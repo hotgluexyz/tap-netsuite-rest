@@ -28,7 +28,7 @@ class NetSuiteStream(RESTStream):
     records_jsonpath = "$.items[*]"
     next_page_token_jsonpath = "$.hasMore"
     type_filter = None
-    page_size = 1000
+    page_size = 10
     path = None
     rest_method = "POST"
 
