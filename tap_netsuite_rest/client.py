@@ -34,6 +34,7 @@ class NetSuiteStream(RESTStream):
     select = None
     join = None
     custom_filter = None
+    replication_key_prefix = None
 
     @property
     def http_headers(self) -> dict:
@@ -140,7 +141,8 @@ class NetSuiteStream(RESTStream):
         order_by = ""
 
         if self.replication_key:
-            order_by = f"ORDER BY {self.replication_key}"
+            prefix = (self.replication_key_prefix or "")
+            order_by = f"ORDER BY {prefix}{self.replication_key}"
 
             start_date = self.get_starting_timestamp(context)
 
@@ -148,7 +150,7 @@ class NetSuiteStream(RESTStream):
                 filters.append(f"{self.replication_key}>='{self.query_date}'")
             elif start_date:
                 start_date_str = start_date.strftime("%m/%d/%Y")
-                filters.append(f"{self.replication_key}>='{start_date_str}'")
+                filters.append(f"{prefix}{self.replication_key}>='{start_date_str}'")
         
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
