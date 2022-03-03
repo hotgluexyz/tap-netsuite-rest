@@ -68,7 +68,7 @@ class SalesOrdersStream(NetSuiteStream):
 
 class TransactionLinesStream(NetSuiteStream):
     name = "transactionLine"
-    primary_keys = ["id", "linelastmodifieddate"]
+    primary_keys = ["transaction", "linelastmodifieddate"]
     table = "TransactionLine"
     type_filter = False
     replication_key = "linelastmodifieddate"
@@ -132,6 +132,21 @@ class PricingStream(NetSuiteStream):
         th.Property("quantity", th.StringType),
         th.Property("saleunit", th.StringType),
         th.Property("unitprice", th.StringType),
+    ).to_dict()
+
+
+class InventoryPricingStream(NetSuiteStream):
+    name = "inventory pricing"
+    primary_keys = ["ns_item_id"]
+    select = "p.item AS ns_item_id, p.pricelevel AS price_level_id, p.unitprice AS price"
+    table = "pricing p"
+    join = "INNER JOIN item i ON p.item = i.id"
+    custom_filter = "i.itemtype='InvtPart'"
+    
+    schema = th.PropertiesList(
+        th.Property("ns_item_id", th.StringType),
+        th.Property("price", th.StringType),
+        th.Property("price_level_id", th.StringType)
     ).to_dict()
 
 

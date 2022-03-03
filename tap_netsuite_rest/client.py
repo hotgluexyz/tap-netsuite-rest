@@ -26,11 +26,14 @@ class NetSuiteStream(RESTStream):
         return f"https://{url_account}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql"
 
     records_jsonpath = "$.items[*]"
-    next_page_token_jsonpath = "$.hasMore"
     type_filter = None
-    page_size = 10
+    page_size = 1000
     path = None
     rest_method = "POST"
+    query_date = None
+    select = None
+    join = None
+    custom_filter = None
 
     @property
     def http_headers(self) -> dict:
@@ -105,11 +108,19 @@ class NetSuiteStream(RESTStream):
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
-        has_next = next(extract_jsonpath(self.next_page_token_jsonpath, response.json()))
+        has_next = next(extract_jsonpath("$.hasMore", response.json()))
+        offset = next(extract_jsonpath("$.offset", response.json()))
+        offset += self.page_size
+
         if has_next:
-            if not previous_token:
-                return 1
-            return previous_token + 1
+            return offset
+
+        totalResults = next(extract_jsonpath("$.totalResults", response.json()))
+        if not has_next and offset < totalResults:
+            if self.replication_key:
+                self.query_date = next(extract_jsonpath(f"$.items[-1].{self.replication_key}", response.json()))
+                return offset
+
         return None
 
     def get_url_params(
@@ -117,7 +128,7 @@ class NetSuiteStream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        params["offset"] = self.page_size * (next_page_token or 0)
+        params["offset"] = (next_page_token or 0)%100000
         params["limit"] = self.page_size
         return params
 
@@ -125,15 +136,24 @@ class NetSuiteStream(RESTStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
 
-        start_date = self.get_starting_timestamp(context)
-        if start_date:
-            start_date_str = start_date.strftime("%m/%d/%Y")
-
         filters = []
+        order_by = ""
+
         if self.replication_key:
-            filters.append(f"{self.replication_key}>='{start_date_str}'")
+            order_by = f"ORDER BY {self.replication_key}"
+
+            start_date = self.get_starting_timestamp(context)
+
+            if self.query_date:
+                filters.append(f"{self.replication_key}>='{self.query_date}'")
+            elif start_date:
+                start_date_str = start_date.strftime("%m/%d/%Y")
+                filters.append(f"{self.replication_key}>='{start_date_str}'")
+        
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
+        if self.custom_filter:
+            filters.append(self.custom_filter)
         
         if filters:
             filters = "WHERE " + " AND ".join(filters)
@@ -146,9 +166,14 @@ class NetSuiteStream(RESTStream):
                 if value.selected:
                     selected_properties.append(key[-1])
 
-        query_str = ",".join(selected_properties)
+        if self.select:
+            select = self.select
+        else:
+            select = ",".join(selected_properties)
+        
+        join = self.join if self.join else ""
 
-        payload = dict(q = f"SELECT {query_str} FROM {self.table} {filters}")
+        payload = dict(q = f"SELECT {select} FROM {self.table} {join} {filters} {order_by}")
         return payload
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:

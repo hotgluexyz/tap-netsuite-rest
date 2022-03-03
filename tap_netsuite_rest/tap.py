@@ -11,16 +11,17 @@ from tap_netsuite_rest.streams import (
     TransactionLinesStream,
     PricingStream,
     ItemStream,
-    ClassificationStream
+    ClassificationStream,
+    InventoryPricingStream
 )
-# TODO: Compile a list of custom stream types here
-#       OR rewrite discover_streams() below with your custom logic.
+
 STREAM_TYPES = [
     SalesOrdersStream,
     TransactionLinesStream,
     PricingStream,
     ItemStream,
-    ClassificationStream
+    ClassificationStream,
+    InventoryPricingStream
 ]
 
 
