@@ -126,7 +126,8 @@ class NetSuiteStream(RESTStream):
     ) -> Optional[dict]:
 
         start_date = self.get_starting_timestamp(context)
-        start_date_str = start_date.strftime("%m/%d/%Y")
+        if start_date:
+            start_date_str = start_date.strftime("%m/%d/%Y")
 
         filters = []
         if self.replication_key:
