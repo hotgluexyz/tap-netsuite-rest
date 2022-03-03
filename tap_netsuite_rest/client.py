@@ -147,7 +147,7 @@ class NetSuiteStream(RESTStream):
             start_date = self.get_starting_timestamp(context)
 
             if self.query_date:
-                filters.append(f"{self.replication_key}>='{self.query_date}'")
+                filters.append(f"{prefix}{self.replication_key}>='{self.query_date}'")
             elif start_date:
                 start_date_str = start_date.strftime("%m/%d/%Y")
                 filters.append(f"{prefix}{self.replication_key}>='{start_date_str}'")
