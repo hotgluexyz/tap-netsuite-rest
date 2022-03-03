@@ -10,7 +10,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 
 from requests_oauthlib import OAuth1Session
-import oauthlib
+from oauthlib import oauth1
 import requests
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -22,33 +22,42 @@ class NetSuiteStream(RESTStream):
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
-        return f"https://{self.config['ns_account']}.suitetalk.api.netsuite.com/services/rest/record/v1"
+        url_account = self.config['ns_account'].replace("_", "-").replace("SB", "sb")
+        return f"https://{url_account}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql"
 
-    records_jsonpath = "$.items[*]"  # Or override `parse_response`.
-    next_page_token_jsonpath = "$.next_page"  # Or override `get_next_page_token`.
+    records_jsonpath = "$.items[*]"
+    next_page_token_jsonpath = "$.hasMore"
+    type_filter = None
+    page_size = 1000
+    path = None
+    rest_method = "POST"
 
     @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
-        headers = {
-            "Prefer": "transient"
-        }
-        if "user_agent" in self.config:
-            headers["User-Agent"] = self.config.get("user_agent")
-        # If not using an authenticator, you may also provide inline auth headers:
-        # headers["Private-Token"] = self.config.get("auth_token")
+        headers = {}
+        headers["Prefer"] = "transient"
+
         return headers
     
-    def gen_auth_header(self, url):
-        client = oauthlib.oauth1.Client(
-            self.config['ns_consumer_key'],
-            client_secret=self.config['ns_consumer_secret'],
-            resource_owner_key=self.config['ns_token_key'],
-            resource_owner_secret=self.config['ns_token_secret']
-        )
-        uri, headers, body = client.sign(url)
-        auth_header = headers['Authorization'] + f", realm=\"{self.config['ns_account']}\""
-        return auth_header
+    def get_session(self) -> requests.Session:
+        """Get requests session.
+
+        Returns:
+            The `requests.Session`_ object for HTTP requests.
+
+        .. _requests.Session:
+            https://docs.python-requests.org/en/latest/api/#request-sessions
+        """
+        return OAuth1Session(
+                client_key=self.config["ns_consumer_key"],
+                client_secret=self.config["ns_consumer_secret"],
+                resource_owner_key=self.config["ns_token_key"],
+                resource_owner_secret=self.config["ns_token_secret"],
+                realm=self.config["ns_account"],
+                signature_method=oauth1.SIGNATURE_HMAC_SHA256
+            )
+
 
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -74,12 +83,12 @@ class NetSuiteStream(RESTStream):
         request_data = self.prepare_request_payload(context, next_page_token)
         headers = self.http_headers
 
-        auth_header = self.gen_auth_header(url)
-        headers['Authorization'] = auth_header
+        # Generate a new OAuth1 session
+        client = self.get_session()
 
         request = cast(
             requests.PreparedRequest,
-            self.requests_session.prepare_request(
+            client.prepare_request(
                 requests.Request(
                     method=http_method,
                     url=url,
@@ -89,47 +98,57 @@ class NetSuiteStream(RESTStream):
                 ),
             ),
         )
+
         return request
 
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
-        # TODO: If pagination is required, return a token which can be used to get the
-        #       next page. If this is the final page, return "None" to end the
-        #       pagination loop.
-        if self.next_page_token_jsonpath:
-            all_matches = extract_jsonpath(
-                self.next_page_token_jsonpath, response.json()
-            )
-            first_match = next(iter(all_matches), None)
-            next_page_token = first_match
-        else:
-            next_page_token = response.headers.get("X-Next-Page", None)
-
-        return next_page_token
+        has_next = next(extract_jsonpath(self.next_page_token_jsonpath, response.json()))
+        if has_next:
+            if not previous_token:
+                return 1
+            return previous_token + 1
+        return None
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        if next_page_token:
-            params["page"] = next_page_token
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+        params["offset"] = self.page_size * (next_page_token or 0)
+        params["limit"] = self.page_size
         return params
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
-        """Prepare the data payload for the REST API request.
 
-        By default, no payload will be sent (return None).
-        """
-        # TODO: Delete this method if no payload is required. (Most REST APIs.)
-        return None
+        start_date = self.get_starting_timestamp(context)
+        start_date_str = start_date.strftime("%m/%d/%Y")
+
+        filters = []
+        if self.replication_key:
+            filters.append(f"{self.replication_key}>='{start_date_str}'")
+        if self.type_filter:
+            filters.append(f"(Type='{self.type_filter}')")
+        
+        if filters:
+            filters = "WHERE " + " AND ".join(filters)
+        else:
+            filters = ""
+
+        selected_properties = []
+        for key, value in self.metadata.items():
+            if isinstance(key, tuple) and len(key)==2:
+                if value.selected:
+                    selected_properties.append(key[-1])
+
+        query_str = ",".join(selected_properties)
+
+        payload = dict(q = f"SELECT {query_str} FROM {self.table} {filters}")
+        return payload
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
@@ -138,5 +157,4 @@ class NetSuiteStream(RESTStream):
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
         return row

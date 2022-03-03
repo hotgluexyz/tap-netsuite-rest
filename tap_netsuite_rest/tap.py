@@ -7,13 +7,11 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 # TODO: Import your custom stream types here:
 from tap_netsuite_rest.streams import (
     NetSuiteStream,
-    SalesOrderStream,
     SalesOrdersStream,
 )
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
-    SalesOrderStream,
     SalesOrdersStream
 ]
 
@@ -58,3 +56,6 @@ class TapNetSuite(Tap):
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
         return [stream_class(tap=self) for stream_class in STREAM_TYPES]
+
+if __name__=="__main__":
+    TapNetSuite.cli()
