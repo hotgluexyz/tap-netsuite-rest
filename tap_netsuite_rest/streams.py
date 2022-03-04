@@ -78,6 +78,33 @@ class InventoryPricingStream(NetSuiteStream):
     ).to_dict()
 
 
+class PriceLevelStream(NetSuiteStream):
+    name = "price_level"
+    primary_keys = ["id", "lastmodifieddate"]
+    table = "pricelevel"
+    replication_key = "lastmodifieddate"
+    
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("isonline", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class CostStream(NetSuiteStream):
+    name = "cost"
+    primary_keys = ["id"]
+    table = "item"
+    custom_filter = "itemtype='InvtPart'"
+    
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("averagecost", th.StringType)
+    ).to_dict()
+
+
 class ItemStream(NetSuiteStream):
     name = "item"
     primary_keys = ["id", "lastmodifieddate"]
