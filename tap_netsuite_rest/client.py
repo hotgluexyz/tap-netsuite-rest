@@ -3,8 +3,7 @@
 import requests
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
-
-from memoization import cached
+from datetime import datetime
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
@@ -119,7 +118,9 @@ class NetSuiteStream(RESTStream):
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
         if not has_next and offset < totalResults:
             if self.replication_key:
-                self.query_date = next(extract_jsonpath(f"$.items[-1].{self.replication_key}", response.json()))
+                json_path = f"$.items[-1].{self.replication_key}"
+                last_dt = next(extract_jsonpath(json_path, response.json()))
+                self.query_date = datetime.strptime(last_dt, "%Y-%m-%d %H:%M:%S")
                 return offset
 
         return None
@@ -139,18 +140,20 @@ class NetSuiteStream(RESTStream):
 
         filters = []
         order_by = ""
+        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
 
         if self.replication_key:
-            prefix = (self.replication_key_prefix or "")
-            order_by = f"ORDER BY {prefix}{self.replication_key}"
+            prefix = (self.replication_key_prefix or self.table)
+            order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
             start_date = self.get_starting_timestamp(context)
 
             if self.query_date:
-                filters.append(f"{prefix}{self.replication_key}>='{self.query_date}'")
+                start_date_str = self.query_date.strftime(time_format)
+                filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
             elif start_date:
-                start_date_str = start_date.strftime("%m/%d/%Y")
-                filters.append(f"{prefix}{self.replication_key}>='{start_date_str}'")
+                start_date_str = start_date.strftime(time_format)
+                filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
         
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
@@ -164,14 +167,17 @@ class NetSuiteStream(RESTStream):
 
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key)==2:
-                if value.selected:
-                    selected_properties.append(key[-1])
+            if isinstance(key, tuple) and len(key)==2 and value.selected:
+                field_name = key[-1]
+                field_type = self.schema["properties"][field_name]
+                if field_type.get("format") == "date-time":
+                    field_name = f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
+                selected_properties.append(field_name)
 
         if self.select:
             select = self.select
         else:
-            select = ",".join(selected_properties)
+            select = ", ".join(selected_properties)
         
         join = self.join if self.join else ""
 
@@ -180,7 +186,6 @@ class NetSuiteStream(RESTStream):
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
-        # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
