@@ -43,6 +43,143 @@ class SalesOrdersStream(NetSuiteStream):
     ).to_dict()
 
 
+class SalesTransactionsStream(NetSuiteStream):
+    name = "sales_transactions"
+    primary_keys = ["id", "lastmodifieddate"]
+    table = "transaction"
+    replication_key = "lastmodifieddate"
+    custom_filter = "recordtype = 'salesorder'"
+
+    schema = th.PropertiesList(
+        th.Property("abbrevtype", th.StringType),
+        th.Property("actualshipdate", th.DateTimeType),
+        th.Property("balsegstatus", th.StringType),
+        th.Property("billingaddress", th.StringType),
+        th.Property("billingstatus", th.StringType),
+        th.Property("closedate", th.DateTimeType),
+        th.Property("createdby", th.StringType),
+        th.Property("createddate", th.DateTimeType),
+        th.Property("currency", th.StringType),
+        th.Property("custbody1", th.StringType),
+        th.Property("custbody_call_paypal_again", th.StringType),
+        th.Property("custbody_charge_payflow", th.StringType),
+        th.Property("custbody_do_not_autobill", th.StringType),
+        th.Property("custbody_fa_shipping_tax", th.StringType),
+        th.Property("custbody_invoice_customer", th.StringType),
+        th.Property("custbody_pj_sscod", th.StringType),
+        th.Property("custbody_pj_ssliftgate", th.StringType),
+        th.Property("custbody_pj_sssdelivery", th.StringType),
+        th.Property("custbody_pj_sssigreq", th.StringType),
+        th.Property("custbody_rrw_2_day_shipping", th.StringType),
+        th.Property("custbody_rrw_addr_is_verified", th.StringType),
+        th.Property("custbody_rrw_estimated_cost", th.StringType),
+        th.Property("custbody_rrw_estimated_delivery_date", th.DateTimeType),
+        th.Property("custbody_rrw_estimated_transit_time", th.StringType),
+        th.Property("custbody_rrw_expected_delivery_date_t", th.StringType),
+        th.Property("custbody_rrw_incl_in_dropship_statemnt", th.StringType),
+        th.Property("custbody_rrw_is_prime", th.StringType),
+        th.Property("custbody_rrw_pacejet_request", th.StringType),
+        th.Property("custbody_rrw_pacejet_response", th.StringType),
+        th.Property("custbody_rrw_rma_notification_sent", th.StringType),
+        th.Property("custbody_rrw_skip_pacejet_quoting", th.StringType),
+        th.Property("custbody_solupay_billingschd_autopay", th.StringType),
+        th.Property("custbody_storefront_order", th.StringType),
+        th.Property("custbody_upaya_paypal_approve", th.StringType),
+        th.Property("custbody_upaya_paypal_hold", th.StringType),
+        th.Property("custbodyreference_order", th.StringType),
+        th.Property("custbodystorefront", th.StringType),
+        th.Property("daysopen", th.StringType),
+        th.Property("email", th.StringType),
+        th.Property("employee", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("foreigntotal", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("isfinchrg", th.StringType),
+        th.Property("isreversal", th.StringType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("linkedtrackingnumberlist", th.StringType),
+        th.Property("nexus", th.StringType),
+        th.Property("number", th.StringType),
+        th.Property("ordpicked", th.StringType),
+        th.Property("paymenthold", th.StringType),
+        th.Property("paymentoption", th.StringType),
+        th.Property("posting", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("printedpickingticket", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("shipcomplete", th.StringType),
+        th.Property("shipdate", th.DateTimeType),
+        th.Property("shippingaddress", th.StringType),
+        th.Property("source", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.DateTimeType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("typebaseddocumentnumber", th.StringType),
+        th.Property("userevenuearrangement", th.StringType),
+        th.Property("visibletocustomer", th.StringType),
+        th.Property("void", th.StringType),
+        th.Property("voided", th.StringType),
+    ).to_dict()
+
+
+class SalesTransactionLinesStream(NetSuiteStream):
+    name = "sales_transactions_lines"
+    primary_keys = ["id", "linelastmodifieddate"]
+    table = "transaction t"
+    replication_key = "linelastmodifieddate"
+    join = "INNER JOIN transactionLine tl ON tl.transaction = t.id"
+    custom_filter = "t.recordtype = 'salesorder'"
+    replication_key_prefix = "tl"
+    select_prefix = "tl"
+
+    schema = th.PropertiesList(
+        th.Property("amountlinked", th.StringType),
+        th.Property("blandedcost", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("cleared", th.StringType),
+        th.Property("commitmentfirm", th.StringType),
+        th.Property("debitforeignamount", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("donotdisplayline", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("expenseaccount", th.StringType),
+        th.Property("foreignamount", th.StringType),
+        th.Property("hasfulfillableitems", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("isbillable", th.StringType),
+        th.Property("isclosed", th.StringType),
+        th.Property("iscogs", th.StringType),
+        th.Property("isfullyshipped", th.StringType),
+        th.Property("isfxvariance", th.StringType),
+        th.Property("isinventoryaffecting", th.StringType),
+        th.Property("kitcomponent", th.StringType),
+        th.Property("landedcostperline", th.StringType),
+        th.Property("linelastmodifieddate", th.DateTimeType),
+        th.Property("linesequencenumber", th.StringType),
+        th.Property("mainline", th.StringType),
+        th.Property("matchbilltoreceipt", th.StringType),
+        th.Property("netamount", th.StringType),
+        th.Property("oldcommitmentfirm", th.StringType),
+        th.Property("paymentmethod", th.StringType),
+        th.Property("processedbyrevcommit", th.StringType),
+        th.Property("quantitybilled", th.StringType),
+        th.Property("quantityrejected", th.StringType),
+        th.Property("quantityshiprecv", th.StringType),
+        th.Property("shipmethod", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("taxline", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactiondiscount", th.StringType),
+        th.Property("uniquekey", th.StringType),
+    ).to_dict()
+
+
 class InventoryItemLocationStream(NetSuiteStream):
     name = "inventory_item_location"
     primary_keys = ["ns_item_id", "lastmodifieddate"]

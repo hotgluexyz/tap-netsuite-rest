@@ -14,7 +14,9 @@ from tap_netsuite_rest.streams import (
     ClassificationStream,
     InventoryPricingStream,
     CostStream,
-    PriceLevelStream
+    PriceLevelStream,
+    SalesTransactionLinesStream,
+    SalesTransactionsStream
 )
 
 STREAM_TYPES = [
@@ -25,7 +27,9 @@ STREAM_TYPES = [
     ClassificationStream,
     InventoryPricingStream,
     CostStream,
-    PriceLevelStream
+    PriceLevelStream,
+    SalesTransactionLinesStream,
+    SalesTransactionsStream
 ]
 
 
