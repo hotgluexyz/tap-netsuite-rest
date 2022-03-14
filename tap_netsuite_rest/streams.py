@@ -180,27 +180,27 @@ class SalesTransactionLinesStream(NetSuiteStream):
     ).to_dict()
 
 
-class InventoryItemLocationStream(NetSuiteStream):
-    name = "inventory_item_location"
-    primary_keys = ["ns_item_id", "lastmodifieddate"]
-    select = """
-        i.id AS ns_item_id,
-        i.itemid AS sku,
-        iil.quantity
-        """
-    table = "item i"
-    join = """
-        INNER JOIN (SELECT item, SUM(quantityavailable)
-        AS quantity FROM inventoryitemlocations GROUP BY item) iil
-        ON i.id = iil.item
-        """
-    custom_filter = "i.isinactive='F' AND i.itemtype='InvtPart'"
+# class InventoryItemLocationStream(NetSuiteStream):
+#     name = "inventory_item_location"
+#     primary_keys = ["ns_item_id", "lastmodifieddate"]
+#     select = """
+#         i.id AS ns_item_id,
+#         i.itemid AS sku,
+#         iil.quantity
+#         """
+#     table = "item i"
+#     join = """
+#         INNER JOIN (SELECT item, SUM(quantityavailable)
+#         AS quantity FROM inventoryitemlocations GROUP BY item) iil
+#         ON i.id = iil.item
+#         """
+#     custom_filter = "i.isinactive='F' AND i.itemtype='InvtPart'"
 
-    schema = th.PropertiesList(
-        th.Property("ns_item_id", th.StringType),
-        th.Property("quantity", th.StringType),
-        th.Property("sku", th.StringType),
-    ).to_dict()
+#     schema = th.PropertiesList(
+#         th.Property("ns_item_id", th.StringType),
+#         th.Property("quantity", th.StringType),
+#         th.Property("sku", th.StringType),
+#     ).to_dict()
 
 
 class PricingStream(NetSuiteStream):
@@ -343,4 +343,24 @@ class ClassificationStream(NetSuiteStream):
         th.Property("lastmodifieddate", th.DateTimeType),
         th.Property("name", th.StringType),
         th.Property("subsidiary", th.StringType),
+    ).to_dict()
+
+
+class InventoryItemLocationsStream(NetSuiteStream):
+    name = "inventory_item_locations"
+    primary_keys = []
+    table = "inventoryitemlocations"
+
+    schema = th.PropertiesList(
+        th.Property("averagecostmli", th.StringType),
+        th.Property("costaccountingstatus", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("lastpurchasepricemli", th.StringType),
+        th.Property("lastquantityavailablechange", th.DateTimeType),
+        th.Property("location", th.StringType),
+        th.Property("onhandvaluemli", th.StringType),
+        th.Property("quantityavailable", th.StringType),
+        th.Property("quantitybackordered", th.StringType),
+        th.Property("quantitycommitted", th.StringType),
+        th.Property("quantityonhand", th.StringType)
     ).to_dict()

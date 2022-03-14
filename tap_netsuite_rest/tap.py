@@ -8,7 +8,6 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 from tap_netsuite_rest.streams import (
     NetSuiteStream,
     SalesOrdersStream,
-    InventoryItemLocationStream,
     PricingStream,
     ItemStream,
     ClassificationStream,
@@ -16,12 +15,12 @@ from tap_netsuite_rest.streams import (
     CostStream,
     PriceLevelStream,
     SalesTransactionLinesStream,
-    SalesTransactionsStream
+    SalesTransactionsStream,
+    InventoryItemLocationsStream
 )
 
 STREAM_TYPES = [
     SalesOrdersStream,
-    InventoryItemLocationStream,
     PricingStream,
     ItemStream,
     ClassificationStream,
@@ -29,7 +28,8 @@ STREAM_TYPES = [
     CostStream,
     PriceLevelStream,
     SalesTransactionLinesStream,
-    SalesTransactionsStream
+    SalesTransactionsStream,
+    InventoryItemLocationsStream
 ]
 
 
