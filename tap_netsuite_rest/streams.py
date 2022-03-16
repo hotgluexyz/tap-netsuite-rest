@@ -250,6 +250,29 @@ class PriceLevelStream(NetSuiteStream):
     ).to_dict()
 
 
+class LocationsStream(NetSuiteStream):
+    name = "locations"
+    primary_keys = ["id", "lastmodifieddate"]
+    table = "location"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property("custrecord_alt_name", th.StringType),
+        th.Property("fullname", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("includechildren", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("locationtype", th.StringType),
+        th.Property("mainaddress", th.StringType),
+        th.Property("makeinventoryavailable", th.StringType),
+        th.Property("makeinventoryavailablestore", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("returnaddress", th.StringType),
+        th.Property("subsidiary", th.StringType)
+    ).to_dict()
+
+
 class CostStream(NetSuiteStream):
     name = "cost"
     primary_keys = ["id", "lastmodifieddate"]
