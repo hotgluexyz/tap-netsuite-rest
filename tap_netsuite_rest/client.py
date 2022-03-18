@@ -2,18 +2,20 @@
 
 import requests
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
+from typing import Any, Dict, Optional, cast
 from datetime import datetime
+import logging
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 
 from requests_oauthlib import OAuth1Session
 from oauthlib import oauth1
 import requests
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-
+logging.getLogger('backoff').setLevel(logging.CRITICAL)
 
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
@@ -66,21 +68,7 @@ class NetSuiteStream(RESTStream):
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> requests.PreparedRequest:
-        """Prepare a request object.
-
-        If partitioning is supported, the `context` object will contain the partition
-        definitions. Pagination information can be parsed from `next_page_token` if
-        `next_page_token` is not None.
-
-        Args:
-            context: Stream partition or context dictionary.
-            next_page_token: Token, page number or any request argument to request the
-                next page of data.
-
-        Returns:
-            Build a request with the stream's URL, path, query parameters,
-            HTTP headers and authenticator.
-        """
+        """Prepare a request object."""
         http_method = self.rest_method
         url: str = self.get_url(context)
         params: dict = self.get_url_params(context, next_page_token)
@@ -188,10 +176,18 @@ class NetSuiteStream(RESTStream):
         payload = dict(q = f"SELECT {select} FROM {self.table} {join} {filters} {order_by}")
         return payload
 
-    def parse_response(self, response: requests.Response) -> Iterable[dict]:
-        """Parse the response and return an iterator of result rows."""
-        yield from extract_jsonpath(self.records_jsonpath, input=response.json())
+    def validate_response(self, response: requests.Response) -> None:
+        """Validate HTTP response."""
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
-        """As needed, append or transform raw data to match expected structure."""
-        return row
+        if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
+            msg = (
+                f"{response.status_code} Server Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise RetriableAPIError(msg)
+        elif 400 <= response.status_code < 500:
+            msg = (
+                f"{response.status_code} Client Error: "
+                f"{response.reason} for path: {self.path}"
+            )
+            raise FatalAPIError(msg)
