@@ -1,12 +1,11 @@
 """Stream type classes for tap-netsuite-rest."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 from singer_sdk import typing as th
 
 from tap_netsuite_rest.client import NetSuiteStream
-
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -279,7 +278,7 @@ class LocationsStream(NetSuiteStream):
         th.Property("makeinventoryavailablestore", th.StringType),
         th.Property("name", th.StringType),
         th.Property("returnaddress", th.StringType),
-        th.Property("subsidiary", th.StringType)
+        th.Property("subsidiary", th.StringType),
     ).to_dict()
 
 
@@ -395,5 +394,5 @@ class InventoryItemLocationsStream(NetSuiteStream):
         th.Property("quantityavailable", th.StringType),
         th.Property("quantitybackordered", th.StringType),
         th.Property("quantitycommitted", th.StringType),
-        th.Property("quantityonhand", th.StringType)
+        th.Property("quantityonhand", th.StringType),
     ).to_dict()

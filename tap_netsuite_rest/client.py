@@ -1,21 +1,21 @@
 """REST client handling, including NetSuiteStream base class."""
 
-import requests
-from pathlib import Path
-from typing import Any, Dict, Optional, cast
-from datetime import datetime
 import logging
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Callable, Dict, Optional, cast
 
+import backoff
+import requests
+from oauthlib import oauth1
+from requests_oauthlib import OAuth1Session
+from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
-
-from requests_oauthlib import OAuth1Session
-from oauthlib import oauth1
-import requests
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-logging.getLogger('backoff').setLevel(logging.CRITICAL)
+logging.getLogger("backoff").setLevel(logging.CRITICAL)
+
 
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
@@ -23,7 +23,7 @@ class NetSuiteStream(RESTStream):
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
-        url_account = self.config['ns_account'].replace("_", "-").replace("SB", "sb")
+        url_account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
         return f"https://{url_account}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql"
 
     records_jsonpath = "$.items[*]"
@@ -45,7 +45,7 @@ class NetSuiteStream(RESTStream):
         headers["Prefer"] = "transient"
 
         return headers
-    
+
     def get_session(self) -> requests.Session:
         """Get requests session.
 
@@ -56,14 +56,13 @@ class NetSuiteStream(RESTStream):
             https://docs.python-requests.org/en/latest/api/#request-sessions
         """
         return OAuth1Session(
-                client_key=self.config["ns_consumer_key"],
-                client_secret=self.config["ns_consumer_secret"],
-                resource_owner_key=self.config["ns_token_key"],
-                resource_owner_secret=self.config["ns_token_secret"],
-                realm=self.config["ns_account"],
-                signature_method=oauth1.SIGNATURE_HMAC_SHA256
-            )
-
+            client_key=self.config["ns_consumer_key"],
+            client_secret=self.config["ns_consumer_secret"],
+            resource_owner_key=self.config["ns_token_key"],
+            resource_owner_secret=self.config["ns_token_secret"],
+            realm=self.config["ns_account"],
+            signature_method=oauth1.SIGNATURE_HMAC_SHA256,
+        )
 
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -119,7 +118,7 @@ class NetSuiteStream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        params["offset"] = (next_page_token or 0)%100000
+        params["offset"] = (next_page_token or 0) % 100000
         params["limit"] = self.page_size
         return params
 
@@ -132,7 +131,7 @@ class NetSuiteStream(RESTStream):
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
 
         if self.replication_key:
-            prefix = (self.replication_key_prefix or self.table)
+            prefix = self.replication_key_prefix or self.table
             order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
             start_date = self.get_starting_timestamp(context)
@@ -143,12 +142,12 @@ class NetSuiteStream(RESTStream):
             elif start_date:
                 start_date_str = start_date.strftime(time_format)
                 filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
-        
+
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
         if self.custom_filter:
             filters.append(self.custom_filter)
-        
+
         if filters:
             filters = "WHERE " + " AND ".join(filters)
         else:
@@ -156,9 +155,9 @@ class NetSuiteStream(RESTStream):
 
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key)==2 and value.selected:
+            if isinstance(key, tuple) and len(key) == 2 and value.selected:
                 field_name = key[-1]
-                prefix = (self.select_prefix or self.table)
+                prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"][field_name]
                 if field_type.get("format") == "date-time":
                     field_name = f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
@@ -170,10 +169,12 @@ class NetSuiteStream(RESTStream):
             select = self.select
         else:
             select = ", ".join(selected_properties)
-        
+
         join = self.join if self.join else ""
 
-        payload = dict(q = f"SELECT {select} FROM {self.table} {join} {filters} {order_by}")
+        payload = dict(
+            q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
+        )
         return payload
 
     def validate_response(self, response: requests.Response) -> None:
@@ -191,3 +192,16 @@ class NetSuiteStream(RESTStream):
                 f"{response.reason} for path: {self.path}"
             )
             raise FatalAPIError(msg)
+
+    def request_decorator(self, func: Callable) -> Callable:
+        """Instantiate a decorator for handling request failures."""
+        decorator: Callable = backoff.on_exception(
+            backoff.expo,
+            (
+                RetriableAPIError,
+                requests.exceptions.ReadTimeout,
+            ),
+            max_tries=10,
+            factor=2,
+        )(func)
+        return decorator
