@@ -396,3 +396,36 @@ class InventoryItemLocationsStream(NetSuiteStream):
         th.Property("quantitycommitted", th.StringType),
         th.Property("quantityonhand", th.StringType),
     ).to_dict()
+
+class ProfitLossReportStream(NetSuiteStream):
+    name = "profit_loss_report"
+    primary_keys = []
+    select = """
+        Transaction.tranid,Transaction.externalid,Transaction.abbrevtype,Transaction.postingperiod, Transaction.journaltype, Account.accountsearchdisplayname, AccountingPeriod.PeriodName, AccountingPeriod.StartDate,Account.AcctType,Transaction.TranDate , SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
+        """
+    table = "Transaction"
+    join = """
+        INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID )
+        INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account )
+        INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod )
+        """
+    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '2022-07-01', 'YYYY-MM-DD' ) AND TO_DATE( '2022-07-31', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
+    #Merge group and order by 
+    order_by = """
+    GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname,Transaction.journaltype,Transaction.postingperiod,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid 
+    ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4   ELSE 9 END ASC, AccountingPeriod.StartDate ASC
+    """
+
+    
+
+    schema = th.PropertiesList(
+        th.Property("abbrevtype", th.StringType),
+        th.Property("accountsearchdisplayname", th.StringType),
+        th.Property("accttype", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("periodname", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("startdate", th.DateTimeType),
+        th.Property("trandate", th.DateTimeType),
+        th.Property("tranid", th.StringType)
+    ).to_dict()

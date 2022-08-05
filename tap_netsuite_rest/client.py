@@ -143,6 +143,9 @@ class NetSuiteStream(RESTStream):
                 start_date_str = start_date.strftime(time_format)
                 filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
 
+        if self.replication_key_prefix is None and self.order_by is not None:
+            order_by = self.order_by       
+
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
         if self.custom_filter:

@@ -19,6 +19,7 @@ from tap_netsuite_rest.streams import (
     SalesOrdersStream,
     SalesTransactionLinesStream,
     SalesTransactionsStream,
+    ProfitLossReportStream,
 )
 
 STREAM_TYPES = [
@@ -33,6 +34,7 @@ STREAM_TYPES = [
     SalesTransactionsStream,
     InventoryItemLocationsStream,
     LocationsStream,
+    ProfitLossReportStream
 ]
 
 
