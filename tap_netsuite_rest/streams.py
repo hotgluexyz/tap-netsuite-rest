@@ -431,3 +431,8 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("tranid", th.StringType),
         th.Property("vendorname", th.StringType)
     ).to_dict()
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if "vendorname" not in row:
+            row["vendorname"] = ""
+        return row
