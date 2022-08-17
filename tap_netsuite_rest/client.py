@@ -1,7 +1,7 @@
 """REST client handling, including NetSuiteStream base class."""
 
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional, cast
 
@@ -129,6 +129,7 @@ class NetSuiteStream(RESTStream):
         filters = []
         order_by = ""
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
+        
 
         if self.replication_key:
             prefix = self.replication_key_prefix or self.table
@@ -146,6 +147,9 @@ class NetSuiteStream(RESTStream):
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by       
 
+        if self.name=="profit_loss_report":
+            pl_dates = self.get_profit_loss_dates(self.get_starting_timestamp(context),self.config.get("end_date",None))
+            self.custom_filter = self.custom_filter.format(start_date=pl_dates["start_date"],end_date = pl_dates["end_date"])
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
         if self.custom_filter:
@@ -208,3 +212,21 @@ class NetSuiteStream(RESTStream):
             factor=2,
         )(func)
         return decorator
+
+    def get_profit_loss_dates(self,start_date,end_date=None):
+        time_format_profit_loss = "%Y-%m-%d"
+        start_date_f = start_date.strftime("%Y-%m-01")
+        if end_date is None:
+            end_date = self.last_day_of_month(start_date)
+            end_date = end_date.strftime(time_format_profit_loss)
+        else:
+            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%SZ")
+            end_date = end_date.strftime(time_format_profit_loss)    
+        return {"start_date":start_date_f,"end_date":end_date}  
+
+    def last_day_of_month(self,any_day):
+        # The day 28 exists in every month. 4 days later, it's always next month
+        next_month = any_day.replace(day=28) + timedelta(days=4)
+        # subtracting the number of the current day brings us back one month
+        return next_month - timedelta(days=next_month.day)          
+    

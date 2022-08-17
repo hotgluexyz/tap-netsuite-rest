@@ -410,7 +410,7 @@ class ProfitLossReportStream(NetSuiteStream):
         INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod )
         LEFT JOIN Vendor ON ( Transaction.memo = Vendor.accountnumber )
         """
-    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '2022-07-01', 'YYYY-MM-DD' ) AND TO_DATE( '2022-07-31', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
+    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
     #Merge group and order by 
     order_by = """
     GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname,Transaction.journaltype,Transaction.postingperiod,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Vendor.altname
