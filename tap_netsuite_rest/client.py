@@ -7,11 +7,13 @@ from typing import Any, Callable, Dict, Optional, cast
 
 import backoff
 import requests
+from memoization import cached
 from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from pendulum import parse
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -113,6 +115,12 @@ class NetSuiteStream(RESTStream):
 
         return None
 
+    @cached
+    def get_starting_time(self, context):
+        start_date = parse(self.config.get("start_date"))
+        rep_key = self.get_starting_timestamp(context)
+        return rep_key or start_date
+
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -130,12 +138,11 @@ class NetSuiteStream(RESTStream):
         order_by = ""
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
         
-
         if self.replication_key:
             prefix = self.replication_key_prefix or self.table
             order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
-            start_date = self.get_starting_timestamp(context)
+            start_date = self.get_starting_time(context)
 
             if self.query_date:
                 start_date_str = self.query_date.strftime(time_format)
@@ -148,7 +155,7 @@ class NetSuiteStream(RESTStream):
             order_by = self.order_by       
 
         if self.name=="profit_loss_report":
-            pl_dates = self.get_profit_loss_dates(self.get_starting_timestamp(context),self.config.get("end_date",None))
+            pl_dates = self.get_profit_loss_dates(self.get_starting_time(context), self.config.get("end_date", None))
             self.custom_filter = self.custom_filter.format(start_date=pl_dates["start_date"],end_date = pl_dates["end_date"])
         if self.type_filter:
             filters.append(f"(Type='{self.type_filter}')")
@@ -213,7 +220,7 @@ class NetSuiteStream(RESTStream):
         )(func)
         return decorator
 
-    def get_profit_loss_dates(self,start_date,end_date=None):
+    def get_profit_loss_dates(self, start_date, end_date=None):
         time_format_profit_loss = "%Y-%m-%d"
         start_date_f = start_date.strftime("%Y-%m-01")
         if end_date is None:

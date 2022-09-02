@@ -401,38 +401,33 @@ class ProfitLossReportStream(NetSuiteStream):
     name = "profit_loss_report"
     primary_keys = []
     select = """
-        Vendor.altname as vendorname,Transaction.tranid,Transaction.externalid,Transaction.abbrevtype,Transaction.postingperiod, Transaction.journaltype, Account.accountsearchdisplayname, AccountingPeriod.PeriodName, AccountingPeriod.StartDate,Account.AcctType,Transaction.TranDate , SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
+        Entity.altname as name, Entity.firstname, Entity.lastname, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Transaction.TranDate as Date, Account.acctnumber as Num, SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
         """
     table = "Transaction"
     join = """
-        INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID )
-        INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account )
-        INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod )
-        LEFT JOIN Vendor ON ( Transaction.memo = Vendor.accountnumber )
+        INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID ) INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id )
         """
     custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
     #Merge group and order by 
     order_by = """
-    GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname,Transaction.journaltype,Transaction.postingperiod,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Vendor.altname
-    ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4   ELSE 9 END ASC, AccountingPeriod.StartDate ASC
+    GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname, Account.displaynamewithhierarchy, Transaction.journaltype,Transaction.postingperiod, Transaction.memo,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Entity.altname, Entity.firstname, Entity.lastname, Account.acctnumber ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
 
-    
-
     schema = th.PropertiesList(
-        th.Property("abbrevtype", th.StringType),
-        th.Property("accountsearchdisplayname", th.StringType),
         th.Property("accttype", th.StringType),
         th.Property("amount", th.StringType),
+        th.Property("categories", th.StringType),
+        th.Property("date", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("firstname", th.StringType),
+        th.Property("lastname", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("num", th.StringType),
         th.Property("periodname", th.StringType),
         th.Property("postingperiod", th.StringType),
-        th.Property("startdate", th.DateTimeType),
-        th.Property("trandate", th.DateTimeType),
+        th.Property("split", th.StringType),
+        th.Property("startdate", th.StringType),
         th.Property("tranid", th.StringType),
-        th.Property("vendorname", th.StringType)
+        th.Property("transactiontype", th.StringType),
+        th.Property("memo", th.StringType)
     ).to_dict()
-
-    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        if "vendorname" not in row:
-            row["vendorname"] = ""
-        return row
