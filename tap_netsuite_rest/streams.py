@@ -412,12 +412,12 @@ class ProfitLossReportStream(NetSuiteStream):
     order_by = """
     GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname, Account.displaynamewithhierarchy, Transaction.journaltype,Transaction.postingperiod, Transaction.memo,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Entity.altname, Entity.firstname, Entity.lastname, Account.acctnumber ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
-
+    replication_key = "date"
     schema = th.PropertiesList(
         th.Property("accttype", th.StringType),
         th.Property("amount", th.StringType),
         th.Property("categories", th.StringType),
-        th.Property("date", th.StringType),
+        th.Property("date", th.DateTimeType),
         th.Property("externalid", th.StringType),
         th.Property("firstname", th.StringType),
         th.Property("lastname", th.StringType),

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tap-netsuite-rest"
-version = "0.0.12"
+version = "0.0.13"
 description = "`tap-netsuite-rest` is a Singer tap for NetSuite, built with the Meltano SDK for Singer Taps."
 authors = ["hotglue"]
 keywords = [
