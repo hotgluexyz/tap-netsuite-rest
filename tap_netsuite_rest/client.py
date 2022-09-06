@@ -39,6 +39,7 @@ class NetSuiteStream(RESTStream):
     custom_filter = None
     replication_key_prefix = None
     select_prefix = None
+    order_by = None
 
     @property
     def http_headers(self) -> dict:
