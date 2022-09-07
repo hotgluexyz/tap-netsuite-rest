@@ -397,6 +397,7 @@ class InventoryItemLocationsStream(NetSuiteStream):
         th.Property("quantityonhand", th.StringType),
     ).to_dict()
 
+
 class ProfitLossReportStream(NetSuiteStream):
     name = "profit_loss_report"
     primary_keys = []
@@ -408,7 +409,7 @@ class ProfitLossReportStream(NetSuiteStream):
         INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID ) INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id )
         """
     custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
-    #Merge group and order by 
+    # Merge group and order by
     order_by = """
     GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname, Account.displaynamewithhierarchy, Transaction.journaltype,Transaction.postingperiod, Transaction.memo,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Entity.altname, Entity.firstname, Entity.lastname, Account.acctnumber ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
@@ -429,5 +430,5 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("startdate", th.StringType),
         th.Property("tranid", th.StringType),
         th.Property("transactiontype", th.StringType),
-        th.Property("memo", th.StringType)
+        th.Property("memo", th.StringType),
     ).to_dict()

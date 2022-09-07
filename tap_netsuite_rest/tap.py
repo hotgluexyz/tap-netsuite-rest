@@ -34,7 +34,7 @@ STREAM_TYPES = [
     SalesTransactionsStream,
     InventoryItemLocationsStream,
     LocationsStream,
-    ProfitLossReportStream
+    ProfitLossReportStream,
 ]
 
 
