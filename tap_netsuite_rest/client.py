@@ -225,14 +225,18 @@ class NetSuiteStream(RESTStream):
         rep_key = self.stream_state
         time_format_profit_loss = "%Y-%m-%d"
         start_date_f = start_date.strftime("%Y-%m-01")
-        if "replication_key" not in rep_key:
-            start_date_f = start_date.strftime("%Y-01-01")
         if end_date is None:
             end_date = self.last_day_of_month(start_date)
             end_date = end_date.strftime(time_format_profit_loss)
         else:
             end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%SZ")
-            end_date = end_date.strftime(time_format_profit_loss)    
+            end_date = end_date.strftime(time_format_profit_loss)  
+
+        if "replication_key" not in rep_key:
+            start_date_f = start_date.strftime("%Y-01-01")
+            end_date = datetime.today()
+            end_date = self.last_day_of_month(end_date)
+            end_date = end_date.strftime(time_format_profit_loss)      
         return {"start_date":start_date_f,"end_date":end_date}  
 
     def last_day_of_month(self,any_day):
