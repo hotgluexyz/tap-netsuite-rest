@@ -465,7 +465,7 @@ class ProfitLossReportStream(NetSuiteStream):
         if offset > totalResults:
             self.query_date = (parse(self.end_date) + timedelta(1)).replace(tzinfo=None)
             if self.query_date < datetime.utcnow():
-                return "0"
+                return self.query_date
         return None
     
     def get_url_params(
@@ -473,6 +473,8 @@ class ProfitLossReportStream(NetSuiteStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
+        if self.query_date == next_page_token:
+            next_page_token = 0
         params["offset"] = int(next_page_token or 0)
         params["limit"] = self.page_size
         return params
