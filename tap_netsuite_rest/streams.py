@@ -6,6 +6,9 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 from singer_sdk import typing as th
 
 from tap_netsuite_rest.client import NetSuiteStream
+from singer_sdk.helpers.jsonpath import extract_jsonpath
+from datetime import datetime, timedelta
+from pendulum import parse
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -400,9 +403,11 @@ class InventoryItemLocationsStream(NetSuiteStream):
 
 class ProfitLossReportStream(NetSuiteStream):
     name = "profit_loss_report"
+    start_date_f = None
+    end_date = None
     primary_keys = []
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Transaction.TranDate as Date, Account.acctnumber as Num, SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
+        Entity.altname as name, Entity.firstname, Entity.lastname, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
         """
     table = "Transaction"
     join = """
@@ -427,8 +432,47 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("periodname", th.StringType),
         th.Property("postingperiod", th.StringType),
         th.Property("split", th.StringType),
-        th.Property("startdate", th.StringType),
+        th.Property("startdate", th.DateTimeType),
         th.Property("tranid", th.StringType),
         th.Property("transactiontype", th.StringType),
         th.Property("memo", th.StringType),
     ).to_dict()
+
+    def get_profit_loss_dates(self):
+        rep_key = self.stream_state
+        if self.query_date:
+            start_date = self.query_date
+            self.start_date_f = start_date.strftime("%Y-%m-01")
+        elif "replication_key" not in rep_key:
+            start_date = parse(self.config["start_date"])
+            self.start_date_f = start_date.strftime("%Y-%m-01")
+        else:
+            start_date = self.get_starting_time({})
+            self.start_date_f = start_date.strftime("%Y-%m-01")
+        self.end_date = self.last_day_of_month(start_date).strftime("%Y-%m-%d")
+
+
+    def get_next_page_token(self, response, previous_token):
+        """Return a token for identifying next page or None if no more pages."""
+        has_next = next(extract_jsonpath("$.hasMore", response.json()))
+        offset = next(extract_jsonpath("$.offset", response.json()))
+        offset += self.page_size
+
+        if has_next:
+            return offset
+
+        totalResults = next(extract_jsonpath("$.totalResults", response.json()))
+        if offset > totalResults:
+            self.query_date = (parse(self.end_date) + timedelta(1)).replace(tzinfo=None)
+            if self.query_date < datetime.utcnow():
+                return "0"
+        return None
+    
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Return a dictionary of values to be used in URL parameterization."""
+        params: dict = {}
+        params["offset"] = int(next_page_token or 0)
+        params["limit"] = self.page_size
+        return params
