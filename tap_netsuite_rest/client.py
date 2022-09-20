@@ -113,7 +113,6 @@ class NetSuiteStream(RESTStream):
                 last_dt = next(extract_jsonpath(json_path, response.json()))
                 self.query_date = datetime.strptime(last_dt, "%Y-%m-%d %H:%M:%S")
                 return offset
-
         return None
 
     @cached
@@ -156,18 +155,16 @@ class NetSuiteStream(RESTStream):
             order_by = self.order_by
 
         if self.name == "profit_loss_report":
-            pl_dates = self.get_profit_loss_dates(
-                self.get_starting_time(context),
-                self.config.get("end_date", None),
-                context,
+            self.get_profit_loss_dates()
+            custom_filter = self.custom_filter.format(
+                start_date=self.start_date_f , end_date=self.end_date
             )
-            self.custom_filter = self.custom_filter.format(
-                start_date=pl_dates["start_date"], end_date=pl_dates["end_date"]
-            )
-        if self.type_filter:
-            filters.append(f"(Type='{self.type_filter}')")
-        if self.custom_filter:
-            filters.append(self.custom_filter)
+            filters.append(custom_filter)
+        else:
+            if self.type_filter:
+                filters.append(f"(Type='{self.type_filter}')")
+            if self.custom_filter:
+                filters.append(self.custom_filter)
 
         if filters:
             filters = "WHERE " + " AND ".join(filters)
@@ -226,24 +223,6 @@ class NetSuiteStream(RESTStream):
             factor=2,
         )(func)
         return decorator
-
-    def get_profit_loss_dates(self, start_date, end_date=None, context=None):
-        rep_key = self.stream_state
-        time_format_profit_loss = "%Y-%m-%d"
-        start_date_f = start_date.strftime("%Y-%m-01")
-        if end_date is None:
-            end_date = self.last_day_of_month(start_date)
-            end_date = end_date.strftime(time_format_profit_loss)
-        else:
-            end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%SZ")
-            end_date = end_date.strftime(time_format_profit_loss)
-
-        if "replication_key" not in rep_key:
-            start_date_f = start_date.strftime("%Y-01-01")
-            end_date = datetime.today()
-            end_date = self.last_day_of_month(end_date)
-            end_date = end_date.strftime(time_format_profit_loss)
-        return {"start_date": start_date_f, "end_date": end_date}
 
     def last_day_of_month(self, any_day):
         # The day 28 exists in every month. 4 days later, it's always next month
