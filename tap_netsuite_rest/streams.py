@@ -405,21 +405,22 @@ class ProfitLossReportStream(NetSuiteStream):
     name = "profit_loss_report"
     start_date_f = None
     end_date = None
-    primary_keys = []
+    primary_keys = ["id"]
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, SUM( COALESCE( TransactionAccountingLine.amount, 0 )) AS Amount
+        Entity.altname as name, Entity.firstname, Entity.lastname, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, TransactionLine.amount, classification.name as class, Department.name as department, CONCAT(CONCAT(Transaction.id, '_'), TransactionLine.id) as id
         """
     table = "Transaction"
     join = """
-        INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID ) INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id )
+        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) LEFT JOIN classification ON ( TransactionLine.class = classification.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id )
         """
-    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionAccountingLine.amount !=0"
+    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND ( Account.AcctType IN ( 'Income', 'COGS', 'Expense', 'OthIncome','OthExpense' ) ) AND TransactionLine.amount !=0"
     # Merge group and order by
     order_by = """
-    GROUP BY AccountingPeriod.PeriodName, AccountingPeriod.StartDate, Account.AcctType, Account.accountsearchdisplayname, Account.displaynamewithhierarchy, Transaction.journaltype,Transaction.postingperiod, Transaction.memo,Transaction.TranDate,Transaction.externalid, Transaction.abbrevtype, Transaction.tranid, Entity.altname, Entity.firstname, Entity.lastname, Account.acctnumber ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
+    ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
     replication_key = "date"
     schema = th.PropertiesList(
+        th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
         th.Property("amount", th.StringType),
         th.Property("categories", th.StringType),
@@ -436,21 +437,23 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("tranid", th.StringType),
         th.Property("transactiontype", th.StringType),
         th.Property("memo", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
     ).to_dict()
 
     def get_profit_loss_dates(self):
         rep_key = self.stream_state
+        window = self.config.get("window_days")
         if self.query_date:
             start_date = self.query_date
-            self.start_date_f = start_date.strftime("%Y-%m-01")
+            self.start_date_f = start_date.strftime("%Y-%m-%d")
         elif "replication_key" not in rep_key:
             start_date = parse(self.config["start_date"])
             self.start_date_f = start_date.strftime("%Y-%m-01")
         else:
             start_date = self.get_starting_time({})
             self.start_date_f = start_date.strftime("%Y-%m-01")
-        self.end_date = self.last_day_of_month(start_date).strftime("%Y-%m-%d")
-
+        self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
     def get_next_page_token(self, response, previous_token):
         """Return a token for identifying next page or None if no more pages."""

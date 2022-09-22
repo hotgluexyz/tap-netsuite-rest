@@ -49,6 +49,7 @@ class TapNetSuite(Tap):
         th.Property("ns_consumer_secret", th.StringType, required=True),
         th.Property("ns_token_key", th.StringType, required=True),
         th.Property("ns_token_secret", th.StringType, required=True),
+        th.Property("window_days", th.IntegerType, default=10),
         th.Property(
             "start_date",
             th.DateTimeType,
