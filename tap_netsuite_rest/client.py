@@ -138,7 +138,7 @@ class NetSuiteStream(RESTStream):
         order_by = ""
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
 
-        if self.replication_key and self.name != "profit_loss_report":
+        if self.replication_key and "_report" not in self.name:
             prefix = self.replication_key_prefix or self.table
             order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
@@ -154,7 +154,7 @@ class NetSuiteStream(RESTStream):
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by
 
-        if self.name == "profit_loss_report":
+        if "_report" in self.name:
             self.get_profit_loss_dates()
             custom_filter = self.custom_filter.format(
                 start_date=self.start_date_f , end_date=self.end_date

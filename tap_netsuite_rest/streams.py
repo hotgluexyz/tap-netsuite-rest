@@ -482,3 +482,45 @@ class ProfitLossReportStream(NetSuiteStream):
         params["offset"] = int(next_page_token or 0)
         params["limit"] = self.page_size
         return params
+
+
+class GeneralLedgerReportStream(ProfitLossReportStream):
+    name = "general_ledger_report"
+    start_date_f = None
+    end_date = None
+    primary_keys = ["id"]
+    select = """
+        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, TransactionLine.amount, classification.name as class, Department.name as department, CONCAT(CONCAT(Transaction.id, '_'), TransactionLine.id) as id
+        """
+    table = "Transaction"
+    join = """
+        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) LEFT JOIN classification ON ( TransactionLine.class = classification.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id )
+        """
+    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
+    # Merge group and order by
+    order_by = """
+    ORDER BY AccountingPeriod.StartDate ASC
+    """
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("accttype", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("categories", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("date", th.DateTimeType),
+        th.Property("externalid", th.StringType),
+        th.Property("firstname", th.StringType),
+        th.Property("lastname", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("num", th.StringType),
+        th.Property("periodname", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("split", th.StringType),
+        th.Property("startdate", th.DateTimeType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactiontype", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
+    ).to_dict()
