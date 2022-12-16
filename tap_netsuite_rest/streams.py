@@ -129,6 +129,86 @@ class SalesTransactionsStream(NetSuiteStream):
         th.Property("voided", th.StringType),
     ).to_dict()
 
+class VendorBillsStream(NetSuiteStream):
+    name = "vendor_bill_transactions"
+    primary_keys = ["id"]
+    table = "transaction"
+    replication_key = "lastmodifieddate"
+    custom_filter = "recordtype = 'vendorbill'"
+
+    schema = th.PropertiesList(
+        th.Property("abbrevtype", th.StringType),
+        th.Property("approvalstatus", th.StringType),
+        th.Property("balsegstatus", th.StringType),
+        th.Property("billingstatus", th.StringType),
+        th.Property("closedate", th.DateTimeType),
+        th.Property("createdby", th.StringType),
+        th.Property("createddate", th.DateTimeType),
+        th.Property("currency", th.StringType),
+        th.Property("customtype", th.StringType),
+        th.Property("daysopen", th.StringType),
+        th.Property("daysoverduesearch", th.StringType),
+        th.Property("duedate", th.DateTimeType),
+        th.Property("entity", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("foreignamountpaid", th.StringType),
+        th.Property("foreignamountunpaid", th.StringType),
+        th.Property("foreigntotal", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("isfinchrg", th.StringType),
+        th.Property("isreversal", th.StringType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("nexus", th.StringType),
+        th.Property("number", th.StringType),
+        th.Property("ordpicked", th.StringType),
+        th.Property("paymenthold", th.StringType),
+        th.Property("posting", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("printedpickingticket", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.DateTimeType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("userevenuearrangement", th.StringType),
+        th.Property("visibletocustomer", th.StringType),
+        th.Property("void", th.StringType),
+        th.Property("voided", th.StringType),
+    ).to_dict()
+
+
+class VendorStream(NetSuiteStream):
+    name = "vendor"
+    primary_keys = ["id"]
+    table = "vendor"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property("altname", th.StringType),
+        th.Property("balance", th.StringType),
+        th.Property("balanceprimary", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("datecreated", th.DateTimeType),
+        th.Property("duplicate", th.StringType),
+        th.Property("emailpreference", th.StringType),
+        th.Property("emailtransactions", th.StringType),
+        th.Property("entityid", th.StringType),
+        th.Property("entitytitle", th.StringType),
+        th.Property("faxtransactions", th.StringType),
+        th.Property("globalsubscriptionstatus", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("isjobresourcevend", th.StringType),
+        th.Property("isperson", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("printtransactions", th.StringType),
+        th.Property("unbilledorders", th.StringType),
+        th.Property("unbilledordersprimary", th.StringType),
+    ).to_dict()
+
 
 class SalesTransactionLinesStream(NetSuiteStream):
     name = "sales_transactions_lines"
