@@ -551,7 +551,7 @@ class ProfitLossReportStream(NetSuiteStream):
             if self.query_date < datetime.utcnow():
                 return self.query_date
         return None
-    
+
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -570,11 +570,11 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, TransactionLine.amount, classification.fullname as class, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id
+        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id
         """
     table = "Transaction"
     join = """
-        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) LEFT JOIN classification ON ( TransactionLine.class = classification.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id )
+        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id )
         """
     custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
     # Merge group and order by
