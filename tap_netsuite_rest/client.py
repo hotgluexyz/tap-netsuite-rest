@@ -202,12 +202,14 @@ class NetSuiteStream(RESTStream):
             msg = (
                 f"{response.status_code} Server Error: "
                 f"{response.reason} for path: {self.path}"
+                f"Response: {response.text}"
             )
             raise RetriableAPIError(msg)
         elif 400 <= response.status_code < 500:
             msg = (
                 f"{response.status_code} Client Error: "
                 f"{response.reason} for path: {self.path}"
+                f"Response: {response.text}"
             )
             raise FatalAPIError(msg)
 
