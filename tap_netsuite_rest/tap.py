@@ -22,8 +22,18 @@ from tap_netsuite_rest.streams import (
     ProfitLossReportStream,
     GeneralLedgerReportStream,
     VendorBillsStream,
-    VendorStream
-
+    VendorStream,
+    TransactionsStream,
+    TransactionLinesStream,
+    TransactionActionLinesStream,
+    CurrenciesStream,
+    DepartmentsStream,
+    SubsidiariesStream,
+    AccountsStream,
+    ConsolidatedExchangeRates,
+    AccountingPeriodsStream,
+    CustomersStream,
+    DeletedRecordsStream
 )
 
 STREAM_TYPES = [
@@ -36,12 +46,23 @@ STREAM_TYPES = [
     PriceLevelStream,
     SalesTransactionLinesStream,
     SalesTransactionsStream,
+    TransactionLinesStream,
     InventoryItemLocationsStream,
     LocationsStream,
     ProfitLossReportStream,
     GeneralLedgerReportStream,
     VendorBillsStream,
-    VendorStream
+    VendorStream,
+    TransactionsStream,
+    TransactionActionLinesStream,
+    CurrenciesStream,
+    DepartmentsStream,
+    SubsidiariesStream,
+    AccountsStream,
+    ConsolidatedExchangeRates,
+    AccountingPeriodsStream,
+    CustomersStream,
+    DeletedRecordsStream
 ]
 
 
