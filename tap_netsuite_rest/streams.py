@@ -129,6 +129,7 @@ class SalesTransactionsStream(NetSuiteStream):
         th.Property("voided", th.StringType),
     ).to_dict()
 
+
 class VendorBillsStream(NetSuiteStream):
     name = "vendor_bill_transactions"
     primary_keys = ["id"]
@@ -603,4 +604,420 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("memo", th.StringType),
         th.Property("class", th.StringType),
         th.Property("department", th.StringType),
+    ).to_dict()
+
+
+class TransactionsStream(NetSuiteStream):
+    name = "transactions"
+    primary_keys = ["id", "lastmodifieddate"]
+    table = "transaction"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property("abbrevtype", th.StringType),
+        th.Property("approvalstatus", th.StringType),
+        th.Property("balsegstatus", th.StringType),
+        th.Property("basetotalaftertaxes", th.StringType),
+        th.Property("billingaddress", th.StringType),
+        th.Property("billingstatus", th.StringType),
+        th.Property("closedate", th.DateTimeType),
+        th.Property("createdby", th.StringType),
+        th.Property("createddate", th.DateTimeType),
+        th.Property("currency", th.StringType),
+        th.Property("custbody_edoc_gen_trans_pdf", th.StringType),
+        th.Property("custbody_ei_ds_txn_identifier", th.StringType),
+        th.Property("custbody_farere_invbill_reimbursement", th.StringType),
+        th.Property("custbody_fareye_vendor_type", th.StringType),
+        th.Property("custbody_in_bill_previous_info", th.StringType),
+        th.Property("custbody_in_eway_exp_status_override", th.StringType),
+        th.Property("custbody_in_eway_gst_total_amt", th.StringType),
+        th.Property("custbody_in_eway_supply_type", th.StringType),
+        th.Property("custbody_in_gst_has_non_zero_rate", th.StringType),
+        th.Property("custbody_in_gst_pos", th.StringType),
+        th.Property("custbody_in_inter_intra_flg", th.StringType),
+        th.Property("custbody_in_is_cs_get_default_nexus", th.StringType),
+        th.Property("custbody_in_place_of_supply", th.StringType),
+        th.Property("custbody_in_subsidiary_taxregnum", th.StringType),
+        th.Property("custbody_in_tan_number", th.StringType),
+        th.Property("custbody_in_tax_trandate", th.DateTimeType),
+        th.Property("custbody_rwpl_bill_for_the_month_of", th.StringType),
+        th.Property("custbody_rwpl_capital_non_capital_po", th.StringType),
+        th.Property("custbody_rwpl_general_terms_condition", th.StringType),
+        th.Property("custbody_rwpl_is_deferred", th.StringType),
+        th.Property("custbody_ste_rcs_applicable", th.StringType),
+        th.Property("customform", th.StringType),
+        th.Property("customtype", th.StringType),
+        th.Property("daysopen", th.StringType),
+        th.Property("daysoverduesearch", th.StringType),
+        th.Property("duedate", th.DateTimeType),
+        th.Property("entity", th.StringType),
+        th.Property("entitytaxregnum", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("foreignamountpaid", th.StringType),
+        th.Property("foreignamountunpaid", th.StringType),
+        th.Property("foreigntotal", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("includeinforecast", th.StringType),
+        th.Property("intercoadj", th.StringType),
+        th.Property("isfinchrg", th.StringType),
+        th.Property("isreversal", th.StringType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("legacytax", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("nextapprover", th.StringType),
+        th.Property("nexus", th.StringType),
+        th.Property("number", th.StringType),
+        th.Property("ordpicked", th.StringType),
+        th.Property("paymenthold", th.StringType),
+        th.Property("posting", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("printedpickingticket", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("source", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("subsidiarytaxregnum", th.StringType),
+        th.Property("taxdetailsoverride", th.StringType),
+        th.Property("taxpointdate", th.DateTimeType),
+        th.Property("taxpointdateoverride", th.StringType),
+        th.Property("taxregoverride", th.StringType),
+        th.Property("terms", th.StringType),
+        th.Property("tobeprinted", th.StringType),
+        th.Property("totalaftertaxes", th.StringType),
+        th.Property("trandate", th.DateTimeType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("userevenuearrangement", th.StringType),
+        th.Property("visibletocustomer", th.StringType),
+        th.Property("void", th.StringType),
+        th.Property("voided", th.StringType)
+    ).to_dict()
+
+
+class TransactionLinesStream(NetSuiteStream):
+    name = "transaction_lines"
+    primary_keys = [
+        "id",
+        "transaction"
+    ]
+    replication_key = "linelastmodifieddate"
+    table = "transactionline"
+
+    schema = th.PropertiesList(
+        th.Property('accountinglinetype', th.StringType),
+        th.Property('cleared', th.StringType),
+        th.Property('closedate', th.DateTimeType),
+        th.Property('commitmentfirm', th.StringType),
+        th.Property('costestimatetype', th.StringType),
+        th.Property('createdfrom', th.StringType),
+        th.Property('debitforeignamount', th.StringType),
+        th.Property('department', th.StringType),
+        th.Property('donotdisplayline', th.StringType),
+        th.Property('eliminate', th.StringType),
+        th.Property('entity', th.StringType),
+        th.Property('expenseaccount', th.StringType),
+        th.Property('foreignamount', th.StringType),
+        th.Property('foreignamountpaid', th.StringType),
+        th.Property('foreignamountunpaid', th.StringType),
+        th.Property('fxamountlinked', th.StringType),
+        th.Property('hasfulfillableitems', th.StringType),
+        th.Property('id', th.StringType),
+        th.Property('invsoebundle', th.StringType),
+        th.Property('isbillable', th.StringType),
+        th.Property('isclosed', th.StringType),
+        th.Property('iscogs', th.StringType),
+        th.Property('iscustomglline', th.StringType),
+        th.Property('isfullyshipped', th.StringType),
+        th.Property('isfxvariance', th.StringType),
+        th.Property('isinventoryaffecting', th.StringType),
+        th.Property('isrevrectransaction', th.StringType),
+        th.Property('kitcomponent', th.StringType),
+        th.Property('linelastmodifieddate', th.DateTimeType),
+        th.Property('linesequencenumber', th.StringType),
+        th.Property('location', th.StringType),
+        th.Property('mainline', th.StringType),
+        th.Property('matchbilltoreceipt', th.StringType),
+        th.Property('needsrevenueelement', th.StringType),
+        th.Property('netamount', th.StringType),
+        th.Property('oldcommitmentfirm', th.StringType),
+        th.Property('processedbyrevcommit', th.StringType),
+        th.Property('quantitybilled', th.StringType),
+        th.Property('quantityrejected', th.StringType),
+        th.Property('quantityshiprecv', th.StringType),
+        th.Property('subsidiary', th.StringType),
+        th.Property('taxline', th.StringType),
+        th.Property('transaction', th.StringType),
+        th.Property('transactiondiscount', th.StringType),
+        th.Property('uniquekey', th.StringType),
+    ).to_dict()
+
+
+class TransactionActionLinesStream(NetSuiteStream):
+    table = "transactionaccountingline"
+    primary_keys = ["account", "accountingbook", "transaction", "transactionline"]
+    name = "transaction_action_lines"
+
+    schema = th.PropertiesList(
+        th.Property('account', th.StringType),
+        th.Property('accountingbook', th.StringType),
+        th.Property('amount', th.StringType),
+        th.Property('amountlinked', th.StringType),
+        th.Property('debit', th.StringType),
+        th.Property('exchangerate', th.StringType),
+        th.Property('netamount', th.StringType),
+        th.Property('posting', th.StringType),
+        th.Property('transaction', th.StringType),
+        th.Property('transactionline', th.StringType),
+    ).to_dict()
+
+
+class CurrenciesStream(NetSuiteStream):
+    name = "currencies"
+    primary_keys = ["id"]
+    table = "currency"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('currencyprecision', th.StringType),
+        th.Property('exchangerate', th.StringType),
+        th.Property('includeinfxrateupdates', th.StringType),
+        th.Property('isbasecurrency', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('name', th.StringType),
+        th.Property('overridecurrencyformat', th.StringType),
+        th.Property('symbol', th.StringType),
+        th.Property('symbolplacement', th.StringType),
+    ).to_dict()
+
+
+class DepartmentsStream(NetSuiteStream):
+    name = "departments"
+    primary_keys = ["id"]
+    table = "department"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('name', th.StringType),
+        th.Property('fullname', th.StringType),
+        th.Property('includechildren', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('lastmodifieddate', th.DateTimeType),
+        th.Property('subsidiary', th.StringType),
+    ).to_dict()
+
+
+class SubsidiariesStream(NetSuiteStream):
+    name = "subsidiaries"
+    primary_keys = ["id"]
+    table = "subsidiary"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('name', th.StringType),
+        th.Property('parent', th.StringType),
+        th.Property('country', th.StringType),
+        th.Property('currency', th.StringType),
+        th.Property('custrecord_psg_ei_disable_country', th.StringType),
+        th.Property('dropdownstate', th.StringType),
+        th.Property('edition', th.StringType),
+        th.Property('fiscalcalendar', th.StringType),
+        th.Property('fullname', th.StringType),
+        th.Property('iselimination', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('languagelocale', th.StringType),
+        th.Property('lastmodifieddate', th.DateTimeType),
+        th.Property('mainaddress', th.StringType),
+        th.Property('showsubsidiaryname', th.StringType),
+        th.Property('state', th.StringType),
+        th.Property('tranprefix', th.StringType),
+    ).to_dict()
+
+
+class AccountsStream(NetSuiteStream):
+    name = "accounts"
+    primary_keys = ["id"]
+    table = "account"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('name', th.StringType),
+        th.Property('country', th.StringType),
+        th.Property('currency', th.StringType),
+        th.Property('custrecord_psg_ei_disable_country', th.StringType),
+        th.Property('dropdownstate', th.StringType),
+        th.Property('edition', th.StringType),
+        th.Property('fiscalcalendar', th.StringType),
+        th.Property('fullname', th.StringType),
+        th.Property('iselimination', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('languagelocale', th.StringType),
+        th.Property('lastmodifieddate', th.DateTimeType), # It may not have this field
+        th.Property('mainaddress', th.StringType),
+        th.Property('parent', th.StringType),
+        th.Property('showsubsidiaryname', th.StringType),
+        th.Property('state', th.StringType),
+        th.Property('tranprefix', th.StringType),
+    ).to_dict()
+
+
+class ConsolidatedExchangeRates(NetSuiteStream):
+    name = "consolidated_exchange_rates"
+    primary_keys = ["id"]
+    table = "consolidatedexchangerate"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('accountingbook', th.StringType),
+        th.Property('averagerate', th.StringType),
+        th.Property('currentrate', th.StringType),
+        th.Property('fromcurrency', th.StringType),
+        th.Property('fromsubsidiary', th.StringType),
+        th.Property('historicalrate', th.StringType),
+        th.Property('postingperiod', th.StringType),
+        th.Property('tocurrency', th.StringType),
+        th.Property('tosubsidiary', th.StringType),
+    ).to_dict()
+
+
+class AccountingPeriodsStream(NetSuiteStream):
+    name = "accounting_periods"
+    primary_keys = ["id"]
+    table = "accountingperiod"
+    replication_key = 'lastmodifieddate'
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('alllocked', th.StringType),
+        th.Property('allownonglchanges', th.StringType),
+        th.Property('aplocked', th.StringType),
+        th.Property('arlocked', th.StringType),
+        th.Property('closed', th.StringType),
+        th.Property('enddate', th.DateTimeType),
+        th.Property('isadjust', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('isposting', th.StringType),
+        th.Property('isquarter', th.StringType),
+        th.Property('isyear', th.StringType),
+        th.Property('periodname', th.StringType),
+        th.Property('startdate', th.DateTimeType),
+        th.Property('lastmodifieddate', th.DateTimeType),
+    ).to_dict()
+
+
+
+class CustomersStream(NetSuiteStream):
+    name = "customers"
+    primary_keys = ["id"]
+    table = "customer"
+
+    schema = th.PropertiesList(
+        th.Property('id', th.StringType),
+        th.Property('alcoholrecipienttype', th.StringType),
+        th.Property('altname', th.StringType),
+        th.Property('balancesearch', th.StringType),
+        th.Property('consolbalancesearch', th.StringType),
+        th.Property('consoldaysoverduesearch', th.StringType),
+        th.Property('consoloverduebalancesearch', th.StringType),
+        th.Property('consolunbilledorderssearch', th.StringType),
+        th.Property('creditholdoverride', th.StringType),
+        th.Property('currency', th.StringType),
+        th.Property('dateclosed', th.DateTimeType),
+        th.Property('datecreated', th.DateTimeType),
+        th.Property('defaultbillingaddress', th.StringType),
+        th.Property('draccount', th.StringType),
+        th.Property('duplicate', th.StringType),
+        th.Property('emailpreference', th.StringType),
+        th.Property('emailtransactions', th.StringType),
+        th.Property('entityid', th.StringType),
+        th.Property('entitystatus', th.StringType),
+        th.Property('entitytitle', th.StringType),
+        th.Property('externalid', th.StringType),
+        th.Property('faxtransactions', th.StringType),
+        th.Property('firstname', th.StringType),
+        th.Property('firstsaledate', th.DateTimeType),
+        th.Property('giveaccess', th.StringType),
+        th.Property('globalsubscriptionstatus', th.StringType),
+        th.Property('groupinvoices', th.StringType),
+        th.Property('isbudgetapproved', th.StringType),
+        th.Property('isinactive', th.StringType),
+        th.Property('isperson', th.StringType),
+        th.Property('language', th.StringType),
+        th.Property('lastmodifieddate', th.DateTimeType),
+        th.Property('lastname', th.StringType),
+        th.Property('lastsaledate', th.DateTimeType),
+        th.Property('oncredithold', th.StringType),
+        th.Property('overduebalancesearch', th.StringType),
+        th.Property('printtransactions', th.StringType),
+        th.Property('probability', th.StringType),
+        th.Property('receivablesaccount', th.StringType),
+        th.Property('searchstage', th.StringType),
+        th.Property('shipcomplete', th.StringType),
+        th.Property('shippingcarrier', th.StringType),
+        th.Property('terms', th.StringType),
+        th.Property('thirdpartycountry', th.StringType),
+        th.Property('unbilledorderssearch', th.StringType),
+        th.Property('weblead', th.StringType),
+        th.Property('companyname', th.StringType),
+        th.Property('email', th.StringType),
+        th.Property('phone', th.StringType),
+        th.Property('salesrep', th.StringType),
+        th.Property('territory', th.StringType),
+        th.Property('parent', th.StringType),
+        th.Property('custentity_wc_dept', th.StringType),
+        th.Property('contact', th.StringType),
+        th.Property('defaultshippingaddress', th.StringType),
+        th.Property('startdate', th.StringType),
+        th.Property('firstorderdate', th.StringType),
+        th.Property('lastorderdate', th.StringType),
+        th.Property('middlename', th.StringType),
+        th.Property('salutation', th.StringType),
+        th.Property('comments', th.StringType),
+        th.Property('fax', th.StringType),
+        th.Property('leadsource', th.StringType),
+        th.Property('creditlimit', th.StringType),
+        th.Property('clickstream', th.StringType),
+        th.Property('firstvisit', th.StringType),
+        th.Property('lastpagevisited', th.StringType),
+        th.Property('lastvisit', th.StringType),
+        th.Property('partner', th.StringType),
+        th.Property('visits', th.StringType),
+        th.Property('accountnumber', th.StringType),
+        th.Property('pricelevel', th.StringType),
+        th.Property('shippingitem', th.StringType),
+        th.Property('url', th.StringType),
+        th.Property('title', th.StringType),
+        th.Property('keywords', th.StringType),
+        th.Property('referrer', th.StringType),
+        th.Property('altemail', th.StringType),
+        th.Property('altphone', th.StringType),
+        th.Property('resalenumber', th.StringType),
+        th.Property('campaignevent', th.StringType),
+    ).to_dict()
+
+
+class DeletedRecordsStream(NetSuiteStream):
+    name = "deleted_records"
+    primary_keys = [
+        "recordid",
+        "recordtypeid",
+        "scriptid",
+    ]
+    table = "deletedrecord"
+
+    schema = th.PropertiesList(
+        th.Property('name', th.StringType),
+        th.Property('recordid', th.StringType),
+        th.Property('recordtypeid', th.StringType),
+        th.Property('scriptid', th.StringType),
+        th.Property('context', th.StringType),
+        th.Property('deletedby', th.StringType),
+        th.Property('deleteddate', th.StringType),
+        th.Property('iscustomlist', th.StringType),
+        th.Property('iscustomrecord', th.StringType),
+        th.Property('iscustomtransaction', th.StringType),
+        th.Property('type', th.StringType),
     ).to_dict()
