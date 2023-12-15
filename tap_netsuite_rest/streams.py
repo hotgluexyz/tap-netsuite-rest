@@ -754,7 +754,7 @@ class TransactionLinesStream(NetSuiteStream):
     ).to_dict()
 
 
-class TransactionActionLinesStream(NetSuiteStream):
+class TransactionAccountingLinesStream(NetSuiteStream):
     table = "transactionaccountingline"
     primary_keys = ["account", "accountingbook", "transaction", "transactionline"]
     name = "transaction_action_lines"
