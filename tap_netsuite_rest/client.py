@@ -1,18 +1,21 @@
 """REST client handling, including NetSuiteStream base class."""
 
 import logging
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional, cast
-
 import backoff
 import requests
+import pendulum
+
+from pathlib import Path
+from datetime import datetime, timedelta
+from typing import Any, Callable, Dict, Optional, cast
+
 from memoization import cached
 from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from singer_sdk import typing as th
 from pendulum import parse
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -111,7 +114,10 @@ class NetSuiteStream(RESTStream):
             if self.replication_key:
                 json_path = f"$.items[-1].{self.replication_key}"
                 last_dt = next(extract_jsonpath(json_path, response.json()))
-                self.query_date = datetime.strptime(last_dt, "%Y-%m-%d %H:%M:%S")
+                try:
+                    self.query_date = pendulum.parse(last_dt)
+                except Exception as e:
+                    self.query_date = datetime.strptime(last_dt, "%d/%m/%Y")
                 return offset
         return None
 
@@ -231,3 +237,44 @@ class NetSuiteStream(RESTStream):
         next_month = any_day.replace(day=28) + timedelta(days=4)
         # subtracting the number of the current day brings us back one month
         return next_month - timedelta(days=next_month.day)
+
+
+class NetsuiteDynamicStream(NetSuiteStream):
+    select = "*"
+    schema_response = None
+
+    def get_schema(self):
+        s = self.get_session()
+        self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+
+        account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
+        url = f"https://{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
+        prepared_req = s.prepare_request(
+            requests.Request(
+                method="GET",
+                url=url,
+                headers=self.http_headers,
+            )
+        )
+        prepared_req.headers.update({"Accept": "application/schema+json"})
+        response = s.send(prepared_req)
+        response.raise_for_status()
+        self.schema_response = response.json()
+
+
+    @property
+    def schema(self):
+        # Get netsuite schema for table
+        if self.schema_response is None:
+            self.get_schema()
+
+        response = self.schema_response
+        properties_list = []
+        for field, value in response.get("properties").items():
+            if value.get("format") == 'date-time':
+                properties_list.append(th.Property(field.lower(), th.DateTimeType))
+            elif value.get("format") == "date":
+                properties_list.append(th.Property(field.lower(), th.DateType))
+            else:
+                properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"], "string"]})))
+        return th.PropertiesList(*properties_list).to_dict()
