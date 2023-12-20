@@ -161,7 +161,7 @@ class NetSuiteStream(RESTStream):
             order_by = self.order_by
 
         if "_report" in self.name:
-            self.get_profit_loss_dates()
+            self.get_date_boundaries()
             custom_filter = self.custom_filter.format(
                 start_date=self.start_date_f , end_date=self.end_date
             )

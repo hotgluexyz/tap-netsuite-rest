@@ -181,13 +181,6 @@ class VendorBillsStream(NetSuiteStream):
     ).to_dict()
 
 
-class VendorStream(NetsuiteDynamicStream):
-    name = "vendor"
-    primary_keys = ["id"]
-    table = "vendor"
-    replication_key = "lastmodifieddate"
-
-
 class SalesTransactionLinesStream(NetSuiteStream):
     name = "sales_transactions_lines"
     primary_keys = ["id", "linelastmodifieddate"]
@@ -303,6 +296,57 @@ class InventoryPricingStream(NetSuiteStream):
         th.Property("price", th.StringType),
         th.Property("price_level_id", th.StringType),
     ).to_dict()
+
+
+class VendorStream(NetsuiteDynamicStream):
+    name = "vendor"
+    primary_keys = ["id"]
+    table = "vendor"
+    replication_key = "lastmodifieddate"
+
+
+class TrialBalanceReportStream(NetSuiteStream):
+    name = "trial_balance_report"
+    primary_keys = ["id"]
+
+    schema = th.PropertiesList(
+        th.Property("glamount", th.StringType),
+        th.Property("accountnumber", th.StringType),
+        th.Property("accountname", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("subsidiary", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        return {
+            "q": f"""
+        SELECT
+            a.acctnumber as accountNumber,
+            a.acctname as accountName,
+            CASE WHEN a.accttype IN
+                ('Bank', 'Accounts Receivable', 'Other Asset', 'Other Current Asset', 'Fixed Asset', 'Deferred Expense', 'Accounts Payable', 'Other Current Liability', 'Deferred Revenue', 'Equity', 'Non Posting')
+                THEN 'Balance Sheet'
+                WHEN a.accttype IN ('Income', 'Cost of Goods Sold', 'Expense', 'Other Expense', 'Other Income')
+                THEN 'Income Statement'
+            ELSE 'Balance Sheet' END as classification,
+            tal.sum_netamount as netAmount
+        FROM
+            account as a
+        join (SELECT
+                account,
+                sum(netamount) as sum_netamount,
+            FROM transactionaccountingline
+            JOIN transaction as tran on tran.id = transactionaccountingline.transaction
+            WHERE tran.trandate >= TO_DATE((SELECT max(startdate) from accountingperiod), 'mm/dd/yyyy') and tran.trandate <= TO_DATE((SELECT max(enddate) from accountingperiod), 'mm/dd/yyyy')
+            GROUP BY account
+        )
+        as tal on tal.account = a.id
+        where a.acctnumber is not null
+        group by a.acctnumber, a.acctname, a.accttype, tal.sum_netamount
+        """
+        }
 
 
 class PriceLevelStream(NetsuiteDynamicStream):
@@ -476,7 +520,7 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("department", th.StringType),
     ).to_dict()
 
-    def get_profit_loss_dates(self):
+    def get_date_boundaries(self):
         rep_key = self.stream_state
         window = self.config.get("window_days")
         if self.query_date:
