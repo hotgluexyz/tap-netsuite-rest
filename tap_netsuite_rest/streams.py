@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 from singer_sdk import typing as th
 
-from tap_netsuite_rest.client import NetSuiteStream
+from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
@@ -181,34 +181,11 @@ class VendorBillsStream(NetSuiteStream):
     ).to_dict()
 
 
-class VendorStream(NetSuiteStream):
+class VendorStream(NetsuiteDynamicStream):
     name = "vendor"
     primary_keys = ["id"]
     table = "vendor"
     replication_key = "lastmodifieddate"
-
-    schema = th.PropertiesList(
-        th.Property("altname", th.StringType),
-        th.Property("balance", th.StringType),
-        th.Property("balanceprimary", th.StringType),
-        th.Property("currency", th.StringType),
-        th.Property("datecreated", th.DateTimeType),
-        th.Property("duplicate", th.StringType),
-        th.Property("emailpreference", th.StringType),
-        th.Property("emailtransactions", th.StringType),
-        th.Property("entityid", th.StringType),
-        th.Property("entitytitle", th.StringType),
-        th.Property("faxtransactions", th.StringType),
-        th.Property("globalsubscriptionstatus", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("isinactive", th.StringType),
-        th.Property("isjobresourcevend", th.StringType),
-        th.Property("isperson", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-        th.Property("printtransactions", th.StringType),
-        th.Property("unbilledorders", th.StringType),
-        th.Property("unbilledordersprimary", th.StringType),
-    ).to_dict()
 
 
 class SalesTransactionLinesStream(NetSuiteStream):
@@ -328,42 +305,18 @@ class InventoryPricingStream(NetSuiteStream):
     ).to_dict()
 
 
-class PriceLevelStream(NetSuiteStream):
+class PriceLevelStream(NetsuiteDynamicStream):
     name = "price_level"
     primary_keys = ["id", "lastmodifieddate"]
     table = "pricelevel"
     replication_key = "lastmodifieddate"
 
-    schema = th.PropertiesList(
-        th.Property("id", th.StringType),
-        th.Property("isinactive", th.StringType),
-        th.Property("isonline", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-        th.Property("name", th.StringType),
-    ).to_dict()
 
-
-class LocationsStream(NetSuiteStream):
+class LocationsStream(NetsuiteDynamicStream):
     name = "locations"
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
     replication_key = "lastmodifieddate"
-
-    schema = th.PropertiesList(
-        th.Property("custrecord_alt_name", th.StringType),
-        th.Property("fullname", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("includechildren", th.StringType),
-        th.Property("isinactive", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-        th.Property("locationtype", th.StringType),
-        th.Property("mainaddress", th.StringType),
-        th.Property("makeinventoryavailable", th.StringType),
-        th.Property("makeinventoryavailablestore", th.StringType),
-        th.Property("name", th.StringType),
-        th.Property("returnaddress", th.StringType),
-        th.Property("subsidiary", th.StringType),
-    ).to_dict()
 
 
 class CostStream(NetSuiteStream):
@@ -624,27 +577,6 @@ class TransactionsStream(NetSuiteStream):
         th.Property("createdby", th.StringType),
         th.Property("createddate", th.DateTimeType),
         th.Property("currency", th.StringType),
-        th.Property("custbody_edoc_gen_trans_pdf", th.StringType),
-        th.Property("custbody_ei_ds_txn_identifier", th.StringType),
-        th.Property("custbody_farere_invbill_reimbursement", th.StringType),
-        th.Property("custbody_fareye_vendor_type", th.StringType),
-        th.Property("custbody_in_bill_previous_info", th.StringType),
-        th.Property("custbody_in_eway_exp_status_override", th.StringType),
-        th.Property("custbody_in_eway_gst_total_amt", th.StringType),
-        th.Property("custbody_in_eway_supply_type", th.StringType),
-        th.Property("custbody_in_gst_has_non_zero_rate", th.StringType),
-        th.Property("custbody_in_gst_pos", th.StringType),
-        th.Property("custbody_in_inter_intra_flg", th.StringType),
-        th.Property("custbody_in_is_cs_get_default_nexus", th.StringType),
-        th.Property("custbody_in_place_of_supply", th.StringType),
-        th.Property("custbody_in_subsidiary_taxregnum", th.StringType),
-        th.Property("custbody_in_tan_number", th.StringType),
-        th.Property("custbody_in_tax_trandate", th.DateTimeType),
-        th.Property("custbody_rwpl_bill_for_the_month_of", th.StringType),
-        th.Property("custbody_rwpl_capital_non_capital_po", th.StringType),
-        th.Property("custbody_rwpl_general_terms_condition", th.StringType),
-        th.Property("custbody_rwpl_is_deferred", th.StringType),
-        th.Property("custbody_ste_rcs_applicable", th.StringType),
         th.Property("customform", th.StringType),
         th.Property("customtype", th.StringType),
         th.Property("daysopen", th.StringType),
@@ -692,7 +624,7 @@ class TransactionsStream(NetSuiteStream):
         th.Property("userevenuearrangement", th.StringType),
         th.Property("visibletocustomer", th.StringType),
         th.Property("void", th.StringType),
-        th.Property("voided", th.StringType)
+        th.Property("voided", th.StringType),
     ).to_dict()
 
 
@@ -755,248 +687,76 @@ class TransactionLinesStream(NetSuiteStream):
 
 
 class TransactionAccountingLinesStream(NetSuiteStream):
-    table = "transactionaccountingline"
+    table = "TransactionAccountingLine"
     primary_keys = ["account", "accountingbook", "transaction", "transactionline"]
-    name = "transaction_action_lines"
+    name = "transaction_accounting_lines"
+    select = "*"
+    replication_key = "lastmodifieddate"
 
     schema = th.PropertiesList(
         th.Property('account', th.StringType),
         th.Property('accountingbook', th.StringType),
         th.Property('amount', th.StringType),
-        th.Property('amountlinked', th.StringType),
+        th.Property('credit', th.StringType),
         th.Property('debit', th.StringType),
-        th.Property('exchangerate', th.StringType),
         th.Property('netamount', th.StringType),
+        th.Property('amountlinked', th.StringType),
+        th.Property('amountpaid', th.StringType),
+        th.Property('amountunpaid', th.StringType),
+        th.Property('overheadParentItem', th.StringType),
+        th.Property('paymentamountunused', th.StringType),
+        th.Property('paymentamountused', th.StringType),
+        th.Property('processedbyrevcommit', th.StringType),
+        th.Property('exchangerate', th.StringType),
         th.Property('posting', th.StringType),
         th.Property('transaction', th.StringType),
         th.Property('transactionline', th.StringType),
+        th.Property('lastmodifieddate', th.DateTimeType)
     ).to_dict()
 
 
-class CurrenciesStream(NetSuiteStream):
+class CurrenciesStream(NetsuiteDynamicStream):
     name = "currencies"
     primary_keys = ["id"]
     table = "currency"
 
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('currencyprecision', th.StringType),
-        th.Property('exchangerate', th.StringType),
-        th.Property('includeinfxrateupdates', th.StringType),
-        th.Property('isbasecurrency', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('name', th.StringType),
-        th.Property('overridecurrencyformat', th.StringType),
-        th.Property('symbol', th.StringType),
-        th.Property('symbolplacement', th.StringType),
-    ).to_dict()
 
-
-class DepartmentsStream(NetSuiteStream):
+class DepartmentsStream(NetsuiteDynamicStream):
     name = "departments"
     primary_keys = ["id"]
     table = "department"
     replication_key = "lastmodifieddate"
 
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('name', th.StringType),
-        th.Property('fullname', th.StringType),
-        th.Property('includechildren', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('lastmodifieddate', th.DateTimeType),
-        th.Property('subsidiary', th.StringType),
-    ).to_dict()
 
-
-class SubsidiariesStream(NetSuiteStream):
+class SubsidiariesStream(NetsuiteDynamicStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
     replication_key = "lastmodifieddate"
 
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('name', th.StringType),
-        th.Property('parent', th.StringType),
-        th.Property('country', th.StringType),
-        th.Property('currency', th.StringType),
-        th.Property('custrecord_psg_ei_disable_country', th.StringType),
-        th.Property('dropdownstate', th.StringType),
-        th.Property('edition', th.StringType),
-        th.Property('fiscalcalendar', th.StringType),
-        th.Property('fullname', th.StringType),
-        th.Property('iselimination', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('languagelocale', th.StringType),
-        th.Property('lastmodifieddate', th.DateTimeType),
-        th.Property('mainaddress', th.StringType),
-        th.Property('showsubsidiaryname', th.StringType),
-        th.Property('state', th.StringType),
-        th.Property('tranprefix', th.StringType),
-    ).to_dict()
 
-
-class AccountsStream(NetSuiteStream):
+class AccountsStream(NetsuiteDynamicStream):
     name = "accounts"
     primary_keys = ["id"]
     table = "account"
 
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('name', th.StringType),
-        th.Property('country', th.StringType),
-        th.Property('currency', th.StringType),
-        th.Property('custrecord_psg_ei_disable_country', th.StringType),
-        th.Property('dropdownstate', th.StringType),
-        th.Property('edition', th.StringType),
-        th.Property('fiscalcalendar', th.StringType),
-        th.Property('fullname', th.StringType),
-        th.Property('iselimination', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('languagelocale', th.StringType),
-        th.Property('lastmodifieddate', th.DateTimeType), # It may not have this field
-        th.Property('mainaddress', th.StringType),
-        th.Property('parent', th.StringType),
-        th.Property('showsubsidiaryname', th.StringType),
-        th.Property('state', th.StringType),
-        th.Property('tranprefix', th.StringType),
-    ).to_dict()
 
-
-class ConsolidatedExchangeRates(NetSuiteStream):
+class ConsolidatedExchangeRates(NetsuiteDynamicStream):
     name = "consolidated_exchange_rates"
     primary_keys = ["id"]
     table = "consolidatedexchangerate"
 
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('accountingbook', th.StringType),
-        th.Property('averagerate', th.StringType),
-        th.Property('currentrate', th.StringType),
-        th.Property('fromcurrency', th.StringType),
-        th.Property('fromsubsidiary', th.StringType),
-        th.Property('historicalrate', th.StringType),
-        th.Property('postingperiod', th.StringType),
-        th.Property('tocurrency', th.StringType),
-        th.Property('tosubsidiary', th.StringType),
-    ).to_dict()
 
-
-class AccountingPeriodsStream(NetSuiteStream):
+class AccountingPeriodsStream(NetsuiteDynamicStream):
     name = "accounting_periods"
     primary_keys = ["id"]
     table = "accountingperiod"
-    replication_key = 'lastmodifieddate'
-
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('alllocked', th.StringType),
-        th.Property('allownonglchanges', th.StringType),
-        th.Property('aplocked', th.StringType),
-        th.Property('arlocked', th.StringType),
-        th.Property('closed', th.StringType),
-        th.Property('enddate', th.DateTimeType),
-        th.Property('isadjust', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('isposting', th.StringType),
-        th.Property('isquarter', th.StringType),
-        th.Property('isyear', th.StringType),
-        th.Property('periodname', th.StringType),
-        th.Property('startdate', th.DateTimeType),
-        th.Property('lastmodifieddate', th.DateTimeType),
-    ).to_dict()
 
 
-
-class CustomersStream(NetSuiteStream):
+class CustomersStream(NetsuiteDynamicStream):
     name = "customers"
     primary_keys = ["id"]
     table = "customer"
-
-    schema = th.PropertiesList(
-        th.Property('id', th.StringType),
-        th.Property('alcoholrecipienttype', th.StringType),
-        th.Property('altname', th.StringType),
-        th.Property('balancesearch', th.StringType),
-        th.Property('consolbalancesearch', th.StringType),
-        th.Property('consoldaysoverduesearch', th.StringType),
-        th.Property('consoloverduebalancesearch', th.StringType),
-        th.Property('consolunbilledorderssearch', th.StringType),
-        th.Property('creditholdoverride', th.StringType),
-        th.Property('currency', th.StringType),
-        th.Property('dateclosed', th.DateTimeType),
-        th.Property('datecreated', th.DateTimeType),
-        th.Property('defaultbillingaddress', th.StringType),
-        th.Property('draccount', th.StringType),
-        th.Property('duplicate', th.StringType),
-        th.Property('emailpreference', th.StringType),
-        th.Property('emailtransactions', th.StringType),
-        th.Property('entityid', th.StringType),
-        th.Property('entitystatus', th.StringType),
-        th.Property('entitytitle', th.StringType),
-        th.Property('externalid', th.StringType),
-        th.Property('faxtransactions', th.StringType),
-        th.Property('firstname', th.StringType),
-        th.Property('firstsaledate', th.DateTimeType),
-        th.Property('giveaccess', th.StringType),
-        th.Property('globalsubscriptionstatus', th.StringType),
-        th.Property('groupinvoices', th.StringType),
-        th.Property('isbudgetapproved', th.StringType),
-        th.Property('isinactive', th.StringType),
-        th.Property('isperson', th.StringType),
-        th.Property('language', th.StringType),
-        th.Property('lastmodifieddate', th.DateTimeType),
-        th.Property('lastname', th.StringType),
-        th.Property('lastsaledate', th.DateTimeType),
-        th.Property('oncredithold', th.StringType),
-        th.Property('overduebalancesearch', th.StringType),
-        th.Property('printtransactions', th.StringType),
-        th.Property('probability', th.StringType),
-        th.Property('receivablesaccount', th.StringType),
-        th.Property('searchstage', th.StringType),
-        th.Property('shipcomplete', th.StringType),
-        th.Property('shippingcarrier', th.StringType),
-        th.Property('terms', th.StringType),
-        th.Property('thirdpartycountry', th.StringType),
-        th.Property('unbilledorderssearch', th.StringType),
-        th.Property('weblead', th.StringType),
-        th.Property('companyname', th.StringType),
-        th.Property('email', th.StringType),
-        th.Property('phone', th.StringType),
-        th.Property('salesrep', th.StringType),
-        th.Property('territory', th.StringType),
-        th.Property('parent', th.StringType),
-        th.Property('custentity_wc_dept', th.StringType),
-        th.Property('contact', th.StringType),
-        th.Property('defaultshippingaddress', th.StringType),
-        th.Property('startdate', th.StringType),
-        th.Property('firstorderdate', th.StringType),
-        th.Property('lastorderdate', th.StringType),
-        th.Property('middlename', th.StringType),
-        th.Property('salutation', th.StringType),
-        th.Property('comments', th.StringType),
-        th.Property('fax', th.StringType),
-        th.Property('leadsource', th.StringType),
-        th.Property('creditlimit', th.StringType),
-        th.Property('clickstream', th.StringType),
-        th.Property('firstvisit', th.StringType),
-        th.Property('lastpagevisited', th.StringType),
-        th.Property('lastvisit', th.StringType),
-        th.Property('partner', th.StringType),
-        th.Property('visits', th.StringType),
-        th.Property('accountnumber', th.StringType),
-        th.Property('pricelevel', th.StringType),
-        th.Property('shippingitem', th.StringType),
-        th.Property('url', th.StringType),
-        th.Property('title', th.StringType),
-        th.Property('keywords', th.StringType),
-        th.Property('referrer', th.StringType),
-        th.Property('altemail', th.StringType),
-        th.Property('altphone', th.StringType),
-        th.Property('resalenumber', th.StringType),
-        th.Property('campaignevent', th.StringType),
-    ).to_dict()
 
 
 class DeletedRecordsStream(NetSuiteStream):
@@ -1007,6 +767,7 @@ class DeletedRecordsStream(NetSuiteStream):
         "scriptid",
     ]
     table = "deletedrecord"
+    replication_key = 'deleteddate'
 
     schema = th.PropertiesList(
         th.Property('name', th.StringType),
@@ -1015,7 +776,7 @@ class DeletedRecordsStream(NetSuiteStream):
         th.Property('scriptid', th.StringType),
         th.Property('context', th.StringType),
         th.Property('deletedby', th.StringType),
-        th.Property('deleteddate', th.StringType),
+        th.Property('deleteddate', th.DateTimeType),
         th.Property('iscustomlist', th.StringType),
         th.Property('iscustomrecord', th.StringType),
         th.Property('iscustomtransaction', th.StringType),
