@@ -310,13 +310,10 @@ class TrialBalanceReportStream(NetSuiteStream):
     primary_keys = ["id"]
 
     schema = th.PropertiesList(
-        th.Property("glamount", th.StringType),
         th.Property("accountnumber", th.StringType),
         th.Property("accountname", th.StringType),
-        th.Property("department", th.StringType),
-        th.Property("class", th.StringType),
-        th.Property("location", th.StringType),
-        th.Property("subsidiary", th.StringType),
+        th.Property("classification", th.StringType),
+        th.Property("netamount", th.StringType),
     ).to_dict()
 
     def prepare_request_payload(self, context, next_page_token):
