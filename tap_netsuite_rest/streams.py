@@ -732,7 +732,7 @@ class TransactionAccountingLinesStream(NetSuiteStream):
     primary_keys = ["account", "accountingbook", "transaction", "transactionline"]
     name = "transaction_accounting_lines"
     select = "*"
-    replication_key = "lastmodifieddate"
+    replication_key = None
 
     schema = th.PropertiesList(
         th.Property('account', th.StringType),
