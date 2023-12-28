@@ -136,6 +136,20 @@ class NetSuiteStream(RESTStream):
         params["limit"] = self.page_size
         return params
 
+    def get_date_boundaries(self):
+        rep_key = self.stream_state
+        window = self.config.get("window_days")
+        if self.query_date:
+            start_date = self.query_date
+            self.start_date_f = start_date.strftime("%Y-%m-%d")
+        elif "replication_key" not in rep_key:
+            start_date = parse(self.config["start_date"])
+            self.start_date_f = start_date.strftime("%Y-%m-01")
+        else:
+            start_date = self.get_starting_time({})
+            self.start_date_f = start_date.strftime("%Y-%m-01")
+        self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
+
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
