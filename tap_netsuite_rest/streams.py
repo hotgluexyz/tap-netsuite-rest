@@ -307,41 +307,69 @@ class VendorStream(NetsuiteDynamicStream):
 
 class TrialBalanceReportStream(NetSuiteStream):
     name = "trial_balance_report"
+    start_date_f = None
+    end_date = None
     primary_keys = ["id"]
 
     schema = th.PropertiesList(
-        th.Property("accountnumber", th.StringType),
-        th.Property("accountname", th.StringType),
-        th.Property("classification", th.StringType),
-        th.Property("netamount", th.StringType),
+        th.Property("account_type", th.StringType),
+        th.Property("account_name", th.StringType),
+        th.Property("account_number", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("company_name", th.StringType),
+        th.Property("period_name", th.StringType),
+        th.Property("period_start_date", th.StringType),
+        th.Property("period_end_date", th.StringType),
+        th.Property("posting_period", th.StringType),
+        th.Property("accumulated_amount", th.StringType),
+        th.Property("credit_amount", th.StringType),
+        th.Property("debit_amount", th.StringType),
     ).to_dict()
 
     def prepare_request_payload(self, context, next_page_token):
         return {
             "q": f"""
-        SELECT
-            a.acctnumber as accountNumber,
-            a.acctname as accountName,
-            CASE WHEN a.accttype IN
-                ('Bank', 'Accounts Receivable', 'Other Asset', 'Other Current Asset', 'Fixed Asset', 'Deferred Expense', 'Accounts Payable', 'Other Current Liability', 'Deferred Revenue', 'Equity', 'Non Posting')
-                THEN 'Balance Sheet'
-                WHEN a.accttype IN ('Income', 'Cost of Goods Sold', 'Expense', 'Other Expense', 'Other Income')
-                THEN 'Income Statement'
-            ELSE 'Balance Sheet' END as classification,
-            tal.sum_netamount as netAmount
-        FROM
-            account as a
-        join (SELECT
-                account,
-                sum(netamount) as sum_netamount,
-            FROM transactionaccountingline
-            JOIN transaction as tran on tran.id = transactionaccountingline.transaction
-            WHERE tran.trandate >= TO_DATE((SELECT max(startdate) from accountingperiod), 'mm/dd/yyyy') and tran.trandate <= TO_DATE((SELECT max(enddate) from accountingperiod), 'mm/dd/yyyy')
-            GROUP BY account
-        )
-        as tal on tal.account = a.id
-        where a.acctnumber is not null
-        group by a.acctnumber, a.acctname, a.accttype, tal.sum_netamount
+            SELECT
+                Account.AcctType account_type,
+                Account.displaynamewithhierarchy as account_name,
+                Account.acctnumber as account_number,
+                Account.currency as currency,
+                Entity.altname as company_name,
+                AccountingPeriod.PeriodName as period_name,
+                AccountingPeriod.StartDate as period_start_date,
+                AccountingPeriod.EndDate as period_end_date,
+                Transaction.postingperiod as posting_period,
+                SUM(COALESCE(TransactionAccountingLine.amount, 0)) AS accumulated_amount,
+                SUM(CASE WHEN TransactionAccountingLine.amount > 0 THEN TransactionAccountingLine.amount ELSE 0 END) AS credit_amount,
+                SUM(CASE WHEN TransactionAccountingLine.amount < 0 THEN TransactionAccountingLine.amount ELSE 0 END) AS debit_amount
+            From
+                Account
+                INNER JOIN TransactionAccountingLine ON (Account.ID = TransactionAccountingLine.Account)
+                INNER JOIN Transaction ON (Transaction.ID = TransactionAccountingLine.Transaction)
+                INNER JOIN AccountingPeriod ON (AccountingPeriod.ID = Transaction.PostingPeriod)
+                LEFT JOIN Entity ON (Transaction.entity = Entity.id)
+            WHERE TransactionAccountingLine.amount != 0 AND (Transaction.Posting = 'T')
+                AND (
+                    Account.AcctType IN (
+                        'Income',
+                        'COGS',
+                        'Expense',
+                        'OthIncome',
+                        'OthExpense'
+                    )
+                )
+            GROUP BY
+                Account.AcctType,
+                Account.displaynamewithhierarchy,
+                Account.acctnumber,
+                Account.currency,
+                Entity.altname,
+                Transaction.postingperiod,
+                AccountingPeriod.PeriodName,
+                AccountingPeriod.StartDate,
+                AccountingPeriod.EndDate
+            ORDER BY
+                AccountingPeriod.StartDate ASC
         """
         }
 
@@ -516,20 +544,6 @@ class ProfitLossReportStream(NetSuiteStream):
         th.Property("class", th.StringType),
         th.Property("department", th.StringType),
     ).to_dict()
-
-    def get_date_boundaries(self):
-        rep_key = self.stream_state
-        window = self.config.get("window_days")
-        if self.query_date:
-            start_date = self.query_date
-            self.start_date_f = start_date.strftime("%Y-%m-%d")
-        elif "replication_key" not in rep_key:
-            start_date = parse(self.config["start_date"])
-            self.start_date_f = start_date.strftime("%Y-%m-01")
-        else:
-            start_date = self.get_starting_time({})
-            self.start_date_f = start_date.strftime("%Y-%m-01")
-        self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
     def get_next_page_token(self, response, previous_token):
         """Return a token for identifying next page or None if no more pages."""
