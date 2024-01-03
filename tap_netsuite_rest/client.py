@@ -17,6 +17,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from singer_sdk import typing as th
 from pendulum import parse
+from requests.exceptions import HTTPError
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -257,6 +258,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
     select = "*"
     schema_response = None
 
+    @backoff.on_exception(backoff.expo, HTTPError, max_tries=5, factor=2)
     def get_schema(self):
         s = self.get_session()
         self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
