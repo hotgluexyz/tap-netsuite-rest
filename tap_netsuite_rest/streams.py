@@ -743,7 +743,7 @@ class TransactionLinesStream(NetSuiteStream):
 
 class TransactionAccountingLinesStream(NetSuiteStream):
     table = "TransactionAccountingLine"
-    primary_keys = ["account", "accountingbook", "transaction", "transactionline"]
+    primary_keys = ["accountingbook", "transaction", "transactionline"]
     name = "transaction_accounting_lines"
     select = "*"
     replication_key = None
