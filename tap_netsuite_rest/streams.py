@@ -816,11 +816,6 @@ class CustomersStream(NetsuiteDynamicStream):
 
 class DeletedRecordsStream(NetSuiteStream):
     name = "deleted_records"
-    primary_keys = [
-        "recordid",
-        "recordtypeid",
-        "scriptid",
-    ]
     table = "deletedrecord"
     replication_key = 'deleteddate'
 
