@@ -4,10 +4,11 @@ import logging
 import backoff
 import requests
 import pendulum
+import copy
 
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, Optional, cast
+from typing import Any, Callable, Dict, Optional, cast, Iterable
 
 from memoization import cached
 from oauthlib import oauth1
@@ -22,6 +23,8 @@ from requests.exceptions import HTTPError
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
+class RetryRequest(Exception):
+    pass  
 
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
@@ -44,6 +47,7 @@ class NetSuiteStream(RESTStream):
     replication_key_prefix = None
     select_prefix = None
     order_by = None
+    record_ids = []
 
     @property
     def http_headers(self) -> dict:
@@ -252,6 +256,49 @@ class NetSuiteStream(RESTStream):
         next_month = any_day.replace(day=28) + timedelta(days=4)
         # subtracting the number of the current day brings us back one month
         return next_month - timedelta(days=next_month.day)
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        #override the request_records method to handle updated query
+        next_page_token: Any = None
+        finished = False
+        decorated_request = self.request_decorator(self._request)
+
+        while not finished:
+            prepared_request = self.prepare_request(
+                context, next_page_token=next_page_token
+            )
+            try:
+                resp = decorated_request(prepared_request, context)
+            except RetryRequest as e:
+                #Retry the request with updated query
+                prepared_request = self.prepare_request(
+                    context, next_page_token=next_page_token
+                )
+                resp = decorated_request(prepared_request, context)
+            
+            # store primary keys to avoid duplicated records if primary keys is available
+            for row in self.parse_response(resp):
+                if self.primary_keys:
+                    if len(self.primary_keys) == 1:
+                        pk = row[pk]
+                    else:
+                        pk = "-".join([row[key] for key in self.primary_keys])
+                    if pk not in self.record_ids:
+                        self.record_ids.append(pk)
+                        yield row
+                else:
+                    yield row
+            previous_token = copy.deepcopy(next_page_token)
+            next_page_token = self.get_next_page_token(
+                response=resp, previous_token=previous_token
+            )
+            if next_page_token and next_page_token == previous_token:
+                raise RuntimeError(
+                    f"Loop detected in pagination. "
+                    f"Pagination token {next_page_token} is identical to prior token."
+                )
+            # Cycle until get_next_page_token() no longer returns a value
+            finished = not next_page_token    
 
 
 class NetsuiteDynamicStream(NetSuiteStream):
