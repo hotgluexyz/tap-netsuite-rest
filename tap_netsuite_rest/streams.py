@@ -10,7 +10,11 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
+import requests
+import copy
+
+class RetryRequest(Exception):
+    pass   
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -579,11 +583,11 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id
+        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id, Currency.name as currency, Classification.name as class
         """
     table = "Transaction"
     join = """
-        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id )
+        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id ) INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )  LEFT JOIN Classification On ( Transactionline.class = Classification.id )
         """
     custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
     # Merge group and order by
@@ -612,7 +616,60 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("memo", th.StringType),
         th.Property("class", th.StringType),
         th.Property("department", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("accountid", th.StringType),
     ).to_dict()
+
+    def validate_response(self, response: requests.Response) -> None:   
+        # Perform your checks here
+        if response.status_code == 400:
+            if "Record \'department\' was not found.".lower() in response.text.lower():
+                self.logger.info("Missing department permission. Retrying with updated query...")
+                self.select = self.select.replace("Department.fullname as department,", "")
+                self.join = self.join.replace("LEFT JOIN department ON ( TransactionLine.department = department.ID )", "")
+                raise RetryRequest(response.text)
+            if "Record \'classification\' was not found.".lower() in response.text.lower():
+                self.logger.info("Missing classification permission. Retrying with updated query...")
+                self.select = self.select.replace(", Classification.name as class", "")
+                self.join = self.join.replace("LEFT JOIN Classification On ( Transactionline.class = Classification.id )", "")
+                raise RetryRequest(response.text)
+        
+        # Call the parent function
+        super().validate_response(response)
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        #override the request_records method to handle updated query
+        next_page_token: Any = None
+        finished = False
+        decorated_request = self.request_decorator(self._request)
+
+        while not finished:
+            prepared_request = self.prepare_request(
+                context, next_page_token=next_page_token
+            )
+            try:
+                resp = decorated_request(prepared_request, context)
+            except RetryRequest as e:
+                #Retry the request with updated query
+                prepared_request = self.prepare_request(
+                    context, next_page_token=next_page_token
+                )
+                resp = decorated_request(prepared_request, context)
+                          
+            for row in self.parse_response(resp):
+                yield row
+            previous_token = copy.deepcopy(next_page_token)
+            next_page_token = self.get_next_page_token(
+                response=resp, previous_token=previous_token
+            )
+            if next_page_token and next_page_token == previous_token:
+                raise RuntimeError(
+                    f"Loop detected in pagination. "
+                    f"Pagination token {next_page_token} is identical to prior token."
+                )
+            # Cycle until get_next_page_token() no longer returns a value
+            finished = not next_page_token     
+
 
 
 class TransactionsStream(NetSuiteStream):
