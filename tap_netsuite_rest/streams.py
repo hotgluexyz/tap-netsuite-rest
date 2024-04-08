@@ -583,7 +583,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id, Currency.name as currency, Classification.name as class
+        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id, Currency.name as currency, Classification.name as class,Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid
         """
     table = "Transaction"
     join = """
@@ -618,6 +618,10 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("department", th.StringType),
         th.Property("currency", th.StringType),
         th.Property("accountid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("entityid", th.StringType),
+
     ).to_dict()
 
     def validate_response(self, response: requests.Response) -> None:   
