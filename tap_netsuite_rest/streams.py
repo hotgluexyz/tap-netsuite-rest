@@ -583,7 +583,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, CONCAT(Transaction.id, TransactionLine.id) as id, Currency.name as currency, Classification.name as class,Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid
+        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, (Transaction.id || '_' || TransactionLine.id) AS id, Currency.name as currency, Classification.name as class,Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid
         """
     table = "Transaction"
     join = """
@@ -598,7 +598,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
-        th.Property("amount", th.StringType),
+        th.Property("amount", th.NumberType),
         th.Property("categories", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("date", th.DateTimeType),
@@ -672,7 +672,15 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
                     f"Pagination token {next_page_token} is identical to prior token."
                 )
             # Cycle until get_next_page_token() no longer returns a value
-            finished = not next_page_token     
+            finished = not next_page_token    
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if "amount" in row:
+            try:
+                row['amount'] = float(row['amount'])
+            except:
+                pass    
+        return row         
 
 
 
