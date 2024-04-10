@@ -901,3 +901,39 @@ class DeletedRecordsStream(NetSuiteStream):
         th.Property('iscustomtransaction', th.StringType),
         th.Property('type', th.StringType),
     ).to_dict()
+
+
+class RelatedTransactionsStream(NetSuiteStream):
+    name = "related_transactions"
+    start_date_f = None
+    end_date = None
+
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("tranid", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("foreigntotal", th.StringType),
+        th.Property("previousdoc", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        return {
+            "q": f"""
+            SELECT DISTINCT
+                NT.ID,
+                NT.TranDate,
+                BUILTIN.DF( NT.Type ) AS Type,
+                NT.TranID,
+                BUILTIN.DF( NT.Status ) AS Status,
+                NT.ForeignTotal,
+                NTLL.PreviousDoc
+            FROM
+                NextTransactionLineLink AS NTLL
+                INNER JOIN Transaction AS NT ON
+                    ( NT.ID = NTLL.NextDoc  )
+            ORDER BY
+                NT.ID
+        """
+        }
