@@ -914,8 +914,10 @@ class RelatedTransactionsStream(NetSuiteStream):
     name = "related_transactions"
     start_date_f = None
     end_date = None
+    primary_keys = ["compositeid"]
 
     schema = th.PropertiesList(
+        th.Property("compositeid", th.StringType),
         th.Property("id", th.StringType),
         th.Property("trandate", th.StringType),
         th.Property("type", th.StringType),
@@ -944,3 +946,7 @@ class RelatedTransactionsStream(NetSuiteStream):
                 NT.ID
         """
         }
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        row["compositeid"] = f"{row['id']}-{row['previousdoc']}"
+        return row
