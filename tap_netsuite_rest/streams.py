@@ -910,48 +910,6 @@ class DeletedRecordsStream(NetSuiteStream):
     ).to_dict()
 
 
-class RelatedTransactionsStream(NetSuiteStream):
-    name = "related_transactions"
-    start_date_f = None
-    end_date = None
-    primary_keys = ["compositeid"]
-
-    schema = th.PropertiesList(
-        th.Property("compositeid", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("trandate", th.StringType),
-        th.Property("type", th.StringType),
-        th.Property("tranid", th.StringType),
-        th.Property("status", th.StringType),
-        th.Property("foreigntotal", th.StringType),
-        th.Property("previousdoc", th.StringType),
-    ).to_dict()
-
-    def prepare_request_payload(self, context, next_page_token):
-        return {
-            "q": f"""
-            SELECT DISTINCT
-                NT.ID,
-                NT.TranDate,
-                BUILTIN.DF( NT.Type ) AS Type,
-                NT.TranID,
-                BUILTIN.DF( NT.Status ) AS Status,
-                NT.ForeignTotal,
-                NTLL.PreviousDoc
-            FROM
-                NextTransactionLineLink AS NTLL
-                INNER JOIN Transaction AS NT ON
-                    ( NT.ID = NTLL.NextDoc  )
-            ORDER BY
-                NT.ID
-        """
-        }
-
-    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        row["compositeid"] = f"{row['id']}-{row['previousdoc']}"
-        return row
-
-
 class RelatedTransactionLinesStream(NetSuiteStream):
     name = "related_transaction_lines"
     start_date_f = None
@@ -974,8 +932,8 @@ class RelatedTransactionLinesStream(NetSuiteStream):
         return {
             "q": f"""
             SELECT DISTINCT
-                NT.ID as lineno,
-                NT.transaction AS transactionid,
+                NTLL.PreviousLine as lineno,
+                NTLL.PreviousDoc AS transactionid,
                 NTLL.NextDoc AS relatedtransactionid,
                 NTLL.ForeignAmount,
                 NTLL.LastModifiedDate,
@@ -984,10 +942,6 @@ class RelatedTransactionLinesStream(NetSuiteStream):
                 NTLL.PreviousType as transactiontype
             FROM
                 NextTransactionLineLink AS NTLL
-                INNER JOIN transactionline AS NT ON
-                    ( NT.transaction = NTLL.PreviousDoc AND NT.id = NTLL.PreviousLine )
-            ORDER BY
-                NT.ID
         """
         }
 
