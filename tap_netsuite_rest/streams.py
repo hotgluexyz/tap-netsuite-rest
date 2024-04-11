@@ -950,3 +950,47 @@ class RelatedTransactionsStream(NetSuiteStream):
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         row["compositeid"] = f"{row['id']}-{row['previousdoc']}"
         return row
+
+
+class RelatedTransactionLinesStream(NetSuiteStream):
+    name = "related_transaction_lines"
+    start_date_f = None
+    end_date = None
+    primary_keys = ["compositeid"]
+
+    schema = th.PropertiesList(
+        th.Property("compositeid", th.StringType),
+        th.Property("lineno", th.StringType),
+        th.Property("transactionid", th.StringType),
+        th.Property("relatedtransactionid", th.StringType),
+        th.Property("foreignamount", th.StringType),
+        th.Property("lastmodifieddate", th.StringType),
+        th.Property("linktype", th.StringType),
+        th.Property("relatedtransactiontype", th.StringType),
+        th.Property("transactiontype", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        return {
+            "q": f"""
+            SELECT DISTINCT
+                NT.ID as lineno,
+                NT.transaction AS transactionid,
+                NTLL.NextDoc AS relatedtransactionid,
+                NTLL.ForeignAmount,
+                NTLL.LastModifiedDate,
+                NTLL.LinkType,
+                NTLL.NextType as relatedtransactiontype,
+                NTLL.PreviousType as transactiontype
+            FROM
+                NextTransactionLineLink AS NTLL
+                INNER JOIN transactionline AS NT ON
+                    ( NT.transaction = NTLL.PreviousDoc AND NT.id = NTLL.PreviousLine )
+            ORDER BY
+                NT.ID
+        """
+        }
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        row["compositeid"] = f"{row['transactionid']}-{row['lineno']}-{row['relatedtransactionid']}"
+        return row
