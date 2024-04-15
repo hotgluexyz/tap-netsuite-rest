@@ -1,7 +1,7 @@
 """Stream type classes for tap-netsuite-rest."""
 
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from singer_sdk import typing as th
 
@@ -10,16 +10,19 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 
-import requests
-import copy
-
-class RetryRequest(Exception):
-    pass   
+import requests 
 
 
 class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
     primary_keys = ["transaction_id", "lastmodifieddate"]
+    entities_fallback = [
+        {
+            "name":"salesordered",
+            "select_replace":"so.amount,",
+            "join_replace":"INNER JOIN salesordered so ON (so.transaction = t.id AND so.tranline = tl.id)"
+        }
+    ]
     select = """
         TO_CHAR (t.trandate, 'YYYY-MM-DD HH24:MI:SS') AS trandate,
         TO_CHAR (t.lastmodifieddate, 'YYYY-MM-DD HH24:MI:SS') AS lastmodifieddate,
@@ -582,6 +585,18 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     start_date_f = None
     end_date = None
     primary_keys = ["id"]
+    entities_fallback = [
+        {
+            "name":"department",
+            "select_replace":"Department.fullname as department,",
+            "join_replace":"LEFT JOIN department ON ( TransactionLine.department = department.ID )"
+        },
+        {
+            "name":"classification",
+            "select_replace":", Classification.name as class",
+            "join_replace":"LEFT JOIN Classification On ( Transactionline.class = Classification.id )"
+        }
+    ]
     select = """
         Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid,TransactionLine.amount, Department.fullname as department, (Transaction.id || '_' || TransactionLine.id) AS id, Currency.name as currency, Classification.name as class,Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid
         """
@@ -623,56 +638,6 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("entityid", th.StringType),
 
     ).to_dict()
-
-    def validate_response(self, response: requests.Response) -> None:   
-        # Perform your checks here
-        if response.status_code == 400:
-            if "Record \'department\' was not found.".lower() in response.text.lower():
-                self.logger.info("Missing department permission. Retrying with updated query...")
-                self.select = self.select.replace("Department.fullname as department,", "")
-                self.join = self.join.replace("LEFT JOIN department ON ( TransactionLine.department = department.ID )", "")
-                raise RetryRequest(response.text)
-            if "Record \'classification\' was not found.".lower() in response.text.lower():
-                self.logger.info("Missing classification permission. Retrying with updated query...")
-                self.select = self.select.replace(", Classification.name as class", "")
-                self.join = self.join.replace("LEFT JOIN Classification On ( Transactionline.class = Classification.id )", "")
-                raise RetryRequest(response.text)
-        
-        # Call the parent function
-        super().validate_response(response)
-
-    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
-        #override the request_records method to handle updated query
-        next_page_token: Any = None
-        finished = False
-        decorated_request = self.request_decorator(self._request)
-
-        while not finished:
-            prepared_request = self.prepare_request(
-                context, next_page_token=next_page_token
-            )
-            try:
-                resp = decorated_request(prepared_request, context)
-            except RetryRequest as e:
-                #Retry the request with updated query
-                prepared_request = self.prepare_request(
-                    context, next_page_token=next_page_token
-                )
-                resp = decorated_request(prepared_request, context)
-                          
-            for row in self.parse_response(resp):
-                yield row
-            previous_token = copy.deepcopy(next_page_token)
-            next_page_token = self.get_next_page_token(
-                response=resp, previous_token=previous_token
-            )
-            if next_page_token and next_page_token == previous_token:
-                raise RuntimeError(
-                    f"Loop detected in pagination. "
-                    f"Pagination token {next_page_token} is identical to prior token."
-                )
-            # Cycle until get_next_page_token() no longer returns a value
-            finished = not next_page_token    
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         if "amount" in row:
