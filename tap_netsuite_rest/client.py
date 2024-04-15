@@ -7,7 +7,7 @@ import pendulum
 
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, Optional, cast
+from typing import Any, Callable, Dict, Optional, cast, Iterable
 
 from memoization import cached
 from oauthlib import oauth1
@@ -18,11 +18,13 @@ from singer_sdk.streams import RESTStream
 from singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
+import copy
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
-
+class RetryRequest(Exception):
+    pass  
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
 
@@ -218,7 +220,15 @@ class NetSuiteStream(RESTStream):
 
     def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response."""
-
+        if hasattr(self,"entities_fallback") and self.entities_fallback and response.status_code == 400:
+            for entity in self.entities_fallback:
+                if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
+                    self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
+                    if "select_replace" in entity:
+                        self.select = self.select.replace(entity['select_replace'], "")
+                    if "join_replace" in entity:  
+                        self.join = self.join.replace(entity['join_replace'], "")
+                    raise RetryRequest(response.text)
         if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
             msg = (
                 f"{response.status_code} Server Error: "
@@ -252,6 +262,39 @@ class NetSuiteStream(RESTStream):
         next_month = any_day.replace(day=28) + timedelta(days=4)
         # subtracting the number of the current day brings us back one month
         return next_month - timedelta(days=next_month.day)
+    
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        #override the request_records method to handle updated query
+        next_page_token: Any = None
+        finished = False
+        decorated_request = self.request_decorator(self._request)
+
+        while not finished:
+            prepared_request = self.prepare_request(
+                context, next_page_token=next_page_token
+            )
+            try:
+                resp = decorated_request(prepared_request, context)
+            except RetryRequest as e:
+                #Retry the request with updated query
+                prepared_request = self.prepare_request(
+                    context, next_page_token=next_page_token
+                )
+                resp = decorated_request(prepared_request, context)
+                          
+            for row in self.parse_response(resp):
+                yield row
+            previous_token = copy.deepcopy(next_page_token)
+            next_page_token = self.get_next_page_token(
+                response=resp, previous_token=previous_token
+            )
+            if next_page_token and next_page_token == previous_token:
+                raise RuntimeError(
+                    f"Loop detected in pagination. "
+                    f"Pagination token {next_page_token} is identical to prior token."
+                )
+            # Cycle until get_next_page_token() no longer returns a value
+            finished = not next_page_token   
 
 
 class NetsuiteDynamicStream(NetSuiteStream):
