@@ -35,7 +35,8 @@ from tap_netsuite_rest.streams import (
     CustomersStream,
     DeletedRecordsStream,
     TrialBalanceReportStream,
-    RelatedTransactionLinesStream
+    RelatedTransactionLinesStream,
+    RevenueElementStream
 )
 
 STREAM_TYPES = [
@@ -66,7 +67,8 @@ STREAM_TYPES = [
     CustomersStream,
     DeletedRecordsStream,
     TrialBalanceReportStream,
-    RelatedTransactionLinesStream
+    RelatedTransactionLinesStream,
+    RevenueElementStream
 ]
 
 

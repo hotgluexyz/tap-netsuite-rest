@@ -875,6 +875,54 @@ class DeletedRecordsStream(NetSuiteStream):
     ).to_dict()
 
 
+class RevenueElementStream(NetSuiteStream):
+    name = "revenueelement"
+    primary_keys = ["id"]
+    table = "revenueelement"
+
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("accountingbook", th.StringType),
+        th.Property("allocationamount", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("createrevenueplanson", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("deferralaccount", th.StringType),
+        th.Property("discountedsalesamount", th.StringType),
+        th.Property("elementdate", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("forecastenddate", th.StringType),
+        th.Property("forecaststartdate", th.StringType),
+        th.Property("fullname", th.StringType),
+        th.Property("fxproratediscsalesamt", th.StringType),
+        th.Property("isbomitemtype", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("itemisautoexpand", th.StringType),
+        th.Property("lastmodifieddate", th.StringType),
+        th.Property("originalchangeorderdiscamount", th.StringType),
+        th.Property("originalchangeorderquantity", th.StringType),
+        th.Property("postingdiscountapplied", th.StringType),
+        th.Property("proratediscsalesamt", th.StringType),
+        th.Property("quantity", th.StringType),
+        th.Property("recognitionaccount", th.StringType),
+        th.Property("recordnumber", th.StringType),
+        th.Property("referenceid", th.StringType),
+        th.Property("requiresrevenueplanupdate", th.StringType),
+        th.Property("revenuearrangement", th.StringType),
+        th.Property("revenueplanstatus", th.StringType),
+        th.Property("revenuerecognitionrule", th.StringType),
+        th.Property("revrecenddate", th.StringType),
+        th.Property("revrecforecastrule", th.StringType),
+        th.Property("revreclassfxaccount", th.StringType),
+        th.Property("revrecstartdate", th.StringType),
+        th.Property("salesamount", th.StringType),
+        th.Property("source", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("treatmentoverride", th.StringType),
+    ).to_dict()
+
+
 class RelatedTransactionLinesStream(NetSuiteStream):
     name = "related_transaction_lines"
     start_date_f = None
