@@ -199,7 +199,7 @@ class NetSuiteStream(RESTStream):
             if isinstance(key, tuple) and len(key) == 2 and value.selected:
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
-                field_type = self.schema["properties"][field_name]
+                field_type = self.schema["properties"].get(field_name) or dict()
                 if field_type.get("format") == "date-time":
                     field_name = f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
                 else:
