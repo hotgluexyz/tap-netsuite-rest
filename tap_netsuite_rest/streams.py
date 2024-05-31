@@ -587,20 +587,25 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     primary_keys = ["id"]
     entities_fallback = [
         {
-            "name":"department",
-            "select_replace":"Department.fullname as department, Department.id as departmentid",
-            "join_replace":"LEFT JOIN department ON ( TransactionLine.department = department.ID )"
+            "name": "department",
+            "select_replace": "Department.fullname as department, Department.id as departmentid",
+            "join_replace": "LEFT JOIN department ON ( TransactionLine.department = department.ID )",
         },
         {
-            "name":"classification",
-            "select_replace":", Classification.name as class, Classification.id as classid,",
-            "join_replace":"LEFT JOIN Classification On ( Transactionline.class = Classification.id )"
+            "name": "classification",
+            "select_replace": ", Classification.name as class, Classification.id as classid,",
+            "join_replace": "LEFT JOIN Classification On ( Transactionline.class = Classification.id )",
         },
         {
-            "name":"location",
-            "select_replace":", Location.name as locationname",
-            "join_replace":"LEFT JOIN Location On ( Transactionline.location = Location.id )"
-        }
+            "name": "location",
+            "select_replace": ", Location.name as locationname",
+            "join_replace": "LEFT JOIN Location On ( Transactionline.location = Location.id )",
+        },
+        {
+            "name": "currency",
+            "select_replace": ", Currency.name as currency",
+            "join_replace": "INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )",
+        },
     ]
     select = """
         Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, TransactionLine.location as locationid, Location.name as locationname, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid, TransactionLine.amount, TransactionLine.subsidiary as subsidiaryid, Department.fullname as department, Department.id as departmentid, (Transaction.id || '_' || TransactionLine.id) AS id, Currency.name as currency, Classification.name as class, Classification.id as classid, Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid, Entity.Type as entitytype
