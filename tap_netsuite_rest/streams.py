@@ -388,12 +388,37 @@ class PriceLevelStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
 
-class LocationsStream(NetsuiteDynamicStream):
+class LocationsStream(NetSuiteStream):
     name = "locations"
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
     replication_key = "lastmodifieddate"
-
+    select = """
+        *
+        """
+    join = """
+        INNER JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
+        """
+    # Merge group and order by
+    order_by = """
+    ORDER BY location.lastmodifieddate ASC
+    """
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("addressee", th.StringType),
+        th.Property("addrtext", th.StringType),
+        th.Property("country", th.StringType),
+        th.Property("fullname", th.StringType),
+        th.Property("includechildren", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("mainaddress", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("nkey", th.StringType),
+        th.Property("override", th.StringType),
+        th.Property("recordowner", th.StringType),
+        th.Property("subsidiary", th.StringType),
+    ).to_dict()
 
 class CostStream(NetSuiteStream):
     name = "cost"
