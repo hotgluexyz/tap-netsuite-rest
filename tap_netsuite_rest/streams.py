@@ -495,6 +495,13 @@ class ItemStream(NetSuiteStream):
         th.Property("weightunit", th.StringType),
         th.Property("weightunits", th.StringType),
         th.Property("yahooproductfeed", th.StringType),
+        th.Property("billingschedule", th.StringType),
+        th.Property("createrevenueplanson", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("revenueallocationgroup", th.StringType),
+        th.Property("revenuerecognitionrule", th.StringType),
+        th.Property("revrecschedule", th.StringType),
+        th.Property("revrecforecastrule", th.StringType),
     ).to_dict()
 
 
@@ -754,6 +761,22 @@ class TransactionsStream(NetSuiteStream):
         th.Property("visibletocustomer", th.StringType),
         th.Property("void", th.StringType),
         th.Property("voided", th.StringType),
+        th.Property("recurannually", th.StringType),
+        th.Property("deferredrevenue", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("startdate", th.DateTimeType),
+        th.Property("enddate", th.DateTimeType),
+        th.Property("recurquarterly", th.StringType),
+        th.Property("recurmonthly", th.StringType),
+        th.Property("recurringbill", th.StringType),
+        th.Property("recurweekly", th.StringType),
+        th.Property("onetime", th.StringType),
+        th.Property("revrecstartdate", th.DateTimeType),
+        th.Property("revrecenddate", th.DateTimeType),
+        th.Property("revrecschedule", th.StringType),
+        th.Property("title", th.StringType),
+        th.Property("sourcetransaction", th.StringType),
+        th.Property("journaltype", th.StringType),
     ).to_dict()
 
 
@@ -819,6 +842,16 @@ class TransactionLinesStream(NetSuiteStream):
         th.Property('transaction', th.StringType),
         th.Property('transactiondiscount', th.StringType),
         th.Property('uniquekey', th.StringType),
+        th.Property('item', th.StringType),
+        th.Property('itemtype', th.StringType),
+        th.Property('isallocation', th.StringType),
+        th.Property('memo', th.StringType),
+        th.Property('price', th.StringType),
+        th.Property('nextlinks', th.StringType),
+        th.Property('previouslinks', th.StringType),
+        th.Property('subscription', th.StringType),
+        th.Property('subscriptionline', th.StringType),
+        th.Property('transactionlinetype', th.StringType),
     ).to_dict()
 
 
@@ -960,6 +993,14 @@ class RevenueElementStream(NetSuiteStream):
         th.Property("source", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("treatmentoverride", th.StringType),
+        th.Property("journalentry", th.StringType),
+        th.Property("effectivestartdate", th.DateTimeType),
+        th.Property("effectiveenddate", th.DateTimeType),
+        th.Property("externalid", th.StringType),
+        th.Property("revenueallocationgroup", th.StringType),
+        th.Property("revenueallocationratio", th.StringType),
+        th.Property("terminmonths", th.StringType),
+        th.Property("termindays", th.StringType),
     ).to_dict()
 
 
