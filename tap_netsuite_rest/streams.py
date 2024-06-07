@@ -991,7 +991,6 @@ class RevenueElementStream(NetSuiteStream):
         th.Property("source", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("treatmentoverride", th.StringType),
-        th.Property("journalentry", th.StringType),
         th.Property("effectivestartdate", th.DateTimeType),
         th.Property("effectiveenddate", th.DateTimeType),
         th.Property("externalid", th.StringType),
