@@ -847,8 +847,6 @@ class TransactionLinesStream(NetSuiteStream):
         th.Property('isallocation', th.StringType),
         th.Property('memo', th.StringType),
         th.Property('price', th.StringType),
-        th.Property('nextlinks', th.StringType),
-        th.Property('previouslinks', th.StringType),
         th.Property('subscription', th.StringType),
         th.Property('subscriptionline', th.StringType),
         th.Property('transactionlinetype', th.StringType),
