@@ -38,6 +38,13 @@ from tap_netsuite_rest.streams import (
     RelatedTransactionLinesStream,
     RevenueElementStream,
     PurchaseOrdersStream,
+    SubscriptionsStream,
+    SubscriptionLinesStream,
+    SubscriptionPlansStream,
+    SubscriptionTermsStream,
+    SalesOrderedStream,
+    SalesInvoicedStream,
+    InvoiceGroupStream
 )
 
 STREAM_TYPES = [
@@ -70,7 +77,14 @@ STREAM_TYPES = [
     TrialBalanceReportStream,
     RelatedTransactionLinesStream,
     RevenueElementStream,
-    PurchaseOrdersStream
+    PurchaseOrdersStream,
+    SubscriptionsStream,
+    SubscriptionLinesStream,
+    SubscriptionPlansStream,
+    SubscriptionTermsStream,
+    SalesOrderedStream,
+    SalesInvoicedStream,
+    InvoiceGroupStream
 ]
 
 
