@@ -998,6 +998,7 @@ class RevenueElementStream(NetSuiteStream):
         th.Property("revenueallocationratio", th.StringType),
         th.Property("terminmonths", th.StringType),
         th.Property("termindays", th.StringType),
+        th.Property("subscriptionline", th.StringType),
     ).to_dict()
 
 
