@@ -1091,3 +1091,129 @@ class PurchaseOrdersStream(NetSuiteStream):
         th.Property("transaction_line_id", th.StringType),
         th.Property("lastmodifieddate", th.DateTimeType),
     ).to_dict()
+
+
+class SubscriptionsStream(NetsuiteDynamicStream):
+    name = "subscriptions"
+    primary_keys = ["id"]
+    table = "subscription"
+
+
+class SubscriptionLinesStream(NetsuiteDynamicStream):
+    name = "subscription_lines"
+    primary_keys = ["id"]
+    table = "subscriptionline"
+
+
+class SubscriptionPlansStream(NetsuiteDynamicStream):
+    name = "subscription_plans"
+    primary_keys = ["id"]
+    table = "subscriptionplan"
+
+
+class SubscriptionTermsStream(NetsuiteDynamicStream):
+    name = "subscription_terms"
+    primary_keys = ["id"]
+    table = "subscriptionterm"
+
+
+class SalesInvoicedStream(NetSuiteStream):
+    name = "sales_invoiced"
+    primary_keys = ["id"]
+    table = "salesinvoiced"
+
+    schema = th.PropertiesList(
+        th.Property("account", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("amountnet", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("costestimate", th.StringType),
+        th.Property("estgrossprofit", th.StringType),
+        th.Property("estgrossprofitpercent", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("partner", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("promotioncombinations", th.StringType),
+        th.Property("itemcount", th.StringType),
+        th.Property("employee", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("tranline", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("uniquekey", th.StringType),
+    ).to_dict()
+
+
+class SalesOrderedStream(NetSuiteStream):
+    name = "sales_ordered"
+    primary_keys = ["id"]
+    table = "salesordered"
+
+    schema = th.PropertiesList(
+        th.Property("account", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("amountnet", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("costestimate", th.StringType),
+        th.Property("estgrossprofit", th.StringType),
+        th.Property("estgrossprofitpercent", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("partner", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("promotioncombinations", th.StringType),
+        th.Property("itemcount", th.StringType),
+        th.Property("employee", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("tranline", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("uniquekey", th.StringType),
+    ).to_dict()
+
+
+class InvoiceGroupStream(NetsuiteDynamicStream):
+    name = "invoice_group"
+    primary_keys = ["id"]
+    table = "invoicegroup"
+    replication_key = "lastmodifieddate"
+
+    schema = th.PropertiesList(
+        th.Property("amountdue", th.StringType),
+        th.Property("amountpaid", th.StringType),
+        th.Property("billaddresslist", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("customer", th.StringType),
+        th.Property("customername", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("discounttotal", th.StringType),
+        th.Property("duedate", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("groupedbypo", th.StringType),
+        th.Property("handlingcost", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("invoicegroupnumber", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("memo", th.StringType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("datedriven", th.StringType),
+        th.Property("dayofmonthnetdue", th.StringType),
+        th.Property("daysuntilnetdue", th.StringType),
+        th.Property("duenextmonthifwithindays", th.StringType),
+        th.Property("ponumber", th.StringType),
+        th.Property("shippingcost", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("taxtotal", th.StringType),
+        th.Property("terms", th.StringType),
+        th.Property("total", th.StringType),
+    ).to_dict()
