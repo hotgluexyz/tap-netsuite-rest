@@ -1218,3 +1218,33 @@ class InvoiceGroupStream(NetsuiteDynamicStream):
         th.Property("terms", th.StringType),
         th.Property("total", th.StringType),
     ).to_dict()
+
+
+class BillingSchedulesStream(NetSuiteStream):
+    name = "billing_schedules"
+    primary_keys = ["id"]
+    table = "billingschedule"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("applytosubtotal", th.StringType),
+        th.Property("recurrence", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("inarrears", th.StringType),
+        th.Property("initialamount", th.StringType),
+        th.Property("initialterms", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("billforactuals", th.StringType),
+        th.Property("milestone", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("job", th.StringType),
+        th.Property("ispublic", th.StringType),
+        th.Property("numberremaining", th.StringType),
+        th.Property("frequency", th.DateTimeType),
+        th.Property("recurrencepattern", th.StringType),
+        th.Property("recurrenceterms", th.StringType),
+        th.Property("repeatevery", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("scheduletype", th.StringType),
+    ).to_dict()

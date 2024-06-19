@@ -44,7 +44,8 @@ from tap_netsuite_rest.streams import (
     SubscriptionTermsStream,
     SalesOrderedStream,
     SalesInvoicedStream,
-    InvoiceGroupStream
+    InvoiceGroupStream,
+    BillingSchedulesStream
 )
 
 STREAM_TYPES = [
@@ -84,7 +85,8 @@ STREAM_TYPES = [
     SubscriptionTermsStream,
     SalesOrderedStream,
     SalesInvoicedStream,
-    InvoiceGroupStream
+    InvoiceGroupStream,
+    BillingSchedulesStream
 ]
 
 
