@@ -335,5 +335,5 @@ class NetsuiteDynamicStream(NetSuiteStream):
             elif value.get("format") == "date":
                 properties_list.append(th.Property(field.lower(), th.DateType))
             else:
-                properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"]]})))
+                properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
         return th.PropertiesList(*properties_list).to_dict()
