@@ -19,6 +19,7 @@ from singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
 import copy
+import json
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -334,6 +335,118 @@ class NetsuiteDynamicStream(NetSuiteStream):
                 properties_list.append(th.Property(field.lower(), th.DateTimeType))
             elif value.get("format") == "date":
                 properties_list.append(th.Property(field.lower(), th.DateType))
+            elif value["type"] == "string":
+                properties_list.append(th.Property(field.lower(), th.StringType))
+            elif value["type"] == "boolean":
+                properties_list.append(th.Property(field.lower(), th.BooleanType))
+            elif value["type"] in ["number", "integer"]:
+                properties_list.append(th.Property(field.lower(), th.NumberType))
             else:
+                #Object and array as custom types
                 properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
         return th.PropertiesList(*properties_list).to_dict()
+    
+    def process_number(self, field, value):
+        return_value = value
+        # Attempt to cast to float only if the value is a string with decimals
+        if isinstance(value, str) and "." in value:
+            try:
+                return_value = float(value)
+            except ValueError:
+                self.logger.error(
+                    f"Could not cast {field} : `{value}` to number / integer"
+                )
+                raise Exception(ValueError)
+        else:
+            # Attempt to cast to int if there are no decimals
+            try:
+                return_value = int(value)
+            except ValueError:
+                self.logger.error(f"Could not cast {field} : `{value}` to integer")
+                raise Exception(ValueError)
+        return return_value
+    
+    def process_types(self, row, schema=None):
+        if schema is None:
+            schema = self.schema["properties"]
+        for field, value in row.items():
+            if field not in schema:
+                # Skip fields not found in the schema
+                continue
+
+            field_info = schema[field]
+            field_type = field_info.get("type", ["null"])[0]
+            # Process nested properties
+            if "properties" in field_info:
+                row[field] = self.process_types(value, field_info["properties"])
+            # Process nested properties
+            if "items" in field_info:
+                if isinstance(value, list):
+                    row[field] = [
+                        self.process_types(v, field_info["items"].get("properties"))
+                        for v in value
+                    ]
+            field_format = field_info.get("format", None)
+            if field_type == "string" and field_format == "date-time":
+                try:
+                    # Attempt to parse string as date-time
+                    # If successful, no need to cast
+                    _ = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
+                except ValueError:
+                    # If parsing fails, consider it as a type mismatch and attempt to cast
+                    try:
+                        row[field] = datetime.fromisoformat(value)
+                    except ValueError:
+                        # Default value for type mismatch date-time
+                        row[field] = "1979-01-01 00:00:00"
+            elif field_type == "boolean":
+                if not isinstance(value, bool):
+                    # Attempt to cast to boolean
+                    if value.lower() == "true":
+                        row[field] = True
+                    elif value.lower() == "false":
+                        row[field] = False
+                    else:
+                        # No need to raise an error, just continue with the loop
+                        continue
+
+            elif field_type == "number" or field_type == "integer":
+                if isinstance(value, str):
+                    row[field] = self.process_number(field, value)
+
+            elif field_type == "string":
+                if not isinstance(value, str):
+                    # Attempt to cast to string
+                    row[field] = str(value)
+            elif field_type == "array":
+                array_types = field_info.get("type", ["null"])
+                if isinstance(value, list):
+                    continue
+                else:
+                    for array_type in array_types:
+                        if array_type == "string":
+                            try:
+                                # Attempt to cast to JSON
+                                parsed_value = json.loads(value)
+                                if isinstance(parsed_value, list):
+                                    row[field] = parsed_value
+                                else:
+                                    # We only want valid lists
+                                    raise ValueError
+                            except (ValueError, json.JSONDecodeError, TypeError):
+                                if not isinstance(value, str):
+                                    # Attempt to cast to string
+                                    row[field] = str(value)
+                        if array_type == "number" or array_type == "integer":
+                            row[field] = self.process_number(field, value)
+
+            else:
+                # Unsupported type
+                # No need to raise an error, just continue with the loop
+                continue
+        return row
+    
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        row = self.process_types(row)
+        return row
