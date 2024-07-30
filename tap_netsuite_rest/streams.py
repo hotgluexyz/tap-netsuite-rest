@@ -1248,3 +1248,104 @@ class BillingSchedulesStream(NetSuiteStream):
         th.Property("transaction", th.StringType),
         th.Property("scheduletype", th.StringType),
     ).to_dict()
+
+
+class PriceBookStream(NetsuiteDynamicStream):
+    name = "pricebooks"
+    primary_keys = ["id"]
+    table = "pricebook"
+
+
+class PriceBookLineIntervalStream(NetSuiteStream):
+    name = "pricebook_line_intervals"
+    primary_keys = ["id"]
+    table = "pricebooklineinterval"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("frequency", th.StringType),
+        th.Property("multiplierline", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("startoffsetunit", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("linenumber", th.StringType),
+        th.Property("chargetype", th.StringType),
+        th.Property("pricebook", th.StringType),
+        th.Property("overagefrequency", th.StringType),
+        th.Property("overagepriceplan", th.StringType),
+        th.Property("overagerepeatevery", th.StringType),
+        th.Property("priceplan", th.StringType),
+        th.Property("prorateby", th.StringType),
+        th.Property("repeatevery", th.StringType),
+        th.Property("isrequired", th.BooleanType),
+        th.Property("startoffsetvalue", th.StringType),
+    ).to_dict()
+
+
+class PriceModelTypeStream(NetSuiteStream):
+    name = "price_model_type"
+    primary_keys = ["key"]
+    table = "pricemodeltype"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("isinactive", th.BooleanType),
+        th.Property("key", th.StringType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class PricePlanStream(NetsuiteDynamicStream):
+    name = "price_plan"
+    primary_keys = ["id"]
+    table = "priceplan"
+
+
+class PriceTiersStream(NetSuiteStream):
+    name = "price_tiers"
+    primary_keys = ["id"]
+    table = "pricetiers"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("externalid", th.StringType),
+        th.Property("fromval", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("lineid", th.StringType),
+        th.Property("maxamount", th.StringType),
+        th.Property("minamount", th.StringType),
+        th.Property("priceplan", th.StringType),
+        th.Property("pricingoption", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionChangeOrderStream(NetsuiteDynamicStream):
+    name = "subscription_change_order"
+    primary_keys = ["id"]
+    table = "subscriptionchangeorder"
+
+
+class SalesTaxItemStream(NetsuiteDynamicStream):
+    name = "sales_tax_item"
+    primary_keys = []
+    table = "salestaxitem"
+
+
+class TaxItemGroupStream(NetSuiteStream):
+    name = "tax_item_group"
+    primary_keys = ["id"]
+    table = "taxitemtaxgroup"
+    select = "*"
+    
+    schema = th.PropertiesList(
+        th.Property("description", th.StringType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("id", th.StringType),
+        th.Property("taxtype", th.StringType),
+    ).to_dict()
+
+
+class TaxTypeStream(NetsuiteDynamicStream):
+    name = "tax_type"
+    primary_keys = ["id"]
+    table = "taxtype"
