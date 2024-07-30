@@ -45,7 +45,16 @@ from tap_netsuite_rest.streams import (
     SalesOrderedStream,
     SalesInvoicedStream,
     InvoiceGroupStream,
-    BillingSchedulesStream
+    BillingSchedulesStream,
+    PriceBookStream,
+    PriceBookLineIntervalStream,
+    PriceModelTypeStream,
+    PricePlanStream,
+    PriceTiersStream,
+    SubscriptionChangeOrderStream,
+    SalesTaxItemStream,
+    TaxItemGroupStream,
+    TaxTypeStream
 )
 
 STREAM_TYPES = [
@@ -86,7 +95,16 @@ STREAM_TYPES = [
     SalesOrderedStream,
     SalesInvoicedStream,
     InvoiceGroupStream,
-    BillingSchedulesStream
+    BillingSchedulesStream,
+    PriceBookStream,
+    PriceBookLineIntervalStream,
+    PriceModelTypeStream,
+    PricePlanStream,
+    PriceTiersStream,
+    SubscriptionChangeOrderStream,
+    SalesTaxItemStream,
+    TaxItemGroupStream,
+    TaxTypeStream
 ]
 
 
