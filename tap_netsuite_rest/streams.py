@@ -1519,10 +1519,10 @@ class SubscriptionPriceIntervalStream(NetSuiteStream):
         th.Property("frequency", th.StringType),
         th.Property("includedquantity", th.NumberType),
         th.Property("multiplierline", th.StringType),
-        th.Property("id", th.IntegerType),
+        th.Property("id", th.StringType),
         th.Property("status", th.StringType),
         th.Property("item", th.StringType),
-        th.Property("linenumber", th.IntegerType),
+        th.Property("linenumber", th.StringType),
         th.Property("chargetype", th.StringType),
         th.Property("subscription", th.StringType),
         th.Property("overagefrequency", th.StringType),
@@ -1534,7 +1534,7 @@ class SubscriptionPriceIntervalStream(NetSuiteStream):
         th.Property("recurringamount", th.NumberType),
         th.Property("repeatevery", th.StringType),
         th.Property("startdate", th.DateType),
-        th.Property("startoffsetvalue", th.IntegerType),
+        th.Property("startoffsetvalue", th.StringType),
     ).to_dict()
 
 
