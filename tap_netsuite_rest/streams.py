@@ -10,7 +10,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 
-import requests 
+import requests
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -18,9 +18,9 @@ class SalesOrdersStream(NetSuiteStream):
     primary_keys = ["transaction_id", "lastmodifieddate"]
     entities_fallback = [
         {
-            "name":"salesordered",
-            "select_replace":"so.amount,",
-            "join_replace":"INNER JOIN salesordered so ON (so.transaction = t.id AND so.tranline = tl.id)"
+            "name": "salesordered",
+            "select_replace": "so.amount,",
+            "join_replace": "INNER JOIN salesordered so ON (so.transaction = t.id AND so.tranline = tl.id)",
         }
     ]
     select = """
@@ -420,6 +420,7 @@ class LocationsStream(NetSuiteStream):
         th.Property("subsidiary", th.StringType),
     ).to_dict()
 
+
 class CostStream(NetSuiteStream):
     name = "cost"
     primary_keys = ["id", "lastmodifieddate"]
@@ -689,11 +690,10 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         if "amount" in row:
             try:
-                row['amount'] = float(row['amount'])
+                row["amount"] = float(row["amount"])
             except:
-                pass    
-        return row         
-
+                pass
+        return row
 
 
 class TransactionsStream(NetSuiteStream):
@@ -782,74 +782,71 @@ class TransactionsStream(NetSuiteStream):
 
 class TransactionLinesStream(NetSuiteStream):
     name = "transaction_lines"
-    primary_keys = [
-        "id",
-        "transaction"
-    ]
+    primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
     table = "transactionline"
 
     schema = th.PropertiesList(
-        th.Property('accountinglinetype', th.StringType),
-        th.Property('cleared', th.StringType),
-        th.Property('closedate', th.DateTimeType),
-        th.Property('commitmentfirm', th.StringType),
-        th.Property('costestimatetype', th.StringType),
-        th.Property('createdfrom', th.StringType),
-        th.Property('debitforeignamount', th.StringType),
-        th.Property('department', th.StringType),
-        th.Property('donotdisplayline', th.StringType),
-        th.Property('eliminate', th.StringType),
-        th.Property('entity', th.StringType),
-        th.Property('expenseaccount', th.StringType),
-        th.Property('foreignamount', th.StringType),
-        th.Property('foreignamountpaid', th.StringType),
-        th.Property('foreignamountunpaid', th.StringType),
-        th.Property('fxamountlinked', th.StringType),
-        th.Property('hasfulfillableitems', th.StringType),
-        th.Property('id', th.StringType),
-        th.Property('invsoebundle', th.StringType),
-        th.Property('isbillable', th.StringType),
-        th.Property('isclosed', th.StringType),
-        th.Property('iscogs', th.StringType),
-        th.Property('iscustomglline', th.StringType),
-        th.Property('isfullyshipped', th.StringType),
-        th.Property('isfxvariance', th.StringType),
-        th.Property('isinventoryaffecting', th.StringType),
-        th.Property('isrevrectransaction', th.StringType),
-        th.Property('deferrevrec', th.StringType),
-        th.Property('revrecenddate', th.StringType),
-        th.Property('revrecstartdate', th.StringType),
-        th.Property('revrecterminmonths', th.StringType),
-        th.Property('revrecschedule', th.StringType),
-        th.Property('revcommittingtransaction', th.StringType),
-        th.Property('revenueelement', th.StringType),
-        th.Property('kitcomponent', th.StringType),
-        th.Property('linelastmodifieddate', th.DateTimeType),
-        th.Property('linesequencenumber', th.StringType),
-        th.Property('location', th.StringType),
-        th.Property('mainline', th.StringType),
-        th.Property('matchbilltoreceipt', th.StringType),
-        th.Property('needsrevenueelement', th.StringType),
-        th.Property('netamount', th.StringType),
-        th.Property('oldcommitmentfirm', th.StringType),
-        th.Property('processedbyrevcommit', th.StringType),
-        th.Property('quantitybilled', th.StringType),
-        th.Property('quantityrejected', th.StringType),
-        th.Property('quantityshiprecv', th.StringType),
-        th.Property('subsidiary', th.StringType),
-        th.Property('taxline', th.StringType),
-        th.Property('transaction', th.StringType),
-        th.Property('transactiondiscount', th.StringType),
-        th.Property('uniquekey', th.StringType),
-        th.Property('item', th.StringType),
-        th.Property('itemtype', th.StringType),
-        th.Property('isallocation', th.StringType),
-        th.Property('memo', th.StringType),
-        th.Property('price', th.StringType),
-        th.Property('subscription', th.StringType),
-        th.Property('subscriptionline', th.StringType),
-        th.Property('transactionlinetype', th.StringType),
+        th.Property("accountinglinetype", th.StringType),
+        th.Property("cleared", th.StringType),
+        th.Property("closedate", th.DateTimeType),
+        th.Property("commitmentfirm", th.StringType),
+        th.Property("costestimatetype", th.StringType),
+        th.Property("createdfrom", th.StringType),
+        th.Property("debitforeignamount", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("donotdisplayline", th.StringType),
+        th.Property("eliminate", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("expenseaccount", th.StringType),
+        th.Property("foreignamount", th.StringType),
+        th.Property("foreignamountpaid", th.StringType),
+        th.Property("foreignamountunpaid", th.StringType),
+        th.Property("fxamountlinked", th.StringType),
+        th.Property("hasfulfillableitems", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("invsoebundle", th.StringType),
+        th.Property("isbillable", th.StringType),
+        th.Property("isclosed", th.StringType),
+        th.Property("iscogs", th.StringType),
+        th.Property("iscustomglline", th.StringType),
+        th.Property("isfullyshipped", th.StringType),
+        th.Property("isfxvariance", th.StringType),
+        th.Property("isinventoryaffecting", th.StringType),
+        th.Property("isrevrectransaction", th.StringType),
+        th.Property("deferrevrec", th.StringType),
+        th.Property("revrecenddate", th.StringType),
+        th.Property("revrecstartdate", th.StringType),
+        th.Property("revrecterminmonths", th.StringType),
+        th.Property("revrecschedule", th.StringType),
+        th.Property("revcommittingtransaction", th.StringType),
+        th.Property("revenueelement", th.StringType),
+        th.Property("kitcomponent", th.StringType),
+        th.Property("linelastmodifieddate", th.DateTimeType),
+        th.Property("linesequencenumber", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("mainline", th.StringType),
+        th.Property("matchbilltoreceipt", th.StringType),
+        th.Property("needsrevenueelement", th.StringType),
+        th.Property("netamount", th.StringType),
+        th.Property("oldcommitmentfirm", th.StringType),
+        th.Property("processedbyrevcommit", th.StringType),
+        th.Property("quantitybilled", th.StringType),
+        th.Property("quantityrejected", th.StringType),
+        th.Property("quantityshiprecv", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("taxline", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactiondiscount", th.StringType),
+        th.Property("uniquekey", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("isallocation", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("price", th.StringType),
+        th.Property("subscription", th.StringType),
+        th.Property("subscriptionline", th.StringType),
+        th.Property("transactionlinetype", th.StringType),
     ).to_dict()
 
 
@@ -861,24 +858,24 @@ class TransactionAccountingLinesStream(NetSuiteStream):
     replication_key = None
 
     schema = th.PropertiesList(
-        th.Property('account', th.StringType),
-        th.Property('accountingbook', th.StringType),
-        th.Property('amount', th.StringType),
-        th.Property('credit', th.StringType),
-        th.Property('debit', th.StringType),
-        th.Property('netamount', th.StringType),
-        th.Property('amountlinked', th.StringType),
-        th.Property('amountpaid', th.StringType),
-        th.Property('amountunpaid', th.StringType),
-        th.Property('overheadParentItem', th.StringType),
-        th.Property('paymentamountunused', th.StringType),
-        th.Property('paymentamountused', th.StringType),
-        th.Property('processedbyrevcommit', th.StringType),
-        th.Property('exchangerate', th.StringType),
-        th.Property('posting', th.StringType),
-        th.Property('transaction', th.StringType),
-        th.Property('transactionline', th.StringType),
-        th.Property('lastmodifieddate', th.DateTimeType)
+        th.Property("account", th.StringType),
+        th.Property("accountingbook", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("credit", th.StringType),
+        th.Property("debit", th.StringType),
+        th.Property("netamount", th.StringType),
+        th.Property("amountlinked", th.StringType),
+        th.Property("amountpaid", th.StringType),
+        th.Property("amountunpaid", th.StringType),
+        th.Property("overheadParentItem", th.StringType),
+        th.Property("paymentamountunused", th.StringType),
+        th.Property("paymentamountused", th.StringType),
+        th.Property("processedbyrevcommit", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("posting", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactionline", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
     ).to_dict()
 
 
@@ -929,20 +926,20 @@ class CustomersStream(NetsuiteDynamicStream):
 class DeletedRecordsStream(NetSuiteStream):
     name = "deleted_records"
     table = "deletedrecord"
-    replication_key = 'deleteddate'
+    replication_key = "deleteddate"
 
     schema = th.PropertiesList(
-        th.Property('name', th.StringType),
-        th.Property('recordid', th.StringType),
-        th.Property('recordtypeid', th.StringType),
-        th.Property('scriptid', th.StringType),
-        th.Property('context', th.StringType),
-        th.Property('deletedby', th.StringType),
-        th.Property('deleteddate', th.DateTimeType),
-        th.Property('iscustomlist', th.StringType),
-        th.Property('iscustomrecord', th.StringType),
-        th.Property('iscustomtransaction', th.StringType),
-        th.Property('type', th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("recordid", th.StringType),
+        th.Property("recordtypeid", th.StringType),
+        th.Property("scriptid", th.StringType),
+        th.Property("context", th.StringType),
+        th.Property("deletedby", th.StringType),
+        th.Property("deleteddate", th.DateTimeType),
+        th.Property("iscustomlist", th.StringType),
+        th.Property("iscustomrecord", th.StringType),
+        th.Property("iscustomtransaction", th.StringType),
+        th.Property("type", th.StringType),
     ).to_dict()
 
 
@@ -1040,8 +1037,11 @@ class RelatedTransactionLinesStream(NetSuiteStream):
         }
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        row["compositeid"] = f"{row['transactionid']}-{row['lineno']}-{row['relatedtransactionid']}"
+        row["compositeid"] = (
+            f"{row['transactionid']}-{row['lineno']}-{row['relatedtransactionid']}"
+        )
         return row
+
 
 class PurchaseOrdersStream(NetSuiteStream):
     name = "purchase_orders"
@@ -1325,6 +1325,219 @@ class SubscriptionChangeOrderStream(NetsuiteDynamicStream):
     table = "subscriptionchangeorder"
 
 
+class SubscriptionChangeOrderLineStream(NetSuiteStream):
+    name = "subscription_change_order_line"
+    primary_keys = ["id"]
+    table = "changeorderline"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("discountdisplay", th.StringType),
+        th.Property("discountnew", th.StringType),
+        th.Property("enddatedisplay", th.DateType),
+        th.Property("apply", th.BooleanType),
+        th.Property("itemdisplay", th.StringType),
+        th.Property("sequencedisplay", th.StringType),
+        th.Property("billingmode", th.StringType),
+        th.Property("changeordernextaction", th.StringType),
+        th.Property("changeordernextdate", th.DateType),
+        th.Property("changeordernextid", th.StringType),
+        th.Property("changeordernextnumber", th.StringType),
+        th.Property("changeorderprevaction", th.StringType),
+        th.Property("changeorderprevdate", th.DateType),
+        th.Property("changeorderprevnumber", th.StringType),
+        th.Property("changeorderprevnumberdisplay", th.StringType),
+        th.Property("changeorderrenewnextdate", th.DateType),
+        th.Property("changeorderrenewnextid", th.StringType),
+        th.Property("changeorderrenewnextnumber", th.StringType),
+        th.Property("decreaseenddate", th.DateType),
+        th.Property("discount", th.StringType),
+        th.Property("discountorig", th.StringType),
+        th.Property("discountprev", th.StringType),
+        th.Property("enddate", th.DateType),
+        th.Property("id", th.IntegerType),
+        th.Property("includeinrenewal", th.BooleanType),
+        th.Property("item", th.IntegerType),
+        th.Property("origapply", th.BooleanType),
+        th.Property("overagediscount", th.StringType),
+        th.Property("overagepriceplan", th.IntegerType),
+        th.Property("parentlinenumber", th.StringType),
+        th.Property("pbli", th.IntegerType),
+        th.Property("pbligroup", th.IntegerType),
+        th.Property("pblioffset", th.IntegerType),
+        th.Property("planitem", th.IntegerType),
+        th.Property("priceplan", th.IntegerType),
+        th.Property("priceplanorig", th.IntegerType),
+        th.Property("priceplanprev", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("quantityorig", th.NumberType),
+        th.Property("quantityprev", th.NumberType),
+        th.Property("recurringamount", th.NumberType),
+        th.Property("sequence", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("statusnext", th.IntegerType),
+        th.Property("statusnextaction", th.StringType),
+        th.Property("statusnextcoid", th.StringType),
+        th.Property("statusnextcoidnumber", th.StringType),
+        th.Property("statusnextdate", th.DateType),
+        th.Property("statusorig", th.StringType),
+        th.Property("statusprev", th.StringType),
+        th.Property("statusprevaction", th.StringType),
+        th.Property("statusprevcoid", th.StringType),
+        th.Property("statusprevcoidnumber", th.StringType),
+        th.Property("statusprevdate", th.DateType),
+        th.Property("subscriptionchangeorder", th.StringType),
+        th.Property("subscriptionline", th.IntegerType),
+        th.Property("subscriptionlinename", th.StringType),
+        th.Property("subscriptionlinetype", th.StringType),
+        th.Property("terminationdate", th.DateType),
+        th.Property("terminationdatedisplay", th.DateType),
+        th.Property("overagediscountdisplay", th.StringType),
+        th.Property("quantitydisplay", th.NumberType),
+        th.Property("quantitynew", th.NumberType),
+        th.Property("overagepriceplandisplay", th.StringType),
+        th.Property("priceplandisplay", th.StringType),
+        th.Property("priceplannew", th.StringType),
+        th.Property("recurringamountdisplay", th.NumberType),
+        th.Property("startdate", th.DateType),
+        th.Property("statusdisplay", th.StringType),
+        th.Property("statusnew", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
+    name = "subscription_change_order_new_line"
+    primary_keys = ["id"]
+    table = "subscriptionchangeordernewline"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("discount", th.StringType),
+        th.Property("include", th.StringType),
+        th.Property("multiplierline", th.IntegerType),
+        th.Property("itemdisplay", th.StringType),
+        th.Property("sequence", th.StringType),
+        th.Property("subscriptionlinetype", th.StringType),
+        th.Property("subscriptionchangeorder", th.StringType),
+        th.Property("priceplan", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("required", th.StringType),
+        th.Property("status", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
+    name = "subscription_change_order_renewal_steps"
+    primary_keys = ["id"]
+    table = "subscriptionchangeorderrenewalsteps"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("error", th.StringType),
+        th.Property("subscriptionchangeorder", th.StringType),
+        th.Property("step", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("subscription", th.StringType),
+        th.Property("transaction", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionChangeOrderStatusStream(NetSuiteStream):
+    name = "subscription_change_order_status"
+    primary_keys = ["key"]
+    table = "subscriptionchangeorderstatus"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("key", th.IntegerType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionLineRevisionStream(NetSuiteStream):
+    name = "subscription_line_revision"
+    primary_keys = ["id"]
+    table = "subscriptionlinerevision"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("appliedtochangeorder", th.BooleanType),
+        th.Property("changeordereffectivedate", th.DateType),
+        th.Property("createdby", th.StringType),
+        th.Property("createdfromvoid", th.BooleanType),
+        th.Property("datecreated", th.DateType),
+        th.Property("deltaamount", th.NumberType),
+        th.Property("deltaquantity", th.NumberType),
+        th.Property("externalid", th.StringType),
+        th.Property("id", th.IntegerType),
+        th.Property("overagepriceplan", th.StringType),
+        th.Property("priceplan", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("recurringamount", th.NumberType),
+        th.Property("revenueelement", th.StringType),
+        th.Property("subscription", th.StringType),
+        th.Property("changeorder", th.StringType),
+        th.Property("subscriptionline", th.StringType),
+        th.Property("subscriptionrevision", th.IntegerType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("totalcontractvalue", th.NumberType),
+    ).to_dict()
+
+
+class SubscriptionLineStatusStream(NetSuiteStream):
+    name = "subscription_line_status"
+    primary_keys = ["key"]
+    table = "subscriptionlinestatus"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("key", th.IntegerType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionLineTypeStream(NetSuiteStream):
+    name = "subscription_line_type"
+    primary_keys = ["key"]
+    table = "subscriptionlinetype"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("key", th.IntegerType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class SubscriptionPriceIntervalStream(NetSuiteStream):
+    name = "subscription_price_interval"
+    primary_keys = ["id"]
+    table = "subscriptionpriceinterval"
+    select = "*"
+
+    schema = th.PropertiesList(
+        th.Property("catalogtype", th.StringType),
+        th.Property("frequency", th.StringType),
+        th.Property("includedquantity", th.NumberType),
+        th.Property("multiplierline", th.StringType),
+        th.Property("id", th.IntegerType),
+        th.Property("status", th.StringType),
+        th.Property("item", th.StringType),
+        th.Property("linenumber", th.IntegerType),
+        th.Property("chargetype", th.StringType),
+        th.Property("subscription", th.StringType),
+        th.Property("overagefrequency", th.StringType),
+        th.Property("overagepriceplan", th.StringType),
+        th.Property("overagerepeatevery", th.StringType),
+        th.Property("priceplan", th.StringType),
+        th.Property("prorateby", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("recurringamount", th.NumberType),
+        th.Property("repeatevery", th.StringType),
+        th.Property("startdate", th.DateType),
+        th.Property("startoffsetvalue", th.IntegerType),
+    ).to_dict()
+
+
 class SalesTaxItemStream(NetsuiteDynamicStream):
     name = "sales_tax_item"
     primary_keys = []
@@ -1336,7 +1549,7 @@ class TaxItemGroupStream(NetSuiteStream):
     primary_keys = ["id"]
     table = "taxitemtaxgroup"
     select = "*"
-    
+
     schema = th.PropertiesList(
         th.Property("description", th.StringType),
         th.Property("isinactive", th.BooleanType),

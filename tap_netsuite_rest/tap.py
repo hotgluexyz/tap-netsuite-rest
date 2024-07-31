@@ -5,108 +5,9 @@ from typing import List
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
 
-# TODO: Import your custom stream types here:
-from tap_netsuite_rest.streams import (
-    ClassificationStream,
-    CostStream,
-    InventoryItemLocationsStream,
-    InventoryPricingStream,
-    ItemStream,
-    LocationsStream,
-    NetSuiteStream,
-    PriceLevelStream,
-    PricingStream,
-    SalesOrdersStream,
-    SalesTransactionLinesStream,
-    SalesTransactionsStream,
-    ProfitLossReportStream,
-    GeneralLedgerReportStream,
-    VendorBillsStream,
-    VendorStream,
-    TransactionsStream,
-    TransactionLinesStream,
-    TransactionAccountingLinesStream,
-    CurrenciesStream,
-    DepartmentsStream,
-    SubsidiariesStream,
-    AccountsStream,
-    ConsolidatedExchangeRates,
-    AccountingPeriodsStream,
-    CustomersStream,
-    DeletedRecordsStream,
-    TrialBalanceReportStream,
-    RelatedTransactionLinesStream,
-    RevenueElementStream,
-    PurchaseOrdersStream,
-    SubscriptionsStream,
-    SubscriptionLinesStream,
-    SubscriptionPlansStream,
-    SubscriptionTermsStream,
-    SalesOrderedStream,
-    SalesInvoicedStream,
-    InvoiceGroupStream,
-    BillingSchedulesStream,
-    PriceBookStream,
-    PriceBookLineIntervalStream,
-    PriceModelTypeStream,
-    PricePlanStream,
-    PriceTiersStream,
-    SubscriptionChangeOrderStream,
-    SalesTaxItemStream,
-    TaxItemGroupStream,
-    TaxTypeStream
-)
+import inspect 
 
-STREAM_TYPES = [
-    SalesOrdersStream,
-    PricingStream,
-    ItemStream,
-    ClassificationStream,
-    InventoryPricingStream,
-    CostStream,
-    PriceLevelStream,
-    SalesTransactionLinesStream,
-    SalesTransactionsStream,
-    TransactionLinesStream,
-    InventoryItemLocationsStream,
-    LocationsStream,
-    ProfitLossReportStream,
-    GeneralLedgerReportStream,
-    VendorBillsStream,
-    VendorStream,
-    TransactionsStream,
-    TransactionAccountingLinesStream,
-    CurrenciesStream,
-    DepartmentsStream,
-    SubsidiariesStream,
-    AccountsStream,
-    ConsolidatedExchangeRates,
-    AccountingPeriodsStream,
-    CustomersStream,
-    DeletedRecordsStream,
-    TrialBalanceReportStream,
-    RelatedTransactionLinesStream,
-    RevenueElementStream,
-    PurchaseOrdersStream,
-    SubscriptionsStream,
-    SubscriptionLinesStream,
-    SubscriptionPlansStream,
-    SubscriptionTermsStream,
-    SalesOrderedStream,
-    SalesInvoicedStream,
-    InvoiceGroupStream,
-    BillingSchedulesStream,
-    PriceBookStream,
-    PriceBookLineIntervalStream,
-    PriceModelTypeStream,
-    PricePlanStream,
-    PriceTiersStream,
-    SubscriptionChangeOrderStream,
-    SalesTaxItemStream,
-    TaxItemGroupStream,
-    TaxTypeStream
-]
-
+from tap_netsuite_rest import streams
 
 class TapNetSuite(Tap):
     """NetSuite tap class."""
@@ -129,7 +30,9 @@ class TapNetSuite(Tap):
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
-        return [stream_class(tap=self) for stream_class in STREAM_TYPES]
+        return [
+           cls(self) for name, cls in inspect.getmembers(streams,inspect.isclass) if cls.__module__ == 'tap_netsuite_rest.streams'
+        ]
 
 
 if __name__ == "__main__":
