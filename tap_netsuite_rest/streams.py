@@ -1407,7 +1407,7 @@ class ChangeOrderLineStream(NetSuiteStream):
 
 class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
     name = "subscription_change_order_new_line"
-    primary_keys = []
+    primary_keys = ["subscriptionchangeorder", "sequence"]
     table = "subscriptionchangeordernewline"
     select = "*"
 
@@ -1428,7 +1428,7 @@ class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
 
 class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
     name = "subscription_change_order_renewal_steps"
-    primary_keys = []
+    primary_keys = ["subscriptionchangeorder", "transaction", "step"]
     table = "subscriptionchangeorderrenewalsteps"
     select = "*"
 
