@@ -1325,8 +1325,8 @@ class SubscriptionChangeOrderStream(NetsuiteDynamicStream):
     table = "subscriptionchangeorder"
 
 
-class SubscriptionChangeOrderLineStream(NetSuiteStream):
-    name = "subscription_change_order_line"
+class ChangeOrderLineStream(NetSuiteStream):
+    name = "change_order_line"
     primary_keys = ["id"]
     table = "changeorderline"
     select = "*"
