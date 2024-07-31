@@ -1449,7 +1449,7 @@ class SubscriptionChangeOrderStatusStream(NetSuiteStream):
     select = "*"
 
     schema = th.PropertiesList(
-        th.Property("key", th.IntegerType),
+        th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
 
@@ -1478,7 +1478,7 @@ class SubscriptionLineRevisionStream(NetSuiteStream):
         th.Property("subscription", th.StringType),
         th.Property("changeorder", th.StringType),
         th.Property("subscriptionline", th.StringType),
-        th.Property("subscriptionrevision", th.IntegerType),
+        th.Property("subscriptionrevision", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("totalcontractvalue", th.NumberType),
     ).to_dict()
@@ -1491,7 +1491,7 @@ class SubscriptionLineStatusStream(NetSuiteStream):
     select = "*"
 
     schema = th.PropertiesList(
-        th.Property("key", th.IntegerType),
+        th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
 
@@ -1503,7 +1503,7 @@ class SubscriptionLineTypeStream(NetSuiteStream):
     select = "*"
 
     schema = th.PropertiesList(
-        th.Property("key", th.IntegerType),
+        th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
 
