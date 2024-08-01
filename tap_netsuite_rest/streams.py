@@ -1436,7 +1436,7 @@ class SubscriptionLineRevisionStream(NetSuiteStream):
         th.Property("deltaamount", th.NumberType),
         th.Property("deltaquantity", th.NumberType),
         th.Property("externalid", th.StringType),
-        th.Property("id", th.IntegerType),
+        th.Property("id", th.StringType),
         th.Property("overagepriceplan", th.StringType),
         th.Property("priceplan", th.StringType),
         th.Property("quantity", th.NumberType),
