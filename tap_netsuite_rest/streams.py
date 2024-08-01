@@ -1383,6 +1383,11 @@ class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
         th.Property("transaction", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if "subscriptionchangeorder" not in row:
+            return None
+
+        return row
 
 class SubscriptionChangeOrderStatusStream(NetSuiteStream):
     name = "subscription_change_order_status"
