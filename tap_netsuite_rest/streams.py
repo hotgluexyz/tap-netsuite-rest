@@ -1492,11 +1492,12 @@ class SubscriptionLineTypeStream(NetSuiteStream):
 
 class SubscriptionPriceIntervalStream(NetSuiteStream):
     name = "subscription_price_interval"
-    primary_keys = ["id"]
+    primary_keys = ["uuid"]
     table = "subscriptionpriceinterval"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("catalogtype", th.StringType),
         th.Property("frequency", th.StringType),
         th.Property("includedquantity", th.NumberType),
@@ -1519,6 +1520,10 @@ class SubscriptionPriceIntervalStream(NetSuiteStream):
         th.Property("startoffsetvalue", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = str(uuid4())
+        return row
 
 class SalesTaxItemStream(NetsuiteDynamicStream):
     name = "sales_tax_item"
