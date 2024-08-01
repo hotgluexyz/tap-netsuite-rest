@@ -1350,7 +1350,7 @@ class ChangeOrderLineStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 
@@ -1377,7 +1377,7 @@ class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 
@@ -1399,7 +1399,7 @@ class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 class SubscriptionChangeOrderStatusStream(NetSuiteStream):
@@ -1416,7 +1416,7 @@ class SubscriptionChangeOrderStatusStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 
@@ -1452,7 +1452,7 @@ class SubscriptionLineRevisionStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 class SubscriptionLineStatusStream(NetSuiteStream):
@@ -1469,7 +1469,7 @@ class SubscriptionLineStatusStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 class SubscriptionLineTypeStream(NetSuiteStream):
@@ -1486,7 +1486,7 @@ class SubscriptionLineTypeStream(NetSuiteStream):
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # NOTE: temporarily forcing a pk
-        row["uuid"] = uuid4()
+        row["uuid"] = str(uuid4())
         return row
 
 
