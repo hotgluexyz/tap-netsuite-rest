@@ -9,6 +9,7 @@ from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
+from uuid import uuid4
 
 import requests
 
@@ -1327,11 +1328,12 @@ class SubscriptionChangeOrderStream(NetsuiteDynamicStream):
 
 class ChangeOrderLineStream(NetSuiteStream):
     name = "change_order_line"
-    primary_keys = ["subscriptionchangeorder", "subscriptionline", "sequence"]
+    primary_keys = ["uuid"]
     table = "changeorderline"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("discount", th.StringType),
         th.Property("item", th.StringType),
         th.Property("newdiscount", th.StringType),
@@ -1346,14 +1348,20 @@ class ChangeOrderLineStream(NetSuiteStream):
         th.Property("sequence", th.IntegerType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
+
 
 class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
     name = "subscription_change_order_new_line"
-    primary_keys = ["subscriptionchangeorder", "subscriptionlinetype", "priceplan"]
+    primary_keys = ["uuid"]
     table = "subscriptionchangeordernewline"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("discount", th.StringType),
         th.Property("include", th.StringType),
         th.Property("multiplierline", th.IntegerType),
@@ -1367,14 +1375,20 @@ class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
         th.Property("status", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
+
 
 class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
     name = "subscription_change_order_renewal_steps"
-    primary_keys = ["subscriptionchangeorder", "step"]
+    primary_keys = ["uuid"]
     table = "subscriptionchangeorderrenewalsteps"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("error", th.StringType),
         th.Property("subscriptionchangeorder", th.StringType),
         th.Property("step", th.StringType),
@@ -1384,30 +1398,36 @@ class SubscriptionChangeOrderRenewalStepsStream(NetSuiteStream):
     ).to_dict()
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        if "subscriptionchangeorder" not in row:
-            return None
-
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
         return row
 
 class SubscriptionChangeOrderStatusStream(NetSuiteStream):
     name = "subscription_change_order_status"
-    primary_keys = ["key"]
+    primary_keys = ["uuid"]
     table = "subscriptionchangeorderstatus"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
+
 
 class SubscriptionLineRevisionStream(NetSuiteStream):
     name = "subscription_line_revision"
-    primary_keys = ["id"]
+    primary_keys = ["uuid"]
     table = "subscriptionlinerevision"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("appliedtochangeorder", th.BooleanType),
         th.Property("changeordereffectivedate", th.DateType),
         th.Property("createdby", th.StringType),
@@ -1430,29 +1450,44 @@ class SubscriptionLineRevisionStream(NetSuiteStream):
         th.Property("totalcontractvalue", th.NumberType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
 
 class SubscriptionLineStatusStream(NetSuiteStream):
     name = "subscription_line_status"
-    primary_keys = ["key"]
+    primary_keys = ["uuid"]
     table = "subscriptionlinestatus"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
 
 class SubscriptionLineTypeStream(NetSuiteStream):
     name = "subscription_line_type"
-    primary_keys = ["key"]
+    primary_keys = ["uuid"]
     table = "subscriptionlinetype"
     select = "*"
 
     schema = th.PropertiesList(
+        th.Property("uuid", th.StringType),
         th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        # NOTE: temporarily forcing a pk
+        row["uuid"] = uuid4()
+        return row
 
 
 class SubscriptionPriceIntervalStream(NetSuiteStream):
