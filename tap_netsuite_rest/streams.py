@@ -1349,7 +1349,7 @@ class ChangeOrderLineStream(NetSuiteStream):
 
 class SubscriptionChangeOrderNewLineStream(NetSuiteStream):
     name = "subscription_change_order_new_line"
-    primary_keys = ["subscriptionchangeorder", "sequence"]
+    primary_keys = ["subscriptionchangeorder", "subscriptionlinetype", "priceplan"]
     table = "subscriptionchangeordernewline"
     select = "*"
 
