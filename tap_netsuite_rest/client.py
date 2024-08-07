@@ -178,7 +178,7 @@ class NetSuiteStream(RESTStream):
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by
 
-        if "_report" in self.name:
+        if "_report" in self.name and self.custom_filter:
             self.get_date_boundaries()
             custom_filter = self.custom_filter.format(
                 start_date=self.start_date_f , end_date=self.end_date

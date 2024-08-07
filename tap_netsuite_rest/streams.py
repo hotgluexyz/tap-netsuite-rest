@@ -648,7 +648,13 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     join = """
         INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) LEFT JOIN department ON ( TransactionLine.department = department.ID ) INNER JOIN Account ON ( Account.ID = TransactionLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id ) INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )  LEFT JOIN Classification On ( Transactionline.class = Classification.id ) LEFT JOIN Location On ( Transactionline.location = Location.id )
         """
-    custom_filter = "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
+    
+    @property
+    def custom_filter(self):
+        if self.config.get("gl_full_sync") == True:
+            return "( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
+        else:
+            return "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
     # Merge group and order by
     order_by = """
     ORDER BY AccountingPeriod.StartDate ASC
