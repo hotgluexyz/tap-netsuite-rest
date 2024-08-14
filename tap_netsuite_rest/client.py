@@ -123,6 +123,31 @@ class NetSuiteStream(RESTStream):
                     self.query_date = datetime.strptime(last_dt, "%d/%m/%Y")
                 return offset
         return None
+    
+    def get_starting_timestamp(self, context):
+        value = self.get_starting_replication_key_value(context)
+
+        if value is None:
+            return None
+
+        if not self.is_timestamp_replication_key:
+            raise ValueError(
+                f"The replication key {self.replication_key} is not of timestamp type"
+            )
+        try:
+            return cast(datetime, pendulum.parse(value))
+        except pendulum.exceptions.ParserError:
+            formats = [
+                'MM/DD/YYYY',
+            ]
+            for fmt in formats:
+                try:
+                    parsed_date = pendulum.from_format(value, fmt)
+                    return parsed_date
+                except ValueError:
+                    continue
+            else:
+                raise ValueError(f"Could not parse date: {value}")
 
     @cached
     def get_starting_time(self, context):
