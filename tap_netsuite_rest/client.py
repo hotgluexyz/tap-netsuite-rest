@@ -170,7 +170,7 @@ class NetSuiteStream(RESTStream):
         if self.query_date:
             start_date = self.query_date
             self.start_date_f = start_date.strftime("%Y-%m-%d")
-        elif "replication_key" not in rep_key:
+        elif (self.name == "general_ledger_report" and self.config.get("gl_full_sync")) or ("replication_key" not in rep_key):
             start_date = parse(self.config["start_date"])
             self.start_date_f = start_date.strftime("%Y-%m-01")
         else:

@@ -650,10 +650,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
 
     @property
     def custom_filter(self):
-        if self.config.get("gl_full_sync") == True:
-            return "( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
-        else:
-            return "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
+        return "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionLine.amount !=0"
 
     # Merge group and order by
     order_by = """
