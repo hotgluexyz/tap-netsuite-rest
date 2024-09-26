@@ -20,6 +20,9 @@ from pendulum import parse
 from requests.exceptions import HTTPError
 import copy
 import json
+from http.client import RemoteDisconnected
+from requests.exceptions import ConnectionError
+
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -277,6 +280,9 @@ class NetSuiteStream(RESTStream):
             (
                 RetriableAPIError,
                 requests.exceptions.ReadTimeout,
+                requests.exceptions.ConnectionError,
+                ConnectionError,
+                RemoteDisconnected,
             ),
             max_tries=10,
             factor=2,
