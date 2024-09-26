@@ -10,6 +10,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 from uuid import uuid4
+from dateutil.relativedelta import relativedelta
 
 import requests
 
@@ -790,6 +791,8 @@ class TransactionLinesStream(NetSuiteStream):
     primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
     table = "transactionline"
+    start_date = None
+    end_date = None
 
     schema = th.PropertiesList(
         th.Property("accountinglinetype", th.StringType),
@@ -853,6 +856,42 @@ class TransactionLinesStream(NetSuiteStream):
         th.Property("subscriptionline", th.StringType),
         th.Property("transactionlinetype", th.StringType),
     ).to_dict()
+
+    def prepare_request_payload(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+        # Avoid using my new logic if the flag is off
+        if not self.config.get("transaction_lines_monthly"):
+            return super().prepare_request_payload(context, next_page_token)
+
+        filters = []
+        # get order query
+        prefix = self.table
+        order_by = f"ORDER BY {prefix}.{self.replication_key}"
+
+        # get filter query
+        start_date = self.start_date or self.get_starting_time(context)
+        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
+
+        if start_date:
+            start_date_str = start_date.strftime(time_format)
+
+            self.start_date = start_date
+            self.end_date = start_date + relativedelta(months=1)
+            end_date_str = self.end_date.strftime(time_format)
+
+            filters.append(f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}")
+
+            filters = "WHERE " + " AND ".join(filters)
+
+        selected_properties = self.get_selected_properties()
+        select = ", ".join(selected_properties)
+
+        payload = dict(
+            q=f"SELECT {select} FROM {self.table} {filters} {order_by}"
+        )
+        # self.logger.info(f"Making query = {payload}")
+        return payload
 
 
 class TransactionAccountingLinesStream(NetSuiteStream):
