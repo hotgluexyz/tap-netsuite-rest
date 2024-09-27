@@ -301,7 +301,7 @@ class NetSuiteStream(RESTStream):
                 Exception,
             ),
             max_tries=10,
-            factor=2,
+            factor=3,
         )(func)
         return decorator
 
@@ -310,26 +310,24 @@ class NetSuiteStream(RESTStream):
         next_month = any_day.replace(day=28) + timedelta(days=4)
         # subtracting the number of the current day brings us back one month
         return next_month - timedelta(days=next_month.day)
+
+    def make_request(self, context, next_page_token):
+        #Retry the request with updated query
+        # NOTE: We have to call prepare_request again to properly build the OAuth1 headers or we get 401
+        prepared_request = self.prepare_request(
+            context, next_page_token=next_page_token
+        )
+        resp = self._request(prepared_request, context)
+        return resp
     
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         #override the request_records method to handle updated query
         next_page_token: Any = None
         finished = False
-        decorated_request = self.request_decorator(self._request)
+        decorated_request = self.request_decorator(self.make_request)
 
         while not finished:
-            prepared_request = self.prepare_request(
-                context, next_page_token=next_page_token
-            )
-            try:
-                resp = decorated_request(prepared_request, context)
-            except RetryRequest as e:
-                #Retry the request with updated query
-                prepared_request = self.prepare_request(
-                    context, next_page_token=next_page_token
-                )
-                resp = decorated_request(prepared_request, context)
-                          
+            resp = decorated_request(context, next_page_token)
             for row in self.parse_response(resp):
                 yield row
             previous_token = copy.deepcopy(next_page_token)
