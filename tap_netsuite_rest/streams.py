@@ -64,41 +64,12 @@ class SalesTransactionsStream(NetSuiteStream):
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
         th.Property("actualshipdate", th.DateTimeType),
-        th.Property("balsegstatus", th.StringType),
         th.Property("billingaddress", th.StringType),
         th.Property("billingstatus", th.StringType),
         th.Property("closedate", th.DateTimeType),
         th.Property("createdby", th.StringType),
         th.Property("createddate", th.DateTimeType),
         th.Property("currency", th.StringType),
-        th.Property("custbody1", th.StringType),
-        th.Property("custbody_call_paypal_again", th.StringType),
-        th.Property("custbody_charge_payflow", th.StringType),
-        th.Property("custbody_do_not_autobill", th.StringType),
-        th.Property("custbody_fa_shipping_tax", th.StringType),
-        th.Property("custbody_invoice_customer", th.StringType),
-        th.Property("custbody_pj_sscod", th.StringType),
-        th.Property("custbody_pj_ssliftgate", th.StringType),
-        th.Property("custbody_pj_sssdelivery", th.StringType),
-        th.Property("custbody_pj_sssigreq", th.StringType),
-        th.Property("custbody_rrw_2_day_shipping", th.StringType),
-        th.Property("custbody_rrw_addr_is_verified", th.StringType),
-        th.Property("custbody_rrw_estimated_cost", th.StringType),
-        th.Property("custbody_rrw_estimated_delivery_date", th.DateTimeType),
-        th.Property("custbody_rrw_estimated_transit_time", th.StringType),
-        th.Property("custbody_rrw_expected_delivery_date_t", th.StringType),
-        th.Property("custbody_rrw_incl_in_dropship_statemnt", th.StringType),
-        th.Property("custbody_rrw_is_prime", th.StringType),
-        th.Property("custbody_rrw_pacejet_request", th.StringType),
-        th.Property("custbody_rrw_pacejet_response", th.StringType),
-        th.Property("custbody_rrw_rma_notification_sent", th.StringType),
-        th.Property("custbody_rrw_skip_pacejet_quoting", th.StringType),
-        th.Property("custbody_solupay_billingschd_autopay", th.StringType),
-        th.Property("custbody_storefront_order", th.StringType),
-        th.Property("custbody_upaya_paypal_approve", th.StringType),
-        th.Property("custbody_upaya_paypal_hold", th.StringType),
-        th.Property("custbodyreference_order", th.StringType),
-        th.Property("custbodystorefront", th.StringType),
         th.Property("daysopen", th.StringType),
         th.Property("email", th.StringType),
         th.Property("employee", th.StringType),
@@ -882,8 +853,9 @@ class TransactionLinesStream(NetSuiteStream):
             start_date_str = start_date.strftime(time_format)
 
             self.start_date = start_date
-            self.end_date = start_date + relativedelta(months=1)
+            self.end_date = start_date + self.time_jump
             end_date_str = self.end_date.strftime(time_format)
+            timeframe = f"{start_date_str} to {end_date_str}"
 
             filters.append(f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}")
 
@@ -897,7 +869,7 @@ class TransactionLinesStream(NetSuiteStream):
         payload = dict(
             q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
         )
-        # self.logger.info(f"Making query = {payload}")
+        self.logger.info(f"Making query ({timeframe})")
         return payload
 
 

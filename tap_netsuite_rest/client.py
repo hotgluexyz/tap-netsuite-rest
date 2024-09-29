@@ -52,6 +52,7 @@ class NetSuiteStream(RESTStream):
     replication_key_prefix = None
     select_prefix = None
     order_by = None
+    time_jump = relativedelta(months=1)
 
     @property
     def http_headers(self) -> dict:
@@ -115,10 +116,53 @@ class NetSuiteStream(RESTStream):
         offset = next(extract_jsonpath("$.offset", response.json()))
         offset += self.page_size
 
-        if has_next:
-            return offset
-
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
+
+        if has_next:
+            if (
+                self.name == "transaction_lines"
+                and self.config.get("transaction_lines_monthly")
+                and totalResults > 100000
+            ):
+                self.logger.info(
+                    f"totalResults = {totalResults}, time_jump = {self.time_jump}"
+                )
+                if self.time_jump == relativedelta(months=1):
+                    self.logger.info("Dropping time_jump to 1 week")
+                    self.time_jump = relativedelta(weeks=1)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(weeks=1):
+                    self.logger.info("Dropping time_jump to 3 days")
+                    self.time_jump = relativedelta(days=3)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(days=3):
+                    self.logger.info("Dropping time_jump to 1 day")
+                    self.time_jump = relativedelta(days=1)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(days=1):
+                    self.logger.info("Dropping time_jump to 12 hours")
+                    self.time_jump = relativedelta(hours=12)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(hours=12):
+                    self.logger.info("Dropping time_jump to 6 hours")
+                    self.time_jump = relativedelta(hours=6)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(hours=6):
+                    self.logger.info("Dropping time_jump to 1 hours")
+                    self.time_jump = relativedelta(hours=1)
+                    # need to reset the offset
+                    return 0
+                else:
+                    self.logger.error(
+                        "Even with minimum delta we are getting more than 100k records! We will likely infinite loop."
+                    )
+
+            return offset
 
         if self.name == "transaction_lines" and self.config.get("transaction_lines_monthly") and not has_next:
             today = datetime.now()
@@ -127,9 +171,14 @@ class NetSuiteStream(RESTStream):
                 self.logger.info("Reached the end of the line! Stopping")
                 return None
             else:
-                # we should move to the next month now
-                self.start_date = self.start_date + relativedelta(months=1)
-                self.logger.info(f"Reached end of data for current month. Moving start date to {self.start_date}")
+                # reset the time_jump to 1 month if we're going into a new month
+                reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
+                # we should move to the next date range now
+                self.start_date = self.start_date + self.time_jump
+                if reset_time_jump:
+                    self.logger.info("Resetting time_jump to 1 month for next iteration...")
+                    self.time_jump = relativedelta(months=1)
+                self.logger.info(f"Reached end of data for current period. Moving start date to {self.start_date}")
                 return 0
 
         if not has_next and offset < totalResults:
@@ -142,7 +191,7 @@ class NetSuiteStream(RESTStream):
                     self.query_date = datetime.strptime(last_dt, "%d/%m/%Y")
                 return offset
         return None
-    
+
     def get_starting_timestamp(self, context):
         value = self.get_starting_replication_key_value(context)
 
@@ -197,7 +246,6 @@ class NetSuiteStream(RESTStream):
             self.start_date_f = start_date.strftime("%Y-%m-01")
         self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
-    
     def get_selected_properties(self):
         selected_properties = []
         for key, value in self.metadata.items():
@@ -312,16 +360,16 @@ class NetSuiteStream(RESTStream):
         return next_month - timedelta(days=next_month.day)
 
     def make_request(self, context, next_page_token):
-        #Retry the request with updated query
+        # Retry the request with updated query
         # NOTE: We have to call prepare_request again to properly build the OAuth1 headers or we get 401
         prepared_request = self.prepare_request(
             context, next_page_token=next_page_token
         )
         resp = self._request(prepared_request, context)
         return resp
-    
+
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
-        #override the request_records method to handle updated query
+        # override the request_records method to handle updated query
         next_page_token: Any = None
         finished = False
         decorated_request = self.request_decorator(self.make_request)
