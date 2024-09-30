@@ -314,6 +314,7 @@ class NetSuiteStream(RESTStream):
         payload = dict(
             q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
         )
+        self.logger.info(f"Making query ({payload['q']})")
         return payload
 
     def validate_response(self, response: requests.Response) -> None:

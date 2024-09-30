@@ -15,7 +15,7 @@ from dateutil.relativedelta import relativedelta
 import requests
 
 
-class SalesOrdersStream(TransactionRootStream):
+class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
     primary_keys = ["transaction_id", "lastmodifieddate"]
     entities_fallback = [
