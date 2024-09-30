@@ -22,7 +22,6 @@ from requests.exceptions import HTTPError
 import copy
 import json
 from http.client import RemoteDisconnected
-from requests.exceptions import ConnectionError
 from dateutil.relativedelta import relativedelta
 import pytz
 
@@ -348,7 +347,11 @@ class NetSuiteStream(RESTStream):
         decorator: Callable = backoff.on_exception(
             backoff.expo,
             (
-                Exception,
+                HTTPError,
+                RetriableAPIError,
+                requests.exceptions.ReadTimeout,
+                requests.exceptions.ConnectionError,
+                RemoteDisconnected,
             ),
             max_tries=10,
             factor=3,
@@ -408,7 +411,13 @@ class NetsuiteDynamicStream(NetSuiteStream):
     select = "*"
     schema_response = None
 
-    @backoff.on_exception(backoff.expo, Exception, max_tries=5, factor=2)
+    @backoff.on_exception(backoff.expo, (
+        HTTPError,
+        RetriableAPIError,
+        requests.exceptions.ReadTimeout,
+        requests.exceptions.ConnectionError,
+        RemoteDisconnected,
+    ), max_tries=5, factor=2)
     def get_schema(self):
         s = self.get_session()
         self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
