@@ -861,6 +861,7 @@ class TransactionLinesStream(TransactionRootStream):
             filters = "WHERE " + " AND ".join(filters)
 
         selected_properties = self.get_selected_properties()
+        selected_properties.remove('transactionline.recordtype AS recordtype')
         select = "Transaction.type as recordtype, " + ", ".join(selected_properties)
 
         join = self.join if self.join else ""
