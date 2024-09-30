@@ -570,7 +570,7 @@ class TransactionRootStream(NetSuiteStream):
 
         filters = []
         # get order query
-        prefix = self.table
+        prefix = self.replication_key_prefix or self.table
         order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
         # get filter query
