@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Union
 
 from singer_sdk import typing as th
 
-from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream
+from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
@@ -54,7 +54,7 @@ class SalesOrdersStream(NetSuiteStream):
     ).to_dict()
 
 
-class SalesTransactionsStream(NetSuiteStream):
+class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
@@ -161,7 +161,7 @@ class VendorBillsStream(NetSuiteStream):
     ).to_dict()
 
 
-class SalesTransactionLinesStream(NetSuiteStream):
+class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
     primary_keys = ["id", "linelastmodifieddate"]
     table = "transaction t"
@@ -408,7 +408,7 @@ class CostStream(NetSuiteStream):
     ).to_dict()
 
 
-class ItemStream(NetSuiteStream):
+class ItemStream(TransactionRootStream):
     name = "item"
     primary_keys = ["id", "lastmodifieddate"]
     table = "item"
@@ -673,13 +673,11 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         return row
 
 
-class TransactionsStream(NetSuiteStream):
+class TransactionsStream(TransactionRootStream):
     name = "transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
-    start_date = None
-    end_date = None
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -758,47 +756,8 @@ class TransactionsStream(NetSuiteStream):
         th.Property("journaltype", th.StringType),
     ).to_dict()
 
-    def prepare_request_payload(
-        self, context: Optional[dict], next_page_token: Optional[Any]
-    ) -> Optional[dict]:
-        # Avoid using my new logic if the flag is off
-        if not self.config.get("transaction_lines_monthly"):
-            return super().prepare_request_payload(context, next_page_token)
 
-        filters = []
-        # get order query
-        prefix = self.table
-        order_by = f"ORDER BY {prefix}.{self.replication_key}"
-
-        # get filter query
-        start_date = self.start_date or self.get_starting_time(context)
-        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
-
-        if start_date:
-            start_date_str = start_date.strftime(time_format)
-
-            self.start_date = start_date
-            self.end_date = start_date + self.time_jump
-            end_date_str = self.end_date.strftime(time_format)
-            timeframe = f"{start_date_str} to {end_date_str}"
-
-            filters.append(f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}")
-
-            filters = "WHERE " + " AND ".join(filters)
-
-        selected_properties = self.get_selected_properties()
-        select = ", ".join(selected_properties)
-
-        join = self.join if self.join else ""
-
-        payload = dict(
-            q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
-        )
-        self.logger.info(f"Making query ({timeframe})")
-        return payload
-
-
-class TransactionLinesStream(NetSuiteStream):
+class TransactionLinesStream(TransactionRootStream):
     name = "transaction_lines"
     primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
