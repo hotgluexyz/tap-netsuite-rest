@@ -163,7 +163,7 @@ class VendorBillsStream(NetSuiteStream):
 
 class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
-    primary_keys = ["id", "linelastmodifieddate"]
+    primary_keys = ["id", "transaction"]
     table = "transaction t"
     replication_key = "linelastmodifieddate"
     join = "INNER JOIN transactionLine tl ON tl.transaction = t.id"
