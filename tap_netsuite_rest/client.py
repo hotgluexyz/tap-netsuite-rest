@@ -383,7 +383,7 @@ class NetSuiteStream(RESTStream):
             for row in self.parse_response(resp):
                 if self.primary_keys:
                     if len(self.primary_keys) == 1:
-                        pk = row[pk]
+                        pk = row[self.primary_keys[0]]
                     else:
                         pk = "-".join([row[key] for key in self.primary_keys])
                     if pk not in self.record_ids:
