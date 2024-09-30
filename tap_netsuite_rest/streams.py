@@ -950,6 +950,7 @@ class DeletedRecordsStream(NetSuiteStream):
     name = "deleted_records"
     table = "deletedrecord"
     replication_key = "deleteddate"
+    primary_keys = ["recordid", "recordtypeid", "scriptid"]
 
     schema = th.PropertiesList(
         th.Property("name", th.StringType),

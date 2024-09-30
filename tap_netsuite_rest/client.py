@@ -4,6 +4,7 @@ import logging
 import backoff
 import requests
 import pendulum
+import copy
 
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -53,6 +54,7 @@ class NetSuiteStream(RESTStream):
     select_prefix = None
     order_by = None
     time_jump = relativedelta(months=1)
+    record_ids = []
 
     @property
     def http_headers(self) -> dict:
@@ -376,8 +378,19 @@ class NetSuiteStream(RESTStream):
 
         while not finished:
             resp = decorated_request(context, next_page_token)
+            
+            # store primary keys to avoid duplicated records if primary keys is available
             for row in self.parse_response(resp):
-                yield row
+                if self.primary_keys:
+                    if len(self.primary_keys) == 1:
+                        pk = row[pk]
+                    else:
+                        pk = "-".join([row[key] for key in self.primary_keys])
+                    if pk not in self.record_ids:
+                        self.record_ids.append(pk)
+                        yield row
+                else:
+                    yield row
             previous_token = copy.deepcopy(next_page_token)
             next_page_token = self.get_next_page_token(
                 response=resp, previous_token=previous_token
