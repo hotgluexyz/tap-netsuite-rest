@@ -172,7 +172,6 @@ class SalesTransactionLinesStream(TransactionRootStream):
     select_prefix = "tl"
 
     schema = th.PropertiesList(
-        th.Property("amountlinked", th.StringType),
         th.Property("blandedcost", th.StringType),
         th.Property("class", th.StringType),
         th.Property("cleared", th.StringType),
