@@ -122,7 +122,7 @@ class NetSuiteStream(RESTStream):
 
         if has_next:
             if (
-                self.name == "transaction_lines"
+                self.name in ["transactions", "transaction_lines"]
                 and self.config.get("transaction_lines_monthly")
                 and totalResults > 100000
             ):
@@ -166,7 +166,7 @@ class NetSuiteStream(RESTStream):
 
             return offset
 
-        if self.name == "transaction_lines" and self.config.get("transaction_lines_monthly") and not has_next:
+        if self.name in ["transaction_lines", "transactions"] and self.config.get("transaction_lines_monthly") and not has_next:
             today = datetime.now()
             today = today.replace(tzinfo=pytz.UTC)
             if self.end_date >= today:

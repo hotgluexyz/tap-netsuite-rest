@@ -678,6 +678,8 @@ class TransactionsStream(NetSuiteStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
+    start_date = None
+    end_date = None
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -755,6 +757,45 @@ class TransactionsStream(NetSuiteStream):
         th.Property("sourcetransaction", th.StringType),
         th.Property("journaltype", th.StringType),
     ).to_dict()
+
+    def prepare_request_payload(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+        # Avoid using my new logic if the flag is off
+        if not self.config.get("transaction_lines_monthly"):
+            return super().prepare_request_payload(context, next_page_token)
+
+        filters = []
+        # get order query
+        prefix = self.table
+        order_by = f"ORDER BY {prefix}.{self.replication_key}"
+
+        # get filter query
+        start_date = self.start_date or self.get_starting_time(context)
+        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
+
+        if start_date:
+            start_date_str = start_date.strftime(time_format)
+
+            self.start_date = start_date
+            self.end_date = start_date + self.time_jump
+            end_date_str = self.end_date.strftime(time_format)
+            timeframe = f"{start_date_str} to {end_date_str}"
+
+            filters.append(f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}")
+
+            filters = "WHERE " + " AND ".join(filters)
+
+        selected_properties = self.get_selected_properties()
+        select = ", ".join(selected_properties)
+
+        join = self.join if self.join else ""
+
+        payload = dict(
+            q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
+        )
+        self.logger.info(f"Making query ({timeframe})")
+        return payload
 
 
 class TransactionLinesStream(NetSuiteStream):
