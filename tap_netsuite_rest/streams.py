@@ -838,7 +838,7 @@ class TransactionLinesStream(TransactionRootStream):
             return super().prepare_request_payload(context, next_page_token)
 
         filters = [
-            "( Transaction.type IN ( 'CustCred', 'CustDep', 'CustRfnd', 'CustInvc','SalesOrd' ) )"
+            "( Transaction.type IN ( 'RevArrng', 'CustCred', 'CustDep', 'CustRfnd', 'CustInvc','SalesOrd' ) )"
         ]
         # get order query
         prefix = self.table
