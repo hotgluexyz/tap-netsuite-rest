@@ -385,11 +385,13 @@ class NetSuiteStream(RESTStream):
             
             # store primary keys to avoid duplicated records if primary keys is available
             for row in self.parse_response(resp):
+                # need to use final_row otherwise the pk may be missing
+                final_row = self.post_process(row)
                 if self.primary_keys:
                     if len(self.primary_keys) == 1:
-                        pk = row[self.primary_keys[0]]
+                        pk = final_row[self.primary_keys[0]]
                     else:
-                        pk = "-".join([row[key] for key in self.primary_keys])
+                        pk = "-".join([final_row[key] for key in self.primary_keys])
                     if pk not in self.record_ids:
                         self.record_ids.append(pk)
                         yield row
