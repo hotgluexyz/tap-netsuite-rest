@@ -158,6 +158,21 @@ class NetSuiteStream(RESTStream):
                     self.time_jump = relativedelta(hours=1)
                     # need to reset the offset
                     return 0
+                elif self.time_jump == relativedelta(hours=1):
+                    self.logger.info("Dropping time_jump to 30 min")
+                    self.time_jump = relativedelta(minutes=30)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(minutes=30):
+                    self.logger.info("Dropping time_jump to 5 min")
+                    self.time_jump = relativedelta(minutes=5)
+                    # need to reset the offset
+                    return 0
+                elif self.time_jump == relativedelta(minutes=5):
+                    self.logger.info("Dropping time_jump to 1 min")
+                    self.time_jump = relativedelta(minutes=1)
+                    # need to reset the offset
+                    return 0
                 else:
                     self.logger.error(
                         "Even with minimum delta we are getting more than 100k records! We will likely infinite loop."
