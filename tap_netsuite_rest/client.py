@@ -602,7 +602,10 @@ class TransactionRootStream(NetSuiteStream):
             filters = "WHERE " + " AND ".join(filters)
 
         selected_properties = self.get_selected_properties()
-        select = ", ".join(selected_properties)
+        if self.select:
+            select = self.select.strip()
+        else:
+            select = ", ".join(selected_properties)
 
         join = self.join if self.join else ""
 

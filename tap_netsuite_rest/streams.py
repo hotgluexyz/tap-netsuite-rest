@@ -1134,11 +1134,25 @@ class RevenueElementStream(NetSuiteStream):
     ).to_dict()
 
 
-class RelatedTransactionLinesStream(NetSuiteStream):
+class RelatedTransactionLinesStream(TransactionRootStream):
     name = "related_transaction_lines"
+    table = "NextTransactionLineLink"
     start_date_f = None
     end_date = None
     primary_keys = ["compositeid"]
+    replication_key = "lastmodifieddate"
+    select = """
+        DISTINCT
+            NextTransactionLineLink.PreviousLine as lineno,
+            NextTransactionLineLink.PreviousDoc AS transactionid,
+            NextTransactionLineLink.NextDoc AS relatedtransactionid,
+            NextTransactionLineLink.NextLine as relatedlineno,
+            NextTransactionLineLink.ForeignAmount,
+            NextTransactionLineLink.LastModifiedDate,
+            NextTransactionLineLink.LinkType,
+            NextTransactionLineLink.NextType as relatedtransactiontype,
+            NextTransactionLineLink.PreviousType as transactiontype
+    """
 
     schema = th.PropertiesList(
         th.Property("compositeid", th.StringType),
@@ -1147,29 +1161,12 @@ class RelatedTransactionLinesStream(NetSuiteStream):
         th.Property("relatedtransactionid", th.StringType),
         th.Property("relatedlineno", th.StringType),
         th.Property("foreignamount", th.StringType),
-        th.Property("lastmodifieddate", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
         th.Property("linktype", th.StringType),
         th.Property("relatedtransactiontype", th.StringType),
         th.Property("transactiontype", th.StringType),
     ).to_dict()
 
-    def prepare_request_payload(self, context, next_page_token):
-        return {
-            "q": f"""
-            SELECT DISTINCT
-                NTLL.PreviousLine as lineno,
-                NTLL.PreviousDoc AS transactionid,
-                NTLL.NextDoc AS relatedtransactionid,
-                NTLL.NextLine as relatedlineno,
-                NTLL.ForeignAmount,
-                NTLL.LastModifiedDate,
-                NTLL.LinkType,
-                NTLL.NextType as relatedtransactiontype,
-                NTLL.PreviousType as transactiontype
-            FROM
-                NextTransactionLineLink AS NTLL
-        """
-        }
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         row["compositeid"] = (
