@@ -405,7 +405,7 @@ class NetSuiteStream(RESTStream):
             # store primary keys to avoid duplicated records if primary keys is available
             for row in self.parse_response(resp):
                 # need to use final_row otherwise the pk may be missing
-                final_row = self.post_process(row)
+                final_row = self.post_process(row, dict())
                 if self.primary_keys:
                     if len(self.primary_keys) == 1:
                         pk = final_row[self.primary_keys[0]]
