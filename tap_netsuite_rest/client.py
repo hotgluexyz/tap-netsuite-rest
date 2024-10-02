@@ -187,8 +187,12 @@ class NetSuiteStream(RESTStream):
                 self.logger.info("Reached the end of the line! Stopping")
                 return None
             else:
-                # reset the time_jump to 1 month if we're going into a new month
-                reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
+                if self.time_jump in [relativedelta(minutes=30), relativedelta(minutes=5), relativedelta(minutes=1)]:
+                    # reset the time_jump if we're going into a new hour
+                    reset_time_jump = self.start_date.hour != (self.start_date + self.time_jump).hour
+                else:
+                    # reset the time_jump if we're going into a new month
+                    reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
                 # we should move to the next date range now
                 self.start_date = self.start_date + self.time_jump
                 if reset_time_jump:
