@@ -967,7 +967,9 @@ class TransactionLinesStream(TransactionRootStream):
         if not self.config.get("transaction_lines_monthly"):
             return super().prepare_request_payload(context, next_page_token)
 
-        filters = []
+        filters = [
+            "( Transaction.type IN ( 'RevArrng', 'CustCred', 'CustPymt', 'CustDep', 'CustRfnd', 'CustInvc', 'SalesOrd' ) )"
+        ]
         # get order query
         prefix = self.table
         order_by = f"ORDER BY {prefix}.{self.replication_key}"
