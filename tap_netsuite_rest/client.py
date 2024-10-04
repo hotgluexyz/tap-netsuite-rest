@@ -591,6 +591,62 @@ class NetsuiteDynamicStream(NetSuiteStream):
 class TransactionRootStream(NetSuiteStream):
     start_date = None
     end_date = None
+    fields = None
+    default_fields = None
+
+    @backoff.on_exception(backoff.expo, (
+        HTTPError,
+        RetriableAPIError,
+        requests.exceptions.ReadTimeout,
+        requests.exceptions.ConnectionError,
+        RemoteDisconnected,
+    ), max_tries=5, factor=2)
+    def get_schema(self):
+        s = self.get_session()
+
+        if self.default_fields is not None:
+            self.fields = self.default_fields
+        else:
+            self.fields = set()
+
+        self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+        url = f"{self.url_base}?offset=0&limit=1000"
+
+        prepared_req = s.prepare_request(
+            requests.Request(
+                method="POST",
+                url=url,
+                headers=self.http_headers,
+                json={
+                    "q": f"SELECT TOP 1000 * FROM {self.table} ORDER BY {self.replication_key} DESC"
+                }
+            )
+        )
+
+        response = s.send(prepared_req)
+        response.raise_for_status()
+        # NOTE: this will only get fields in the first 1k records, we could still miss things
+        for item in response.json().get("items"):
+            self.fields.update(set(item.keys()))
+
+        # Can't query links, so we remove it
+        self.fields.remove("links")
+
+    @property
+    def schema(self):
+        # Get netsuite schema for table
+        if self.fields is None:
+            self.get_schema()
+
+        fields = self.fields
+        properties_list = []
+        for field in fields:
+            if field == self.replication_key:
+                properties_list.append(th.Property(field.lower(), th.DateTimeType))
+            else:
+                properties_list.append(th.Property(field.lower(), th.StringType))
+
+        return th.PropertiesList(*properties_list).to_dict()
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
