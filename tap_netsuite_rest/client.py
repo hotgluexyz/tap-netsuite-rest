@@ -123,7 +123,7 @@ class NetSuiteStream(RESTStream):
             if (
                 isinstance(self, TransactionRootStream)
                 and self.config.get("transaction_lines_monthly")
-                and totalResults > 100000
+                and totalResults > 10000
             ):
                 self.logger.info(
                     f"totalResults = {totalResults}, time_jump = {self.time_jump}"
@@ -416,6 +416,7 @@ class NetSuiteStream(RESTStream):
                         yield row
                 else:
                     yield row
+
             previous_token = copy.deepcopy(next_page_token)
             next_page_token = self.get_next_page_token(
                 response=resp, previous_token=previous_token
