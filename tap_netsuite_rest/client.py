@@ -435,6 +435,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
     schema_response = None
     fields = None
     default_fields = None
+    date_fields = []
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -487,6 +488,20 @@ class NetsuiteDynamicStream(NetSuiteStream):
             for item in response.json().get("items"):
                 self.fields.update(set(item.keys()))
 
+            # decide which ones are date fields
+            pot_date_fields = [f for f in self.fields if 'date' in f]
+            for f in pot_date_fields:
+                match = [i for i in response.json().get("items") if i.get(f)]
+                if len(match) > 0:
+                    try:
+                        try:
+                            parse(match[0][f])
+                        except:
+                            pendulum.from_format(match[0][f], "MM/DD/YYYY")
+                        self.date_fields.append(f)
+                    except:
+                        pass
+
             # Can't query links, so we remove it
             self.fields.remove("links")
 
@@ -501,7 +516,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
             fields = self.fields
             properties_list = []
             for field in fields:
-                if field == self.replication_key:
+                if field == self.replication_key or field in self.date_fields:
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
                 else:
                     properties_list.append(th.Property(field.lower(), th.StringType))
@@ -637,6 +652,7 @@ class TransactionRootStream(NetSuiteStream):
     end_date = None
     fields = None
     default_fields = None
+    date_fields = []
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -673,6 +689,20 @@ class TransactionRootStream(NetSuiteStream):
         for item in response.json().get("items"):
             self.fields.update(set(item.keys()))
 
+        # decide which ones are date fields
+        pot_date_fields = [f for f in self.fields if 'date' in f]
+        for f in pot_date_fields:
+            match = [i for i in response.json().get("items") if i.get(f)]
+            if len(match) > 0:
+                try:
+                    try:
+                        parse(match[0][f])
+                    except:
+                        pendulum.from_format(match[0][f], "MM/DD/YYYY")
+                    self.date_fields.append(f)
+                except:
+                    pass
+
         # Can't query links, so we remove it
         self.fields.remove("links")
 
@@ -685,7 +715,7 @@ class TransactionRootStream(NetSuiteStream):
         fields = self.fields
         properties_list = []
         for field in fields:
-            if field == self.replication_key:
+            if field == self.replication_key or field in self.date_fields:
                 properties_list.append(th.Property(field.lower(), th.DateTimeType))
             else:
                 properties_list.append(th.Property(field.lower(), th.StringType))
