@@ -641,7 +641,6 @@ class TransactionLinesStream(TransactionRootStream):
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction )"""
 
     default_fields = set([
-        "recordtype",
         "id",
         "linelastmodifieddate",
         "quantity",
