@@ -591,10 +591,9 @@ class NetsuiteDynamicStream(NetSuiteStream):
                 except ValueError:
                     # If parsing fails, consider it as a type mismatch and attempt to cast
                     try:
-                        row[field] = datetime.fromisoformat(value)
-                    except ValueError:
-                        # Default value for type mismatch date-time
-                        row[field] = "1979-01-01 00:00:00"
+                        row[field] = parse(value)
+                    except:
+                        row[field] = pendulum.from_format(value, "MM/DD/YYYY")
             elif field_type == "boolean":
                 if not isinstance(value, bool):
                     # Attempt to cast to boolean
