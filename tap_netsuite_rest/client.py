@@ -436,6 +436,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
     fields = None
     default_fields = None
     date_fields = []
+    use_dynamic_fields = False
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -445,8 +446,13 @@ class NetsuiteDynamicStream(NetSuiteStream):
         RemoteDisconnected,
     ), max_tries=5, factor=2)
     def get_schema(self):
+        s = self.get_session()
+
         try:
-            s = self.get_session()
+            if self.use_dynamic_fields:
+                # TODO: refactor this to not force the except like this lol
+                raise Exception("Switching to dynamic fields...")
+
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
 
             account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")

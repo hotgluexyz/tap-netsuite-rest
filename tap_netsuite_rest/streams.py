@@ -746,6 +746,8 @@ class AccountsStream(NetsuiteDynamicStream):
     name = "accounts"
     primary_keys = ["id"]
     table = "account"
+    select = None
+    use_dynamic_fields = True
 
 
 class ConsolidatedExchangeRates(NetsuiteDynamicStream):
