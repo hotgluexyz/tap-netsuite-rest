@@ -372,6 +372,7 @@ class NetSuiteStream(RESTStream):
                 requests.exceptions.ReadTimeout,
                 requests.exceptions.ConnectionError,
                 RemoteDisconnected,
+                RetryRequest,
             ),
             max_tries=10,
             factor=3,
