@@ -584,6 +584,11 @@ class NetsuiteDynamicStream(NetSuiteStream):
                     ]
             field_format = field_info.get("format", None)
             if field_type == "string" and field_format == "date-time":
+                # if it's already correctly a datetime, don't need to do anything
+                if isinstance(value, datetime):
+                    row[field] = value
+                    continue
+
                 try:
                     # Attempt to parse string as date-time
                     # If successful, no need to cast
