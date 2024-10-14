@@ -24,6 +24,7 @@ import json
 from http.client import RemoteDisconnected
 from dateutil.relativedelta import relativedelta
 import pytz
+from copy import deepcopy
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -431,14 +432,14 @@ class NetSuiteStream(RESTStream):
             finished = next_page_token is None
 
 
-class NetsuiteDynamicStream(NetSuiteStream):
+class NetsuiteDynamicSchema(NetSuiteStream):
     select = "*"
     schema_response = None
     fields = None
-    default_fields = None
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
+    default_fields = []
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -471,10 +472,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
             response.raise_for_status()
             self.schema_response = response.json()
         except:
-            if self.default_fields is not None:
-                self.fields = self.default_fields
-            else:
-                self.fields = set()
+            self.fields = set()
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
             url = f"{self.url_base}?offset=0&limit=1000"
@@ -529,7 +527,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
 
         if self.fields:
             fields = self.fields
-            properties_list = []
+            properties_list = deepcopy(self.default_fields)
             for field in fields:
                 if field == self.replication_key or field in self.date_fields:
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
@@ -559,6 +557,17 @@ class NetsuiteDynamicStream(NetSuiteStream):
                     properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
             return th.PropertiesList(*properties_list).to_dict()
     
+   
+
+class NetsuiteDynamicStream(NetsuiteDynamicSchema):
+    select = "*"
+    schema_response = None
+    fields = None
+    date_fields = []
+    bool_fields = []
+    use_dynamic_fields = False
+    default_fields = []
+
     def process_number(self, field, value):
         return_value = value
         # Attempt to cast to float only if the value is a string with decimals
@@ -668,80 +677,12 @@ class NetsuiteDynamicStream(NetSuiteStream):
         row = self.process_types(row)
         return row
 
-class TransactionRootStream(NetSuiteStream):
+class TransactionRootStream(NetsuiteDynamicSchema):
     start_date = None
     end_date = None
     fields = None
-    default_fields = None
+    default_fields = []
     date_fields = []
-
-    @backoff.on_exception(backoff.expo, (
-        HTTPError,
-        RetriableAPIError,
-        requests.exceptions.ReadTimeout,
-        requests.exceptions.ConnectionError,
-        RemoteDisconnected,
-    ), max_tries=5, factor=2)
-    def get_schema(self):
-        s = self.get_session()
-
-        if self.default_fields is not None:
-            self.fields = self.default_fields
-        else:
-            self.fields = set()
-
-        self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-        url = f"{self.url_base}?offset=0&limit=1000"
-
-        prepared_req = s.prepare_request(
-            requests.Request(
-                method="POST",
-                url=url,
-                headers=self.http_headers,
-                json={
-                    "q": f"SELECT TOP 1000 * FROM {self.table} ORDER BY {self.replication_key} DESC"
-                }
-            )
-        )
-
-        response = s.send(prepared_req)
-        response.raise_for_status()
-        # NOTE: this will only get fields in the first 1k records, we could still miss things
-        for item in response.json().get("items"):
-            self.fields.update(set(item.keys()))
-
-        # decide which ones are date fields
-        pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f]
-        for f in pot_date_fields:
-            match = [i for i in response.json().get("items") if i.get(f)]
-            if len(match) > 0:
-                try:
-                    try:
-                        parse(match[0][f])
-                    except:
-                        pendulum.from_format(match[0][f], "MM/DD/YYYY")
-                    self.date_fields.append(f)
-                except:
-                    pass
-
-        # Can't query links, so we remove it
-        self.fields.remove("links")
-
-    @property
-    def schema(self):
-        # Get netsuite schema for table
-        if self.fields is None:
-            self.get_schema()
-
-        fields = self.fields
-        properties_list = []
-        for field in fields:
-            if field == self.replication_key or field in self.date_fields:
-                properties_list.append(th.Property(field.lower(), th.DateTimeType))
-            else:
-                properties_list.append(th.Property(field.lower(), th.StringType))
-
-        return th.PropertiesList(*properties_list).to_dict()
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]

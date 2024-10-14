@@ -414,10 +414,10 @@ class ItemStream(TransactionRootStream):
     type_filter = False
     replication_key = "lastmodifieddate"
 
-    default_fields = set([
-        "id",
-        "lastmodifieddate"
-    ])
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+    ]
 
 
 class ClassificationStream(NetSuiteStream):
@@ -619,15 +619,26 @@ class TransactionsStream(TransactionRootStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
-    default_fields = set([
-        "id",
-        "lastmodifieddate",
-        "trandate",
-        "trandisplayname",
-        "tranid",
-        "transactionnumber",
-        "type",
-    ])
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("closedate", th.DateType),
+        th.Property("duedate", th.DateType),
+        th.Property("createddate", th.DateTimeType),
+        th.Property("foreigntotal", th.NumberType),
+        th.Property("foreignamountpaid", th.NumberType),
+        th.Property("foreignamountunpaid", th.NumberType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.NumberType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.DateType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+    ]
 
 
 class TransactionLinesStream(TransactionRootStream):
@@ -640,12 +651,29 @@ class TransactionLinesStream(TransactionRootStream):
 
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction )"""
 
-    default_fields = set([
-        "id",
-        "linelastmodifieddate",
-        "quantity",
-        "transaction",
-    ])
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("linelastmodifieddate", th.DateTimeType),
+        th.Property("linesequencenumber", th.IntegerType),
+        th.Property("transaction", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.NumberType),
+        th.Property("createdfrom", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("accountinglinetype", th.StringType),
+        th.Property("foreignamount", th.NumberType),
+        th.Property("foreignamountpaid", th.NumberType),
+        th.Property("foreignamountunpaid", th.NumberType),
+        th.Property("revenueelement", th.StringType),
+        th.Property("revrecstartdate", th.DateType),
+        th.Property("revrecenddate", th.DateType),
+        th.Property("revrecterminmonths", th.NumberType),
+        th.Property("subscription", th.StringType),
+        th.Property("subscriptionline", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("quantitybilled", th.NumberType),
+    ]
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -749,6 +777,24 @@ class AccountsStream(NetsuiteDynamicStream):
     select = None
     use_dynamic_fields = True
 
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("parent", th.StringType),
+        th.Property("accttype", th.StringType),
+        th.Property("acctnumber", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("generalrate",th.StringType),
+        th.Property("fullname", th.StringType)
+    ]
+    
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+        # add accountsearchdisplayname as fullname as default field
+        selected_properties = ["account.accountsearchdisplayname AS fullname" if prop == "account.fullname AS fullname" else prop for prop in selected_properties]
+        return selected_properties
+
 
 class ConsolidatedExchangeRates(NetsuiteDynamicStream):
     name = "consolidated_exchange_rates"
@@ -794,10 +840,17 @@ class RevenueElementStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "revenueelement"
 
-    default_fields = set([
-        "id",
-        "quantity"
-    ])
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("referenceid", th.StringType),
+        th.Property("revrecstartdate", th.DateType),
+        th.Property("revrecenddate", th.DateType),
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("salesamount", th.NumberType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.NumberType),
+    ]
 
 
 class RelatedTransactionLinesStream(TransactionRootStream):
@@ -896,6 +949,17 @@ class SubscriptionsStream(NetsuiteDynamicStream):
     name = "subscriptions"
     primary_keys = ["id"]
     table = "subscription"
+
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("subscriptionrevision", th.IntegerType),
+        th.Property("customer", th.StringType),
+        th.Property("startdate", th.DateType),
+        th.Property("enddate", th.DateType),
+        th.Property("billingsubscriptionstatus", th.StringType),
+        th.Property("frequency", th.StringType),
+    ]
 
 
 class SubscriptionLinesStream(NetsuiteDynamicStream):
@@ -1201,11 +1265,13 @@ class SubscriptionChangeOrderStatusStream(NetSuiteStream):
         th.Property("name", th.StringType),
     ).to_dict()
 
-class SubscriptionLineRevisionStream(NetSuiteStream):
+
+class SubscriptionLineRevisionStream(NetsuiteDynamicStream):
     name = "subscription_line_revision"
     primary_keys = ["subscription", "subscriptionline", "subscriptionrevision"]
     table = "subscriptionlinerevision"
     select = "*"
+    use_dynamic_fields = True
 
     schema = th.PropertiesList(
         th.Property("appliedtochangeorder", th.BooleanType),
@@ -1228,6 +1294,14 @@ class SubscriptionLineRevisionStream(NetSuiteStream):
         th.Property("subscriptionrevision", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("totalcontractvalue", th.NumberType),
+        th.Property("item_id", th.StringType),
+        th.Property("item_name", th.StringType),
+        th.Property("revrecstartdate", th.DateType),
+        th.Property("revrecenddate", th.DateTimeType),
+        th.Property("action", th.StringType),
+        th.Property("subscriptionchangeorderstatus", th.StringType),
+        th.Property("frequency", th.StringType),
+        th.Property("repeatevery", th.IntegerType),
     ).to_dict()
 
 
