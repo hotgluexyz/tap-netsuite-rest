@@ -437,6 +437,7 @@ class NetsuiteDynamicStream(NetSuiteStream):
     fields = None
     default_fields = None
     date_fields = []
+    bool_fields = []
     use_dynamic_fields = False
 
     @backoff.on_exception(backoff.expo, (
@@ -509,6 +510,13 @@ class NetsuiteDynamicStream(NetSuiteStream):
                     except:
                         pass
 
+            # decide who ones are boolean fields
+            def all_bool(f):
+                match = [i for i in response.json().get("items") if i.get(f) in ["T", "F", None]]
+                return len(match) == len(response.json().get("items"))
+
+            self.bool_fields = [f for f in self.fields if all_bool(f)]
+
             # Can't query links, so we remove it
             self.fields.remove("links")
 
@@ -525,6 +533,8 @@ class NetsuiteDynamicStream(NetSuiteStream):
             for field in fields:
                 if field == self.replication_key or field in self.date_fields:
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
+                elif field in self.bool_fields:
+                    properties_list.append(th.Property(field.lower(), th.BooleanType))
                 else:
                     properties_list.append(th.Property(field.lower(), th.StringType))
 
