@@ -359,6 +359,14 @@ class NetsuiteDynamicStream(NetSuiteStream):
                 properties_list.append(th.Property(field.lower(), th.DateTimeType))
             elif value.get("format") == "date":
                 properties_list.append(th.Property(field.lower(), th.DateType))
+            elif value["type"] == "boolean":
+                properties_list.append(th.Property(field.lower(), th.BooleanType))
+            elif value["type"] == "string":
+                properties_list.append(th.Property(field.lower(), th.StringType))
+            elif value["type"] == "number":
+                properties_list.append(th.Property(field.lower(), th.NumberType))
+            elif value["type"] == "integer":
+                properties_list.append(th.Property(field.lower(), th.IntegerType))
             else:
                 properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
         return th.PropertiesList(*properties_list).to_dict()
