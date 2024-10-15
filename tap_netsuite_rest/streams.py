@@ -656,8 +656,6 @@ class TransactionLinesStream(TransactionRootStream):
         th.Property("linelastmodifieddate", th.DateTimeType),
         th.Property("linesequencenumber", th.IntegerType),
         th.Property("transaction", th.StringType),
-        th.Property("currency", th.StringType),
-        th.Property("exchangerate", th.NumberType),
         th.Property("createdfrom", th.StringType),
         th.Property("entity", th.StringType),
         th.Property("accountinglinetype", th.StringType),
