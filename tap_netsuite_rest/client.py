@@ -433,7 +433,6 @@ class NetSuiteStream(RESTStream):
 
 
 class NetsuiteDynamicSchema(NetSuiteStream):
-    select = "*"
     schema_response = None
     fields = None
     date_fields = []
