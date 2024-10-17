@@ -685,7 +685,7 @@ class TransactionLinesStream(TransactionRootStream):
         ]
         # get order query
         prefix = self.table
-        order_by = f"ORDER BY {prefix}.{self.replication_key}"
+        order_by = f"ORDER BY {prefix}.{self.replication_key}, transactionline.uniquekey"
 
         # get filter query
         start_date = self.start_date or self.get_starting_time(context)
