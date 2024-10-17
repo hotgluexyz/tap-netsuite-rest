@@ -346,6 +346,25 @@ class NetsuiteDynamicStream(NetSuiteStream):
         self.schema_response = response.json()
 
 
+    def get_jsonschema_type(self, obj):
+        dtype = obj.get("type")
+
+        if dtype in ["number", "integer"]:
+            # some fields are typed as numbers but the data coming is a string
+            return th.CustomType({"type": ["string", "number"]})
+        elif dtype == "string":
+            return th.StringType
+        elif dtype == "boolean":
+            return th.BooleanType
+        elif dtype == "array":
+                return th.ArrayType(
+                    th.CustomType({"type": ["string", "object", "number"]})
+                )
+        elif dtype == "object":
+            return th.CustomType({"type": ["string", "object", "number"]})
+        else:
+            return th.CustomType({"type": ["string", "object", "number"]})
+
     @property
     def schema(self):
         # Get netsuite schema for table
@@ -368,5 +387,8 @@ class NetsuiteDynamicStream(NetSuiteStream):
             elif value["type"] == "integer":
                 properties_list.append(th.Property(field.lower(), th.IntegerType))
             else:
+                # TODO: not sure which line below is correct
                 properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
+                # properties_list.append(th.Property(field.lower(), self.get_jsonschema_type(value)))
+
         return th.PropertiesList(*properties_list).to_dict()
