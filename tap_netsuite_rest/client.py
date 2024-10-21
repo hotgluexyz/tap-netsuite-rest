@@ -54,7 +54,24 @@ class NetSuiteStream(RESTStream):
     select_prefix = None
     order_by = None
     time_jump = relativedelta(months=1)
-    record_ids = []
+
+    def __init__(
+        self,
+        tap,
+        name = None,
+        schema = None,
+        path = None,
+    ) -> None:
+        """Initialize the REST stream.
+
+        Args:
+            tap: Singer Tap this stream belongs to.
+            schema: JSON schema for records in this stream.
+            name: Name of this stream.
+            path: URL path for this entity stream.
+        """
+        super().__init__(name=name, schema=schema, tap=tap, path=path)
+        self.record_ids = []
 
     @property
     def http_headers(self) -> dict:
@@ -119,7 +136,7 @@ class NetSuiteStream(RESTStream):
         offset += self.page_size
 
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
-        self.logger.info(f"[{self.name}] Got total results = {totalResults}. Offset = {offset}")
+        self.logger.info(f"[{self.name}] Total results = {totalResults}. Offset = {offset}")
 
         if has_next:
             if (
@@ -417,8 +434,6 @@ class NetSuiteStream(RESTStream):
                     if pk not in self.record_ids:
                         self.record_ids.append(pk)
                         yield row
-                    else:
-                        self.logger.info(f"Filtering out record with pk={pk} because it's a duplicate. {self.record_ids}")
                 else:
                     yield row
 
