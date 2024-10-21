@@ -418,7 +418,7 @@ class NetSuiteStream(RESTStream):
                         self.record_ids.append(pk)
                         yield row
                     else:
-                        self.logger.info(f"Filtering out record with pk={pk} because it's a duplicate")
+                        self.logger.info(f"Filtering out record with pk={pk} because it's a duplicate. {self.record_ids}")
                 else:
                     yield row
 
