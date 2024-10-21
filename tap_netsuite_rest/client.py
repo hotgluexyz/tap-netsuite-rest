@@ -119,6 +119,7 @@ class NetSuiteStream(RESTStream):
         offset += self.page_size
 
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
+        self.logger.info(f"[{self.name}] Got total results = {totalResults}. Offset = {offset}")
 
         if has_next:
             if (
@@ -416,6 +417,8 @@ class NetSuiteStream(RESTStream):
                     if pk not in self.record_ids:
                         self.record_ids.append(pk)
                         yield row
+                    else:
+                        self.logger.info(f"Filtering out record with pk={pk} because it's a duplicate")
                 else:
                     yield row
 
