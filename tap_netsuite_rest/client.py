@@ -547,7 +547,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         if self.fields is None and self.schema_response is None:
             self.get_schema()
 
-        if self.fields:
+        if self.fields is not None:
             fields = self.fields
             properties_list = deepcopy(self.default_fields)
             for field in fields:
