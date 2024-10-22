@@ -59,7 +59,7 @@ class SalesTransactionsStream(TransactionRootStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
-    custom_filter = "recordtype = 'salesorder'"
+    custom_filter = "transaction.recordtype = 'salesorder'"
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -649,10 +649,12 @@ class TransactionLinesStream(TransactionRootStream):
     start_date = None
     end_date = None
 
+    append_select = "Transaction.type as recordtype, "
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction )"""
 
     default_fields = [
         th.Property("id", th.StringType),
+        th.Property("recordtype", th.StringType),
         th.Property("linelastmodifieddate", th.DateTimeType),
         th.Property("linesequencenumber", th.IntegerType),
         th.Property("transaction", th.StringType),
@@ -672,6 +674,14 @@ class TransactionLinesStream(TransactionRootStream):
         th.Property("quantity", th.NumberType),
         th.Property("quantitybilled", th.NumberType),
     ]
+
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+
+        if 'transactionline.recordtype AS recordtype' in selected_properties:
+            selected_properties.remove('transactionline.recordtype AS recordtype')
+
+        return selected_properties
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -704,9 +714,6 @@ class TransactionLinesStream(TransactionRootStream):
             filters = "WHERE " + " AND ".join(filters)
 
         selected_properties = self.get_selected_properties()
-
-        if 'transactionline.recordtype AS recordtype' in selected_properties:
-            selected_properties.remove('transactionline.recordtype AS recordtype')
 
         select = "Transaction.type as recordtype, " + ", ".join(selected_properties)
 

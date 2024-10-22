@@ -53,6 +53,7 @@ class NetSuiteStream(RESTStream):
     replication_key_prefix = None
     select_prefix = None
     order_by = None
+    append_select = None
     time_jump = relativedelta(months=1)
 
     def __init__(
@@ -346,6 +347,9 @@ class NetSuiteStream(RESTStream):
             select = self.select
         else:
             select = ", ".join(selected_properties)
+
+        if self.append_select:
+            select = self.append_select + select
 
         join = self.join if self.join else ""
 
@@ -650,9 +654,9 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
             elif field_type == "boolean":
                 if not isinstance(value, bool):
                     # Attempt to cast to boolean
-                    if value.lower() == "true":
+                    if value.lower() in ["true", "t"]:
                         row[field] = True
-                    elif value.lower() == "false":
+                    elif value.lower() in ["false", "f"]:
                         row[field] = False
                     else:
                         # No need to raise an error, just continue with the loop
