@@ -506,34 +506,39 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
 
             response = s.send(prepared_req)
-            response.raise_for_status()
-            # NOTE: this will only get fields in the first 1k records, we could still miss things
-            for item in response.json().get("items"):
-                self.fields.update(set(item.keys()))
 
-            # decide which ones are date fields
-            pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f]
-            for f in pot_date_fields:
-                match = [i for i in response.json().get("items") if i.get(f)]
-                if len(match) > 0:
-                    try:
+            try:
+                response.raise_for_status()
+                # NOTE: this will only get fields in the first 1k records, we could still miss things
+                for item in response.json().get("items"):
+                    self.fields.update(set(item.keys()))
+
+                # decide which ones are date fields
+                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f]
+                for f in pot_date_fields:
+                    match = [i for i in response.json().get("items") if i.get(f)]
+                    if len(match) > 0:
                         try:
-                            parse(match[0][f])
+                            try:
+                                parse(match[0][f])
+                            except:
+                                pendulum.from_format(match[0][f], "MM/DD/YYYY")
+                            self.date_fields.append(f)
                         except:
-                            pendulum.from_format(match[0][f], "MM/DD/YYYY")
-                        self.date_fields.append(f)
-                    except:
-                        pass
+                            pass
 
-            # decide who ones are boolean fields
-            def all_bool(f):
-                match = [i for i in response.json().get("items") if i.get(f) in ["T", "F", None]]
-                return len(match) == len(response.json().get("items"))
+                # decide who ones are boolean fields
+                def all_bool(f):
+                    match = [i for i in response.json().get("items") if i.get(f) in ["T", "F", None]]
+                    return len(match) == len(response.json().get("items"))
 
-            self.bool_fields = [f for f in self.fields if all_bool(f)]
+                self.bool_fields = [f for f in self.fields if all_bool(f)]
 
-            # Can't query links, so we remove it
-            self.fields.remove("links")
+                # Can't query links, so we remove it
+                self.fields.remove("links")
+            except:
+                self.logger.exception(f"Failed to get schema for {self.table} - stream: {self.name}")
+                pass
 
 
     @property
