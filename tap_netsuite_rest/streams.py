@@ -623,6 +623,7 @@ class TransactionsStream(TransactionRootStream):
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
         th.Property("entity", th.StringType),
+        th.Property("otherrefnum", th.StringType),
         th.Property("closedate", th.DateType),
         th.Property("duedate", th.DateType),
         th.Property("createddate", th.DateTimeType),
