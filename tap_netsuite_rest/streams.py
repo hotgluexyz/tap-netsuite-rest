@@ -284,6 +284,27 @@ class VendorStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
 
+class ShippingAddressStream(NetsuiteDynamicStream):
+    name = "shipping_address"
+    primary_keys = ["nkey"]
+    table = "TransactionShippingAddress"
+    replication_key = "lastmodifieddate"
+
+
+class BillingAddressStream(NetsuiteDynamicStream):
+    name = "billing_address"
+    primary_keys = ["nkey"]
+    table = "TransactionBillingAddress"
+    replication_key = "lastmodifieddate"
+
+
+class TermStream(NetsuiteDynamicStream):
+    name = "term"
+    primary_keys = ["id"]
+    table = "term"
+    replication_key = "lastmodifieddate"
+
+
 class TrialBalanceReportStream(NetSuiteStream):
     name = "trial_balance_report"
     start_date_f = None
@@ -633,6 +654,9 @@ class TransactionsStream(TransactionRootStream):
         th.Property("currency", th.StringType),
         th.Property("exchangerate", th.NumberType),
         th.Property("status", th.StringType),
+        th.Property("status_description", th.StringType),
+        th.Property("approvalstatus", th.StringType),
+        th.Property("approvalstatus_description", th.StringType),
         th.Property("trandate", th.DateType),
         th.Property("trandisplayname", th.StringType),
         th.Property("memo", th.StringType),
@@ -640,6 +664,19 @@ class TransactionsStream(TransactionRootStream):
         th.Property("tranid", th.StringType),
         th.Property("transactionnumber", th.StringType),
     ]
+
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+        ignore_queries = ['transaction.status_description AS status_description', 'transaction.approvalstatus_description AS approvalstatus_description']
+
+        for q in ignore_queries:
+            if q in selected_properties:
+                selected_properties.remove(q)
+
+        selected_properties.append('BUILTIN.DF( Transaction.Status ) AS status_description')
+        selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
+
+        return selected_properties
 
 
 class TransactionLinesStream(TransactionRootStream):
