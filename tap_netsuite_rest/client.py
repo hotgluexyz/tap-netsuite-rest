@@ -434,7 +434,7 @@ class NetSuiteStream(RESTStream):
                     if len(self.primary_keys) == 1:
                         pk = final_row[self.primary_keys[0]]
                     else:
-                        pk = "-".join([final_row[key] for key in self.primary_keys])
+                        pk = "-".join([str(final_row[key]) for key in self.primary_keys])
                     if pk not in self.record_ids:
                         self.record_ids.append(pk)
                         yield row
@@ -703,7 +703,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         row = self.process_types(row)
         return row
 
-class TransactionRootStream(NetsuiteDynamicSchema):
+class TransactionRootStream(NetsuiteDynamicStream):
     start_date = None
     end_date = None
     fields = None
