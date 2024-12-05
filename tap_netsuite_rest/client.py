@@ -704,6 +704,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         return row
 
 class TransactionRootStream(NetsuiteDynamicStream):
+    select = None
     start_date = None
     end_date = None
     fields = None
