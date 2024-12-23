@@ -539,7 +539,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 self.bool_fields = [f for f in self.fields if all_bool(f)]
 
                 # Can't query links, so we remove it
-                self.fields.remove("links")
+                if "links" in self.fields:
+                    self.fields.remove("links")
             except:
                 self.logger.exception(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
