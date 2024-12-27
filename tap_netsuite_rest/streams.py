@@ -288,7 +288,7 @@ class VendorStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
     def post_process(self, row, context):
-        row["lastmodifieddate"] = row["lastmodifieddate_formatted"]
+        row["lastmodifieddate"] = row["lastmodifieddate_formatted"].replace(" ", "T") + "+00:00"
         return row
 
 
@@ -826,7 +826,7 @@ class SubsidiariesStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
     def post_process(self, row, context):
-        row["lastmodifieddate"] = row["lastmodifieddate_formatted"]
+        row["lastmodifieddate"] = row["lastmodifieddate_formatted"].replace(" ", "T") + "+00:00"
         return row
 
 
