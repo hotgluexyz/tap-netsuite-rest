@@ -797,6 +797,8 @@ class CurrenciesStream(NetsuiteDynamicStream):
     name = "currencies"
     primary_keys = ["id"]
     table = "currency"
+    select = None
+    filter_fields = True
 
 
 class DepartmentsStream(NetsuiteDynamicStream):
@@ -811,6 +813,8 @@ class SubsidiariesStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "subsidiary"
     replication_key = "lastmodifieddate"
+    select = None
+    filter_fields = True
 
 
 class AccountsStream(NetsuiteDynamicStream):
@@ -849,6 +853,8 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
     name = "accounting_periods"
     primary_keys = ["id"]
     table = "accountingperiod"
+    select = None
+    filter_fields = True
 
 
 class CustomersStream(NetsuiteDynamicStream):
