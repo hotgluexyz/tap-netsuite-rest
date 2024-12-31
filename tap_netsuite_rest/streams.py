@@ -849,6 +849,7 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
     name = "accounting_periods"
     primary_keys = ["id"]
     table = "accountingperiod"
+    select = None
 
 
 class CustomersStream(NetsuiteDynamicStream):
