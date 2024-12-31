@@ -518,7 +518,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     self.fields.update(set(item.keys()))
 
                 # decide which ones are date fields
-                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f]
+                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f and 'custrecord' not in f]
                 for f in pot_date_fields:
                     match = [i for i in response.json().get("items") if i.get(f)]
                     if len(match) > 0:
