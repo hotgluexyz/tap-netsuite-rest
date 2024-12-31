@@ -797,6 +797,8 @@ class CurrenciesStream(NetsuiteDynamicStream):
     name = "currencies"
     primary_keys = ["id"]
     table = "currency"
+    select = None
+    use_dynamic_fields = True
 
 
 class DepartmentsStream(NetsuiteDynamicStream):
