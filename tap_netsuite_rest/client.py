@@ -460,6 +460,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
+    filter_fields = False
     default_fields = []
 
     @backoff.on_exception(backoff.expo, (
@@ -493,6 +494,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             response.raise_for_status()
             self.schema_response = response.json()
         except:
+            pass
+
+        if not self.schema_response or self.filter_fields:
             self.fields = set()
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
@@ -518,7 +522,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     self.fields.update(set(item.keys()))
 
                 # decide which ones are date fields
-                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f]
+                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f and 'custrecord' not in f]
                 for f in pot_date_fields:
                     match = [i for i in response.json().get("items") if i.get(f)]
                     if len(match) > 0:
@@ -542,7 +546,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 if "links" in self.fields:
                     self.fields.remove("links")
             except:
-                self.logger.exception(f"Failed to get schema for {self.table} - stream: {self.name}")
+                self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
 
@@ -552,7 +556,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         if self.fields is None and self.schema_response is None:
             self.get_schema()
 
-        if self.fields is not None:
+        if self.fields is not None and not self.schema_response:
             fields = self.fields
             properties_list = deepcopy(self.default_fields)
             for field in fields:
@@ -569,6 +573,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             response = self.schema_response
             properties_list = []
             for field, value in response.get("properties").items():
+                if self.fields and self.filter_fields and field.lower() not in self.fields:
+                    continue
+
                 if value.get("format") == 'date-time':
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
                 elif value.get("format") == "date":
