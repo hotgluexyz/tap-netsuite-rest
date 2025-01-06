@@ -38,6 +38,7 @@ class SalesOrdersStream(NetSuiteStream):
         """
     custom_filter = "tl.itemtype='InvtPart' AND t.recordtype = 'salesorder'"
     replication_key_prefix = "t"
+    custom_filter_prefix = "t"
 
     replication_key = "lastmodifieddate"
 
@@ -170,6 +171,7 @@ class SalesTransactionLinesStream(TransactionRootStream):
     custom_filter = "t.recordtype = 'salesorder'"
     replication_key_prefix = "tl"
     select_prefix = "tl"
+    custom_filter_prefix = "tl"
 
     schema = th.PropertiesList(
         th.Property("blandedcost", th.StringType),
@@ -269,6 +271,7 @@ class InventoryPricingStream(NetSuiteStream):
     table = "pricing p"
     join = "INNER JOIN item i ON p.item = i.id"
     custom_filter = "i.itemtype='InvtPart'"
+    custom_filter_prefix = "p"
 
     schema = th.PropertiesList(
         th.Property("ns_item_id", th.StringType),
@@ -505,6 +508,8 @@ class ProfitLossReportStream(NetSuiteStream):
     ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
     replication_key = "date"
+    custom_filter_prefix = "TransactionLine"
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
@@ -600,6 +605,8 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     ORDER BY AccountingPeriod.StartDate ASC
     """
     replication_key = "date"
+    custom_filter_prefix = "TransactionLine"
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
@@ -697,6 +704,7 @@ class TransactionLinesStream(TransactionRootStream):
 
     append_select = "Transaction.type as recordtype, "
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction )"""
+    custom_filter_prefix = "transactionline"
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -797,6 +805,10 @@ class TransactionLinesStream(TransactionRootStream):
         filters = [
             "( Transaction.type IN ( 'RevArrng', 'CustCred', 'CustPymt', 'CustDep', 'CustRfnd', 'CustInvc', 'SalesOrd' ) )"
         ]
+
+        # add config filters
+        filters.extend(self.build_config_filters())
+
         # get order query
         prefix = self.table
         order_by = f"ORDER BY {prefix}.{self.replication_key}, transactionline.uniquekey"
@@ -1038,6 +1050,7 @@ class PurchaseOrdersStream(NetSuiteStream):
         """
     custom_filter = "t.recordtype = 'purchaseorder'"
     replication_key_prefix = "t"
+    custom_filter_prefix = "t"
 
     replication_key = "lastmodifieddate"
 
