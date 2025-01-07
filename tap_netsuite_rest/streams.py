@@ -280,16 +280,8 @@ class InventoryPricingStream(NetSuiteStream):
 class VendorStream(NetsuiteDynamicStream):
     name = "vendor"
     primary_keys = ["id"]
-    select = """
-        *,
-        TO_CHAR (lastmodifieddate, 'YYYY-MM-DD HH24:MI:SS') AS lastmodifieddate_formatted,
-        """
     table = "vendor"
     replication_key = "lastmodifieddate"
-
-    def post_process(self, row, context):
-        row["lastmodifieddate"] = row["lastmodifieddate_formatted"].replace(" ", "T") + "+00:00"
-        return row
 
 
 class ShippingAddressStream(NetsuiteDynamicStream):
@@ -878,18 +870,10 @@ class DepartmentsStream(NetsuiteDynamicStream):
 class SubsidiariesStream(NetsuiteDynamicStream):
     name = "subsidiaries"
     primary_keys = ["id"]
-    select = """
-        *,
-        TO_CHAR (lastmodifieddate, 'YYYY-MM-DD HH24:MI:SS') AS lastmodifieddate_formatted,
-        """
     table = "subsidiary"
     replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
-
-    def post_process(self, row, context):
-        row["lastmodifieddate"] = row["lastmodifieddate_formatted"].replace(" ", "T") + "+00:00"
-        return row
 
 
 class AccountsStream(NetsuiteDynamicStream):
