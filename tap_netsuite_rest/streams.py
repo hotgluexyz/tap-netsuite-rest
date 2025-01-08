@@ -285,6 +285,8 @@ class VendorStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "vendor"
     replication_key = "lastmodifieddate"
+    select = None
+    filter_fields = True
 
 
 class ShippingAddressStream(NetsuiteDynamicStream):
