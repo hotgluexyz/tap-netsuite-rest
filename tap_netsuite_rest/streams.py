@@ -1,7 +1,8 @@
 """Stream type classes for tap-netsuite-rest."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, List
+import requests
 
 from singer_sdk import typing as th
 
@@ -12,7 +13,12 @@ from pendulum import parse
 from uuid import uuid4
 from dateutil.relativedelta import relativedelta
 
-import requests
+import copy
+from singer_sdk.helpers._state import (
+    finalize_state_progress_markers,
+    log_sort_error,
+)
+from singer_sdk.exceptions import InvalidStreamSortException
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -283,6 +289,91 @@ class VendorStream(NetsuiteDynamicStream):
     table = "vendor"
     replication_key = "lastmodifieddate"
 
+    def get_child_context(self, record, context) -> dict:
+        address_keys = ["defaultbillingaddress", "defaultshippingaddress"]
+        # Collect valid address IDs
+        address_ids = {
+            record.get(key) for key in address_keys 
+            if record.get(key)
+        }
+        return {"ids": list(address_ids)}
+
+    def _sync_records(  # noqa C901  # too complex
+        self, context: Optional[dict] = None
+    ) -> None:
+        record_count = 0
+        current_context: Optional[dict]
+        context_list: Optional[List[dict]]
+        context_list = [context] if context is not None else self.partitions
+        selected = self.selected
+
+        for current_context in context_list or [{}]:
+            partition_record_count = 0
+            current_context = current_context or None
+            state = self.get_context_state(current_context)
+            state_partition_context = self._get_state_partition_context(current_context)
+            self._write_starting_replication_value(current_context)
+            child_context: Optional[dict] = (
+                None if current_context is None else copy.copy(current_context)
+            )
+            child_context_bulk = {"ids": []}
+            for record_result in self.get_records(current_context):
+                if isinstance(record_result, tuple):
+                    # Tuple items should be the record and the child context
+                    record, child_context = record_result
+                else:
+                    record = record_result
+                child_context = copy.copy(
+                    self.get_child_context(record=record, context=child_context)
+                )
+                for key, val in (state_partition_context or {}).items():
+                    # Add state context to records if not already present
+                    if key not in record:
+                        record[key] = val
+
+                # Sync children, except when primary mapper filters out the record
+                if self.stream_maps[0].get_filter_result(record):
+                    # add id to child_context_bulk ids
+                    child_context_bulk["ids"].extend(child_context["ids"])
+                if len(child_context_bulk["ids"])>=1000:
+                    self._sync_children(child_context_bulk)
+                    child_context_bulk = {"ids": []}
+
+                self._check_max_record_limit(record_count)
+                if selected:
+                    if (record_count - 1) % self.STATE_MSG_FREQUENCY == 0:
+                        self._write_state_message()
+                    self._write_record_message(record)
+                    try:
+                        self._increment_stream_state(record, context=current_context)
+                    except InvalidStreamSortException as ex:
+                        log_sort_error(
+                            log_fn=self.logger.error,
+                            ex=ex,
+                            record_count=record_count + 1,
+                            partition_record_count=partition_record_count + 1,
+                            current_context=current_context,
+                            state_partition_context=state_partition_context,
+                            stream_name=self.name,
+                        )
+                        raise ex
+
+                record_count += 1
+                partition_record_count += 1
+            # process remaining child context if len < 1000
+            if len(child_context_bulk["ids"]):
+                self._sync_children(child_context_bulk)
+            #----
+            if current_context == state_partition_context:
+                # Finalize per-partition state only if 1:1 with context
+                finalize_state_progress_markers(state)
+        if not context:
+            # Finalize total stream only if we have the full full context.
+            # Otherwise will be finalized by tap at end of sync.
+            finalize_state_progress_markers(self.stream_state)
+        self._write_record_count_log(record_count=record_count, context=context)
+        # Reset interim bookmarks before emitting final STATE message:
+        self._write_state_message()
 
 class ShippingAddressStream(NetsuiteDynamicStream):
     name = "shipping_address"
@@ -1488,3 +1579,24 @@ class TaxTypeStream(NetsuiteDynamicStream):
     name = "tax_type"
     primary_keys = ["id"]
     table = "taxtype"
+
+
+class VendorCategoryStream(NetsuiteDynamicStream):
+    name = "vendor_category"
+    primary_keys = ["id"]
+    table = "vendorcategory"
+
+
+class VendorEntityAddressesStream(NetsuiteDynamicStream):
+    name = "vendor_addresses"
+    primary_keys = ["nkey"]
+    table = "vendoraddressbookentityaddress"
+    parent_stream_type = VendorStream
+    custom_filter = ""
+
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
