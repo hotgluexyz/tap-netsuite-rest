@@ -55,6 +55,7 @@ class NetSuiteStream(RESTStream):
     order_by = None
     append_select = None
     time_jump = relativedelta(months=1)
+    always_add_default_fields = False
 
     def __init__(
         self,
@@ -570,7 +571,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         if self.schema_response:
             response = self.schema_response
-            properties_list = []
+            properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
             for field, value in response.get("properties").items():
                 if self.fields and self.filter_fields and field.lower() not in self.fields:
                     continue

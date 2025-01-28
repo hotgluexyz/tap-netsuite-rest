@@ -288,6 +288,11 @@ class VendorStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "vendor"
     replication_key = "lastmodifieddate"
+    always_add_default_fields = True
+
+    default_fields = [
+        th.Property("defaultbillingaddress", th.StringType)
+    ]
 
     def get_child_context(self, record, context) -> dict:
         address_keys = ["defaultbillingaddress", "defaultshippingaddress"]
@@ -335,7 +340,7 @@ class VendorStream(NetsuiteDynamicStream):
                 if self.stream_maps[0].get_filter_result(record):
                     # add id to child_context_bulk ids
                     child_context_bulk["ids"].extend(child_context["ids"])
-                if len(child_context_bulk["ids"])>=1000:
+                if len(child_context_bulk["ids"])>=self.page_size:
                     self._sync_children(child_context_bulk)
                     child_context_bulk = {"ids": []}
 
