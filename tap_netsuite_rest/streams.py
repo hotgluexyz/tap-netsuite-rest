@@ -63,6 +63,18 @@ class SalesTransactionsStream(TransactionRootStream):
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
 
+
+    select = """
+        transaction.*
+        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
+        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
+        """
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
         th.Property("actualshipdate", th.DateTimeType),
@@ -119,11 +131,25 @@ class VendorBillsStream(NetSuiteStream):
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
 
+
+    select = """
+        transaction.*
+        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
+        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
+        """
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
         th.Property("approvalstatus", th.StringType),
         th.Property("balsegstatus", th.StringType),
         th.Property("billingstatus", th.StringType),
+        th.Property("billingaddress", th.StringType),
+        th.Property("shippingaddress", th.StringType),
         th.Property("closedate", th.DateTimeType),
         th.Property("createdby", th.StringType),
         th.Property("createddate", th.DateTimeType),
@@ -320,18 +346,20 @@ class VendorCategoryStream(NetsuiteDynamicStream):
     table = "vendorCategory"
 
 
-class ShippingAddressStream(NetsuiteDynamicStream):
-    name = "shipping_address"
-    primary_keys = ["nkey"]
-    table = "TransactionShippingAddress"
-    replication_key = "lastmodifieddate"
+# The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
+# Instead, shipping + billing address is joined on transaction streams
+# class ShippingAddressStream(NetsuiteDynamicStream):
+#     name = "shipping_address"
+#     primary_keys = ["nkey"]
+#     table = "TransactionShippingAddress"
+#     replication_key = "lastmodifieddate"
 
 
-class BillingAddressStream(NetsuiteDynamicStream):
-    name = "billing_address"
-    primary_keys = ["nkey"]
-    table = "TransactionBillingAddress"
-    replication_key = "lastmodifieddate"
+# class BillingAddressStream(NetsuiteDynamicStream):
+#     name = "billing_address"
+#     primary_keys = ["nkey"]
+#     table = "TransactionBillingAddress"
+#     replication_key = "lastmodifieddate"
 
 
 class TermStream(NetsuiteDynamicStream):
@@ -680,10 +708,25 @@ class TransactionsStream(TransactionRootStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
+
+    
+    select = """
+        transaction.*
+        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
+        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
+        """
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+    
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
         th.Property("entity", th.StringType),
+        th.Property("shippingaddress", th.StringType),
+        th.Property("billingaddress", th.StringType),
         th.Property("otherrefnum", th.StringType),
         th.Property("closedate", th.DateType),
         th.Property("duedate", th.DateType),
