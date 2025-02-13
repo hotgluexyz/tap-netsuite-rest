@@ -759,3 +759,10 @@ class TransactionRootStream(NetsuiteDynamicStream):
         )
         self.logger.info(f"Making query ({timeframe})")
         return payload
+
+
+    # Remove double spaces that might result from empty address fields
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        row["shippingaddress"] = row.get("shippingaddress").replace("  ", " ") if row.get("shippingaddress") else None
+        row["billingaddress"] = row.get("billingaddress").replace("  ", " ") if row.get("billingaddress") else None
+        return row
