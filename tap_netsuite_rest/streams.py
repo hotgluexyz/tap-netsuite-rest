@@ -10,9 +10,7 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 from uuid import uuid4
-from dateutil.relativedelta import relativedelta
 
-import requests
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -123,7 +121,7 @@ class SalesTransactionsStream(TransactionRootStream):
     ).to_dict()
 
 
-class VendorBillsStream(NetSuiteStream):
+class VendorBillsStream(TransactionRootStream):
     name = "vendor_bill_transactions"
     primary_keys = ["id"]
     table = "transaction"
@@ -187,6 +185,14 @@ class VendorBillsStream(NetSuiteStream):
         th.Property("voided", th.StringType),
     ).to_dict()
 
+    def get_selected_properties(self):
+        transaction_properties = super().get_selected_properties()
+        transaction_properties.extend([
+            "COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress",
+            "COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress"
+        ])
+        return transaction_properties
+    
 
 class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
@@ -744,7 +750,11 @@ class TransactionsStream(TransactionRootStream):
 
         selected_properties.append('BUILTIN.DF( Transaction.Status ) AS status_description')
         selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
-
+        
+        # Build Formatted Addresses
+        selected_properties.append("COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress")
+        selected_properties.append("COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress")
+        
         return selected_properties
 
 
