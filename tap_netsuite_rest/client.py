@@ -766,3 +766,4 @@ class TransactionRootStream(NetsuiteDynamicStream):
         row["shippingaddress"] = row.get("shippingaddress").replace("  ", " ") if row.get("shippingaddress") else None
         row["billingaddress"] = row.get("billingaddress").replace("  ", " ") if row.get("billingaddress") else None
         return row
+    
