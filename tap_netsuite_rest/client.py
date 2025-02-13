@@ -5,6 +5,7 @@ import backoff
 import requests
 import pendulum
 import copy
+import re
 
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -763,7 +764,12 @@ class TransactionRootStream(NetsuiteDynamicStream):
 
     # Remove double spaces that might result from empty address fields
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        row["shippingaddress"] = row.get("shippingaddress").replace("  ", " ") if row.get("shippingaddress") else None
-        row["billingaddress"] = row.get("billingaddress").replace("  ", " ") if row.get("billingaddress") else None
+        # Collapse duplicate spaces in address fields
+        if row.get("shippingaddress"):
+            row["shippingaddress"] = re.sub(r'(, )+', ', ', row["shippingaddress"]).strip(', ')
+        if row.get("billingaddress"):
+            row["billingaddress"] = re.sub(r'(, )+', ', ', row["billingaddress"]).strip(', ')
+        
+
         return row
     
