@@ -61,11 +61,11 @@ class SalesTransactionsStream(TransactionRootStream):
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
 
+
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
         LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
     """
-
 
     def get_selected_properties(self):
         transaction_properties = super().get_selected_properties()
@@ -130,6 +130,7 @@ class VendorBillsStream(TransactionRootStream):
     table = "transaction"
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
+
 
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
