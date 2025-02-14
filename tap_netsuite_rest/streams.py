@@ -314,16 +314,17 @@ class VendorStream(NetsuiteDynamicStream):
     select = None
     filter_fields = True
 
-    select = """
-        vendor.*
-        , vc.name as categoryname
-        """
     join = """
         INNER JOIN vendorCategory vc ON(vendor.category = vc.id)
         """
     default_fields = [
         th.Property("categoryname", th.StringType),
     ]
+
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+        selected_properties.append("vc.name as categoryname")
+        return selected_properties
    
 class VendorCategoryStream(NetsuiteDynamicStream):
     name = "vendor_category"
