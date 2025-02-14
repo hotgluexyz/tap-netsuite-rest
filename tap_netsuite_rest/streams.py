@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 from pendulum import parse
 from uuid import uuid4
 from dateutil.relativedelta import relativedelta
-from copy import deepcopy
 
 import requests
 
@@ -322,23 +321,9 @@ class VendorStream(NetsuiteDynamicStream):
     join = """
         INNER JOIN vendorCategory vc ON(vendor.category = vc.id)
         """
-    
-    @property
-    def schema(self):
-        # Get the schema from the parent class
-        parent_schema = super().schema
-
-        # Add additional properties
-        additional_properties = {
-            "categoryname": {
-                "type": ["string", "null"]
-            }
-        }
-
-        # Merge the additional properties into the parent schema
-        parent_schema["properties"].update(additional_properties)
-
-        return parent_schema
+    default_fields = [
+        th.Property("categoryname", th.StringType),
+    ]
    
 class VendorCategoryStream(NetsuiteDynamicStream):
     name = "vendor_category"
