@@ -767,8 +767,12 @@ class TransactionRootStream(NetsuiteDynamicStream):
         # Collapse duplicate spaces in address fields
         if row.get("shippingaddress"):
             row["shippingaddress"] = re.sub(r'(, )+', ', ', row["shippingaddress"]).strip(', ')
+            if row["shippingaddress"] == "":
+                row.pop("shippingaddress")
         if row.get("billingaddress"):
             row["billingaddress"] = re.sub(r'(, )+', ', ', row["billingaddress"]).strip(', ')
+            if row["billingaddress"] == "":
+                row.pop("billingaddress")
         
 
         return row
