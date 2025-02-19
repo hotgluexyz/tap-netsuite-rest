@@ -317,8 +317,11 @@ class VendorStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "vendor"
     replication_key = "lastmodifieddate"
-    select = None
-    filter_fields = True
+    select = """
+    vendor.*
+    , vendor.lastmodifieddate as lastmodifieddate
+    , vc.name as categoryname
+    """
 
     join = """
         INNER JOIN vendorCategory vc ON(vendor.category = vc.id)
