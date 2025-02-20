@@ -279,7 +279,11 @@ class VendorStream(BulkParentStream):
     name = "vendor"
     primary_keys = ["id"]
     table = "vendor"
+    query_table = "vendor v"
+    select = "v.*, vsr.subsidiary, vsr.entity"
+    join = "JOIN vendorsubsidiaryrelationship vsr ON vsr.entity = v.id"
     replication_key = "lastmodifieddate"
+    replication_key_prefix = "v"
     always_add_default_fields = True
 
     default_fields = [
@@ -450,6 +454,26 @@ class ItemStream(TransactionRootStream):
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("fullname", th.StringType),
+        th.Property("itemid", th.StringType),
+        th.Property("displayname", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("subtype", th.StringType),
+        th.Property("totalquantityonhand", th.StringType),
+        th.Property("itemid", th.StringType),
+        th.Property("displayname", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("subtype", th.StringType),
+        th.Property("totalquantityonhand", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("assetaccount", th.StringType),
+        th.Property("incomeaccount", th.StringType),
+        th.Property("expenseaccount", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("createddate", th.DateTimeType),
     ]
 
 

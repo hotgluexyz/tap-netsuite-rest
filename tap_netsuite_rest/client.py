@@ -63,6 +63,7 @@ class NetSuiteStream(RESTStream):
     append_select = None
     time_jump = relativedelta(months=1)
     always_add_default_fields = False
+    query_table = None
 
     def __init__(
         self,
@@ -360,9 +361,10 @@ class NetSuiteStream(RESTStream):
             select = self.append_select + select
 
         join = self.join if self.join else ""
+        table = self.query_table or self.table
 
         payload = dict(
-            q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
+            q=f"SELECT {select} FROM {table} {join} {filters} {order_by}"
         )
         self.logger.info(f"Making query ({payload['q']})")
         return payload
