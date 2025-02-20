@@ -161,7 +161,7 @@ class VendorBillsStream(NetSuiteStream):
         th.Property("voided", th.StringType),
     ).to_dict()
 
-    
+
 class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
     primary_keys = ["id", "transaction"]
