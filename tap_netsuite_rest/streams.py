@@ -61,16 +61,18 @@ class SalesTransactionsStream(TransactionRootStream):
     custom_filter = "transaction.recordtype = 'salesorder'"
 
 
-    select = """
-        transaction.*
-        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
-        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
-        """
-
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
         LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
     """
+
+    def get_selected_properties(self):
+        transaction_properties = super().get_selected_properties()
+        transaction_properties.extend([
+            "COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress",
+            "COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress"
+        ])
+        return transaction_properties
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -128,12 +130,6 @@ class VendorBillsStream(TransactionRootStream):
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
 
-
-    select = """
-        transaction.*
-        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
-        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
-        """
 
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
@@ -329,17 +325,6 @@ class VendorStream(NetsuiteDynamicStream):
     default_fields = [
         th.Property("categoryname", th.StringType),
     ]
-
-    def get_selected_properties(self):
-        selected_properties = super().get_selected_properties()
-        selected_properties.append("vc.name as categoryname")
-        return selected_properties
-   
-class VendorCategoryStream(NetsuiteDynamicStream):
-    name = "vendor_category"
-    primary_keys = ["id"]
-    table = "vendorCategory"
-
 
 # The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
 # Instead, shipping + billing address is joined on transaction streams
@@ -704,12 +689,6 @@ class TransactionsStream(TransactionRootStream):
     table = "transaction"
     replication_key = "lastmodifieddate"
 
-    
-    select = """
-        transaction.*
-        , COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress
-        , COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress
-        """
 
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
