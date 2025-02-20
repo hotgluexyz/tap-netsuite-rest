@@ -770,3 +770,4 @@ class TransactionRootStream(NetsuiteDynamicStream):
         )
         self.logger.info(f"Making query ({timeframe})")
         return payload
+    

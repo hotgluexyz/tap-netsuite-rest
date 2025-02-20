@@ -15,7 +15,6 @@ from dateutil.relativedelta import relativedelta
 import requests
 
 
-
 class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
     primary_keys = ["transaction_id", "lastmodifieddate"]
@@ -62,7 +61,6 @@ class SalesTransactionsStream(TransactionRootStream):
     table = "transaction"
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
-
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -113,13 +111,12 @@ class SalesTransactionsStream(TransactionRootStream):
     ).to_dict()
 
 
-class VendorBillsStream(TransactionRootStream):
+class VendorBillsStream(NetSuiteStream):
     name = "vendor_bill_transactions"
     primary_keys = ["id"]
     table = "transaction"
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
-
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
@@ -165,7 +162,6 @@ class VendorBillsStream(TransactionRootStream):
     ).to_dict()
 
     
-
 class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
     primary_keys = ["id", "transaction"]
@@ -663,9 +659,6 @@ class TransactionsStream(TransactionRootStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
-
-
-    
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
@@ -701,7 +694,7 @@ class TransactionsStream(TransactionRootStream):
 
         selected_properties.append('BUILTIN.DF( Transaction.Status ) AS status_description')
         selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
-        
+
         return selected_properties
 
 
