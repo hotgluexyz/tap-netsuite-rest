@@ -10,6 +10,9 @@ from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 from uuid import uuid4
+from dateutil.relativedelta import relativedelta
+
+import requests
 
 
 
@@ -60,19 +63,6 @@ class SalesTransactionsStream(TransactionRootStream):
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
 
-
-    join = """
-        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
-        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
-    """
-
-    def get_selected_properties(self):
-        transaction_properties = super().get_selected_properties()
-        transaction_properties.extend([
-            "COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress",
-            "COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress"
-        ])
-        return transaction_properties
 
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
