@@ -1,19 +1,17 @@
 """Stream type classes for tap-netsuite-rest."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, List
+import requests
 
 from singer_sdk import typing as th
 
-from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream
+from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream, BulkParentStream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 from uuid import uuid4
 from dateutil.relativedelta import relativedelta
-
-import requests
-
 
 class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
@@ -307,11 +305,29 @@ class InventoryPricingStream(NetSuiteStream):
     ).to_dict()
 
 
-class VendorStream(NetsuiteDynamicStream):
+class VendorStream(BulkParentStream):
     name = "vendor"
     primary_keys = ["id"]
     table = "vendor"
+    query_table = "vendor v"
+    select = "v.*, vsr.subsidiary, vsr.entity"
+    join = "JOIN vendorsubsidiaryrelationship vsr ON vsr.entity = v.id"
     replication_key = "lastmodifieddate"
+    replication_key_prefix = "v"
+    always_add_default_fields = True
+
+    default_fields = [
+        th.Property("defaultbillingaddress", th.StringType)
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        address_keys = ["defaultbillingaddress", "defaultshippingaddress"]
+        # Collect valid address IDs
+        address_ids = {
+            record.get(key) for key in address_keys 
+            if record.get(key)
+        }
+        return {"ids": list(address_ids)}
 
 
 # The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
@@ -470,6 +486,26 @@ class ItemStream(TransactionRootStream):
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("fullname", th.StringType),
+        th.Property("itemid", th.StringType),
+        th.Property("displayname", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("subtype", th.StringType),
+        th.Property("totalquantityonhand", th.StringType),
+        th.Property("itemid", th.StringType),
+        th.Property("displayname", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("subtype", th.StringType),
+        th.Property("totalquantityonhand", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("assetaccount", th.StringType),
+        th.Property("incomeaccount", th.StringType),
+        th.Property("expenseaccount", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("isinactive", th.StringType),
+        th.Property("createddate", th.DateTimeType),
     ]
 
 
@@ -960,10 +996,24 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
     filter_fields = True
 
 
-class CustomersStream(NetsuiteDynamicStream):
+class CustomersStream(BulkParentStream):
     name = "customers"
     primary_keys = ["id"]
     table = "customer"
+    always_add_default_fields = True
+
+    default_fields = [
+        th.Property("defaultbillingaddress", th.StringType)
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        address_keys = ["defaultbillingaddress", "defaultshippingaddress"]
+        # Collect valid address IDs
+        address_ids = {
+            record.get(key) for key in address_keys 
+            if record.get(key)
+        }
+        return {"ids": list(address_ids)}
 
 
 class DeletedRecordsStream(NetSuiteStream):
@@ -1533,3 +1583,52 @@ class TaxTypeStream(NetsuiteDynamicStream):
     name = "tax_type"
     primary_keys = ["id"]
     table = "taxtype"
+
+
+class VendorCategoryStream(NetsuiteDynamicStream):
+    name = "vendor_category"
+    primary_keys = ["id"]
+    table = "vendorcategory"
+
+
+class VendorEntityAddressesStream(NetsuiteDynamicStream):
+    name = "vendor_addresses"
+    primary_keys = ["nkey"]
+    table = "vendoraddressbookentityaddress"
+    parent_stream_type = VendorStream
+    custom_filter = ""
+
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class CustomerCategoryStream(NetsuiteDynamicStream):
+    name = "customer_category"
+    primary_keys = ["id"]
+    table = "customercategory"
+
+
+class CustomerEntityAddressesStream(NetsuiteDynamicStream):
+    name = "customer_addresses"
+    primary_keys = ["nkey"]
+    table = "customeraddressbookentityaddress"
+    parent_stream_type = CustomersStream
+    custom_filter = ""
+
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SalesRepStream(NetsuiteDynamicStream):
+    name = "sales_rep"
+    primary_keys = ["id"]
+    table = "employee"
+    custom_filter = "issalesrep = 'T'"
