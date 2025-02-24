@@ -444,7 +444,7 @@ class CostStream(NetSuiteStream):
     ).to_dict()
 
 
-class ItemStream(TransactionRootStream):
+class ItemStream(BulkParentStream):
     name = "item"
     primary_keys = ["id", "lastmodifieddate"]
     table = "item"
@@ -475,6 +475,9 @@ class ItemStream(TransactionRootStream):
         th.Property("isinactive", th.StringType),
         th.Property("createddate", th.DateTimeType),
     ]
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
 
 
 class ClassificationStream(NetSuiteStream):
@@ -1587,3 +1590,27 @@ class SalesRepStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "employee"
     custom_filter = "issalesrep = 'T'"
+
+
+class ItemVendorStream(NetsuiteDynamicStream):
+    name = "item_vendors"
+    table = "itemvendor"
+    parent_stream_type = ItemStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"item IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class ItemPriceStream(NetsuiteDynamicStream):
+    name = "item_prices"
+    table = "itemprice"
+    parent_stream_type = ItemStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"item IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
