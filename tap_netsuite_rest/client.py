@@ -580,7 +580,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         if self.schema_response:
             response = self.schema_response
-            properties_list = []
+            properties_list = deepcopy(self.default_fields)
             for field, value in response.get("properties").items():
                 if self.fields and self.filter_fields and field.lower() not in self.fields:
                     continue

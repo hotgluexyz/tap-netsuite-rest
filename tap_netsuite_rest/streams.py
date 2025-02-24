@@ -288,6 +288,26 @@ class VendorStream(NetsuiteDynamicStream):
     select = None
     filter_fields = True
 
+    join = """
+        INNER JOIN vendorCategory vc ON(vendor.category = vc.id)
+        """
+    default_fields = [
+        th.Property("categoryname", th.StringType),
+    ]
+
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+        fields_to_replace = [
+            ('vendor.categoryname AS categoryname', 'vc.name AS categoryname'),
+        ]
+       
+        for old_field, new_field in fields_to_replace:
+            if old_field in selected_properties:
+                selected_properties.remove(old_field)
+                selected_properties.append(new_field)
+
+        return selected_properties
+
 
 class ShippingAddressStream(NetsuiteDynamicStream):
     name = "shipping_address"
