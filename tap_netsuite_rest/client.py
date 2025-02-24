@@ -300,12 +300,21 @@ class NetSuiteStream(RESTStream):
                     field_name = f"{prefix}.{field_name} AS {field_name}"
                 selected_properties.append(field_name)
         return selected_properties
+    
+    def build_config_filters(self):
+        filters = []
+        # add config filters
+        stream_filters = self.config.get("stream_filters", {}).get(self.name, {})
+        prefix = self.table if not hasattr(self, "custom_filter_prefix") else self.custom_filter_prefix
+        for k,v in stream_filters.items():
+            filters.append(f"{prefix}.{k} = '{v}'")
+        return filters
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
 
-        filters = []
+        filters = self.build_config_filters()
         order_by = ""
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
 
@@ -544,7 +553,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 self.bool_fields = [f for f in self.fields if all_bool(f)]
 
                 # Can't query links, so we remove it
-                self.fields.remove("links")
+                if "links" in self.fields:
+                    self.fields.remove("links")
             except:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
@@ -571,7 +581,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         if self.schema_response:
             response = self.schema_response
-            properties_list = []
+            properties_list = deepcopy(self.default_fields)
             for field, value in response.get("properties").items():
                 if self.fields and self.filter_fields and field.lower() not in self.fields:
                     continue
@@ -726,7 +736,8 @@ class TransactionRootStream(NetsuiteDynamicStream):
         if not self.config.get("transaction_lines_monthly"):
             return super().prepare_request_payload(context, next_page_token)
 
-        filters = []
+        filters = self.build_config_filters()
+
         # get order query
         prefix = self.replication_key_prefix or self.table
         order_by = f"ORDER BY {prefix}.{self.replication_key}"
