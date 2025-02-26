@@ -438,7 +438,7 @@ class LocationsStream(BulkParentStream):
     ).to_dict()
 
     def get_child_context(self, record, context) -> dict:
-        return {"return_address_ids": list(record["returnaddress"]), "main_address_ids": list(record["mainaddress"])}
+        return {"return_address_ids": list(record.get("returnaddress", [])), "main_address_ids": list(record.get("mainaddress", []))}
 
 
 class LocationReturnAddressStream(NetsuiteDynamicStream):
@@ -958,7 +958,7 @@ class SubsidiariesStream(BulkParentStream):
     ]
 
     def get_child_context(self, record, context) -> dict:
-        return {"return_address_ids": list(record["returnaddress"]), "main_address_ids": list(record["mainaddress"]), "shipping_address_ids": list(record["mainaddress"])}
+        return {"return_address_ids": list(record.get("returnaddress", [])), "main_address_ids": list(record.get("mainaddress", [])), "shipping_address_ids": list(record.get("mainaddress", []))}
 
 
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
@@ -985,7 +985,7 @@ class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
         return super().prepare_request_payload(context, next_page_token)
 
 
-class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
+class SubsidiaryShippingAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_shipping_address"
     table = "subsidiaryshippingaddress"
     parent_stream_type = SubsidiariesStream
@@ -1709,8 +1709,8 @@ class BillsStream(BulkParentStream):
 
 
 class BillLineStream(NetsuiteDynamicStream):
-    name = "item_prices"
-    table = "itemprice"
+    name = "bill_lines"
+    table = "transactionline"
     parent_stream_type = BillsStream
 
     def prepare_request_payload(self, context, next_page_token):
