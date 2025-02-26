@@ -723,6 +723,8 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
 
 class BulkParentStream(NetsuiteDynamicStream):
 
+    child_context_keys = ["ids"]
+
     def _sync_records(  # noqa C901  # too complex
         self, context: Optional[dict] = None
     ) -> None:
@@ -741,7 +743,7 @@ class BulkParentStream(NetsuiteDynamicStream):
             child_context: Optional[dict] = (
                 None if current_context is None else copy.copy(current_context)
             )
-            child_context_bulk = {"ids": []}
+            child_context_bulk = {key: [] for key in self.child_context_keys}
             for record_result in self.get_records(current_context):
                 if isinstance(record_result, tuple):
                     # Tuple items should be the record and the child context
@@ -759,10 +761,12 @@ class BulkParentStream(NetsuiteDynamicStream):
                 # Sync children, except when primary mapper filters out the record
                 if self.stream_maps[0].get_filter_result(record):
                     # add id to child_context_bulk ids
-                    child_context_bulk["ids"].extend(child_context["ids"])
-                if len(child_context_bulk["ids"])>=self.page_size:
+                    for key, value in child_context.items():                        
+                        child_context_bulk[key].extend(child_context[key]) if value else None
+                
+                if any(len(v) > self.page_size for v in child_context_bulk.values()):
                     self._sync_children(child_context_bulk)
-                    child_context_bulk = {"ids": []}
+                    child_context_bulk = {key: [] for key in self.child_context_keys}
 
                 self._check_max_record_limit(record_count)
                 if selected:
@@ -786,7 +790,7 @@ class BulkParentStream(NetsuiteDynamicStream):
                 record_count += 1
                 partition_record_count += 1
             # process remaining child context if len < 1000
-            if len(child_context_bulk["ids"]):
+            if any(v != [] for v in child_context_bulk.values()):
                 self._sync_children(child_context_bulk)
             #----
             if current_context == state_partition_context:

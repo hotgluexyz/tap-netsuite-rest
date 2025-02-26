@@ -1,8 +1,6 @@
 """Stream type classes for tap-netsuite-rest."""
 
-from pathlib import Path
 from typing import Any, Dict, Optional, List
-import requests
 
 from singer_sdk import typing as th
 
@@ -10,8 +8,12 @@ from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, Tran
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
-from uuid import uuid4
-from dateutil.relativedelta import relativedelta
+import copy
+from singer_sdk.helpers._state import (
+    finalize_state_progress_markers,
+    log_sort_error,
+)
+from singer_sdk.exceptions import InvalidStreamSortException
 
 class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
@@ -397,7 +399,7 @@ class PriceLevelStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
 
-class LocationsStream(NetSuiteStream):
+class LocationsStream(BulkParentStream):
     name = "locations"
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
@@ -412,6 +414,8 @@ class LocationsStream(NetSuiteStream):
     order_by = """
     ORDER BY location.lastmodifieddate ASC
     """
+    child_context_keys = ["return_address_ids", "main_address_ids"]
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("addressee", th.StringType),
@@ -427,7 +431,38 @@ class LocationsStream(NetSuiteStream):
         th.Property("override", th.StringType),
         th.Property("recordowner", th.StringType),
         th.Property("subsidiary", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("parent", th.StringType),
+        th.Property("locationtype", th.StringType),
+        th.Property("returnaddress", th.StringType),
     ).to_dict()
+
+    def get_child_context(self, record, context) -> dict:
+        return {"return_address_ids": list(record["returnaddress"]), "main_address_ids": list(record["mainaddress"])}
+
+
+class LocationReturnAddressStream(NetsuiteDynamicStream):
+    name = "location_return_address"
+    table = "locationreturnaddress"
+    parent_stream_type = LocationsStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class LocationMainAddressStream(NetsuiteDynamicStream):
+    name = "location_main_address"
+    table = "locationmainaddress"
+    parent_stream_type = LocationsStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
 
 
 class CostStream(NetSuiteStream):
@@ -495,6 +530,7 @@ class ClassificationStream(NetSuiteStream):
         th.Property("lastmodifieddate", th.DateTimeType),
         th.Property("name", th.StringType),
         th.Property("subsidiary", th.StringType),
+        th.Property("parent", th.StringType),
     ).to_dict()
 
 
@@ -905,13 +941,60 @@ class DepartmentsStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
 
-class SubsidiariesStream(NetsuiteDynamicStream):
+class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
     replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
+    child_context_keys = ["return_address_ids", "main_address_ids", "shipping_address_ids"]
+
+    default_fields = [
+        th.Property("externalid", th.StringType),
+        th.Property("returnaddress", th.StringType),
+        th.Property("email", th.StringType),
+        th.Property("url", th.StringType),
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        return {"return_address_ids": list(record["returnaddress"]), "main_address_ids": list(record["mainaddress"]), "shipping_address_ids": list(record["mainaddress"])}
+
+
+class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_return_address"
+    table = "subsidiaryreturnaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_main_address"
+    table = "subsidiarymainaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_shipping_address"
+    table = "subsidiaryshippingaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["shipping_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
 
 
 class AccountsStream(NetsuiteDynamicStream):
@@ -1613,4 +1696,25 @@ class ItemPriceStream(NetsuiteDynamicStream):
         # fetch addresses filtering by addres id from vendor parent stream
         ids = ', '.join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"item IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class BillsStream(BulkParentStream):
+    name = "bills"
+    table = "transaction"
+    custom_filter = "type = 'VendBill'"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+
+class BillLineStream(NetsuiteDynamicStream):
+    name = "item_prices"
+    table = "itemprice"
+    parent_stream_type = BillsStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
