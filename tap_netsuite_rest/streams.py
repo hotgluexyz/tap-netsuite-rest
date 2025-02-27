@@ -531,6 +531,7 @@ class ClassificationStream(NetSuiteStream):
         th.Property("name", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("parent", th.StringType),
+        th.Property("externalid", th.StringType),
     ).to_dict()
 
 
@@ -1044,7 +1045,8 @@ class CustomersStream(BulkParentStream):
     always_add_default_fields = True
 
     default_fields = [
-        th.Property("defaultbillingaddress", th.StringType)
+        th.Property("defaultbillingaddress", th.StringType),
+        th.Property("parent", th.StringType)
     ]
 
     def get_child_context(self, record, context) -> dict:
