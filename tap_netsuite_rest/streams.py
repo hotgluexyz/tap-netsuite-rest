@@ -438,7 +438,10 @@ class LocationsStream(BulkParentStream):
     ).to_dict()
 
     def get_child_context(self, record, context) -> dict:
-        return {"return_address_ids": list(record.get("returnaddress", [])), "main_address_ids": list(record.get("mainaddress", []))}
+        return {
+            "return_address_ids": [record["returnaddress"]] if record.get("returnaddress") is not None else [],
+            "main_address_ids": [record["mainaddress"]] if record.get("mainaddress") is not None else []
+        }
 
 
 class LocationReturnAddressStream(NetsuiteDynamicStream):
@@ -959,8 +962,11 @@ class SubsidiariesStream(BulkParentStream):
     ]
 
     def get_child_context(self, record, context) -> dict:
-        return {"return_address_ids": list(record.get("returnaddress", [])), "main_address_ids": list(record.get("mainaddress", [])), "shipping_address_ids": list(record.get("mainaddress", []))}
-
+        return {
+            "return_address_ids": [record["returnaddress"]] if record.get("returnaddress") is not None else [],
+            "main_address_ids": [record["mainaddress"]] if record.get("mainaddress") is not None else [],
+            "shipping_address_ids": [record["shippingaddress"]] if record.get("shippingaddress") is not None else [],
+        }
 
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_return_address"
