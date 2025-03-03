@@ -1711,6 +1711,7 @@ class BillsStream(BulkParentStream):
     name = "bills"
     table = "transaction"
     custom_filter = "type = 'VendBill'"
+    replication_key = "lastmodifieddate"
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
@@ -1752,9 +1753,9 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     name = "bill_payments"
     table = "transactionline"
     parent_stream_type = BillsStream
-    select = "DISTINCT NTLL.previousdoc transaction, NT.ID ID, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
+    select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
     query_table = "NextTransactionLineLink AS NTLL"
-    join = "INNER JOIN Transaction AS NT ON (NT.ID = NTLL.nextdoc)"
+    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
     custom_filter = "NT.recordtype = 'vendorpayment'"
     order_by = "ORDER BY NT.id"
 
@@ -1784,6 +1785,7 @@ class InvoicesStream(BulkParentStream):
     table = "transaction"
     custom_filter = "type = 'CustInvc'"
     child_context_keys = ["ids", "addresses"]
+    replication_key = "lastmodifieddate"
 
     def get_child_context(self, record, context) -> dict:
         # get addresses ids
