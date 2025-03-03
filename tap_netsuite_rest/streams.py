@@ -1716,13 +1716,139 @@ class BillsStream(BulkParentStream):
         return {"ids": [record["id"]]}
 
 
-class BillLineStream(NetsuiteDynamicStream):
+class BillLinesStream(NetsuiteDynamicStream):
     name = "bill_lines"
     table = "transactionline"
     parent_stream_type = BillsStream
+    select = "t.recordtype, tl.*"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    custom_filter = "mainline = 'F' and accountinglinetype is not null"
 
     def prepare_request_payload(self, context, next_page_token):
-        # fetch addresses filtering by addres id from vendor parent stream
+        # fetch bill lines filtering by transaction id from bills parent stream
         ids = ', '.join(f"'{id}'" for id in context["ids"])
-        self.custom_filter = f"transaction IN ({ids})"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class BillExpensesStream(NetsuiteDynamicStream):
+    name = "bill_expenses"
+    table = "transactionline"
+    parent_stream_type = BillsStream
+    select = "t.recordtype, tl.*"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    custom_filter = "mainline = 'F' and accountinglinetype is null"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class BillPaymentsStream(NetsuiteDynamicStream):
+    name = "bill_payments"
+    table = "transactionline"
+    parent_stream_type = BillsStream
+    select = "DISTINCT NTLL.previousdoc transaction, NT.ID ID, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
+    query_table = "NextTransactionLineLink AS NTLL"
+    join = "INNER JOIN Transaction AS NT ON (NT.ID = NTLL.nextdoc)"
+    custom_filter = "NT.recordtype = 'vendorpayment'"
+    order_by = "ORDER BY NT.id"
+
+    schema = th.PropertiesList(
+        th.Property("account", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("tranid", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill payments filtering by transaction id from bill parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class InvoicesStream(BulkParentStream):
+    name = "invoices"
+    table = "transaction"
+    custom_filter = "type = 'CustInvc'"
+    child_context_keys = ["ids", "addresses"]
+
+    def get_child_context(self, record, context) -> dict:
+        # get addresses ids
+        address_keys = ["billingaddress", "shippingaddress"]
+        # Collect valid address IDs
+        address_ids = {
+            record.get(key) for key in address_keys 
+            if record.get(key)
+        }
+        return {"ids": [record["id"]], "addresses": list(address_ids)}
+
+
+class InvoiceLinesStream(NetsuiteDynamicStream):
+    name = "invoice_lines"
+    table = "transactionline"
+    parent_stream_type = InvoicesStream
+    select = "*"
+    custom_filter = "mainline = 'F'"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice lines filtering by transaction id
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class InvoicePaymentsStream(NetsuiteDynamicStream):
+    name = "invoice_payments"
+    table = "transactionline"
+    parent_stream_type = InvoicesStream
+    select = "DISTINCT NTLL.previousdoc transaction, NT.id id, NT.account account, NT.trandate, NT.type, NT.tranid, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
+    query_table = "NextTransactionLineLink AS NTLL"
+    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
+    custom_filter = "NT.recordtype = 'customerpayment'"
+    order_by = "ORDER BY NT.id"
+
+    schema = th.PropertiesList(
+        th.Property("account", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("tranid", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice payments filtering by transaction id from parent stream
+        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class InvoiceAddressesStream(NetsuiteDynamicStream):
+    name = "invoice_addresses"
+    table = "transactionaddressmappingaddress"
+    parent_stream_type = InvoicesStream
+    select = "*"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice addresses filtering by addres id from invoice parent stream
+        ids = ', '.join(f"'{id}'" for id in context["addresses"])
+        self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
