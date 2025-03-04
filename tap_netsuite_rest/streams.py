@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Union
 
 from singer_sdk import typing as th
 
-from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream
+from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream, BulkParentStream
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
@@ -901,13 +901,63 @@ class DepartmentsStream(NetsuiteDynamicStream):
     replication_key = "lastmodifieddate"
 
 
-class SubsidiariesStream(NetsuiteDynamicStream):
+class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
     replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
+    child_context_keys = ["return_address_ids", "main_address_ids", "shipping_address_ids"]
+
+    default_fields = [
+        th.Property("externalid", th.StringType),
+        th.Property("returnaddress", th.StringType),
+        th.Property("email", th.StringType),
+        th.Property("url", th.StringType),
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        return {
+            "return_address_ids": [record["returnaddress"]] if record.get("returnaddress") is not None else [],
+            "main_address_ids": [record["mainaddress"]] if record.get("mainaddress") is not None else [],
+            "shipping_address_ids": [record["shippingaddress"]] if record.get("shippingaddress") is not None else [],
+        }
+
+class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_return_address"
+    table = "subsidiaryreturnaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_main_address"
+    table = "subsidiarymainaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SubsidiaryShippingAddressStream(NetsuiteDynamicStream):
+    name = "subsidiary_shipping_address"
+    table = "subsidiaryshippingaddress"
+    parent_stream_type = SubsidiariesStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch addresses filtering by addres id from vendor parent stream
+        ids = ', '.join(f"'{id}'" for id in context["shipping_address_ids"]) or "NULL"
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
 
 
 class AccountsStream(NetsuiteDynamicStream):
