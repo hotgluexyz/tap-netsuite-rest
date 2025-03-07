@@ -4,7 +4,12 @@ from typing import Any, Dict, Optional, List
 
 from singer_sdk import typing as th
 
-from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream, BulkParentStream
+from tap_netsuite_rest.client import (
+    NetSuiteStream,
+    NetsuiteDynamicStream,
+    TransactionRootStream,
+    BulkParentStream,
+)
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
@@ -14,6 +19,7 @@ from singer_sdk.helpers._state import (
     log_sort_error,
 )
 from singer_sdk.exceptions import InvalidStreamSortException
+
 
 class SalesOrdersStream(NetSuiteStream):
     name = "sales_orders"
@@ -439,8 +445,12 @@ class LocationsStream(BulkParentStream):
 
     def get_child_context(self, record, context) -> dict:
         return {
-            "return_address_ids": [record["returnaddress"]] if record.get("returnaddress") is not None else [],
-            "main_address_ids": [record["mainaddress"]] if record.get("mainaddress") is not None else []
+            "return_address_ids": [record["returnaddress"]]
+            if record.get("returnaddress") is not None
+            else [],
+            "main_address_ids": [record["mainaddress"]]
+            if record.get("mainaddress") is not None
+            else [],
         }
 
 
@@ -451,7 +461,7 @@ class LocationReturnAddressStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
+        ids = ", ".join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -463,7 +473,7 @@ class LocationMainAddressStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
+        ids = ", ".join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -628,90 +638,63 @@ class ProfitLossReportStream(NetSuiteStream):
 
 
 class GeneralLedgerReportStream(ProfitLossReportStream):
-    name = "general_ledger_report"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.replication_key = None
+
     start_date_f = None
     end_date = None
     primary_keys = ["id"]
-    entities_fallback = [
-        {
-            "name": "department",
-            "select_replace": "Department.fullname as department, Department.id as departmentid",
-            "join_replace": "LEFT JOIN department ON ( TransactionLine.department = department.ID )",
-        },
-        {
-            "name": "classification",
-            "select_replace": ", Classification.name as class, Classification.id as classid,",
-            "join_replace": "LEFT JOIN Classification On ( Transactionline.class = Classification.id )",
-        },
-        {
-            "name": "location",
-            "select_replace": ", Location.name as locationname",
-            "join_replace": "LEFT JOIN Location On ( Transactionline.location = Location.id )",
-        },
-        {
-            "name": "currency",
-            "select_replace": ", Currency.name as currency",
-            "join_replace": "INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )",
-        },
-    ]
-    select = """
-        Entity.altname as name, Entity.firstname, Entity.lastname, Subsidiary.fullname as subsidiary, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as TransactionType, Transaction.postingperiod, Transaction.memo, Transaction.journaltype, Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as Categories, TransactionLine.location as locationid, Location.name as locationname, AccountingPeriod.PeriodName, TO_CHAR (AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as StartDate, Account.AcctType, TO_CHAR (Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as Date, Account.acctnumber as Num, Account.id as accountid, TransactionAccountingLine.amount, TransactionLine.subsidiary as subsidiaryid, Department.fullname as department, Department.id as departmentid, (Transaction.id || '_' || TransactionLine.id) AS id, Currency.name as currency, Classification.name as class, Classification.id as classid, Transaction.transactionnumber, Transaction.trandisplayname, Entity.id as entityid, Entity.Type as entitytype
-        """
+    name = "general_ledger_report"
+    select = "Account.accountsearchdisplayname as accountName, Account.displaynamewithhierarchy as fullyQualifiedAccountName, Account.AcctType accountType, Account.acctnumber as accountNumber, Account.id as accountId, Entity.altname as entityName, Entity.firstname entityFirstName, Entity.lastname entityLastName, Entity.id as entityId, Entity.Type as entityType, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid externalId, Transaction.abbrevtype as transactionType, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as transactionDate, Transaction.transactionnumber, Transaction.trandisplayname, TransactionLine.memo memo, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entryType, TransactionAccountingLine.credit creditAmount, TransactionAccountingLine.debit debitAmount, department.id as departmentId, department.fullname as departmentName, TransactionLine.location as locationId, Location.name as locationName, Transaction.currency currencyId, Currency.name as currencyName, Currency.symbol as currency, TransactionAccountingLine.exchangeRate as exchangeRate, TransactionLine.subsidiary as subsidiaryId, Subsidiary.fullname as subsidiaryName, Classification.id as classId, Classification.name as className, Transaction.postingPeriod, AccountingPeriod.PeriodName as periodName, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as periodStartDate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as periodEndDate"
     table = "Transaction"
-    join = """
-        INNER JOIN TransactionLine ON ( TransactionLine.Transaction = Transaction.ID ) INNER JOIN TransactionAccountingLine ON ( TransactionAccountingLine.Transaction = Transaction.ID AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN department ON ( TransactionLine.department = department.ID ) INNER JOIN Account ON ( Account.ID = TransactionAccountingLine.Account ) INNER JOIN AccountingPeriod ON ( AccountingPeriod.ID = Transaction.PostingPeriod ) LEFT JOIN Entity ON ( Transaction.entity = Entity.id ) LEFT JOIN subsidiary On ( Transactionline.subsidiary = Subsidiary.id ) INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )  LEFT JOIN Classification On ( Transactionline.class = Classification.id ) LEFT JOIN Location On ( Transactionline.location = Location.id )
-        """
+    join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity ON (Transaction.entity = Entity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Transaction.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
     @property
     def custom_filter(self):
         return "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionAccountingLine.amount !=0"
-
-    # Merge group and order by
-    order_by = """
-    ORDER BY AccountingPeriod.StartDate ASC
-    """
+    order_by = "ORDER BY Transaction.TranDate DESC"
     replication_key = "date"
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
-        th.Property("accttype", th.StringType),
-        th.Property("amount", th.NumberType),
-        th.Property("categories", th.StringType),
-        th.Property("subsidiary", th.StringType),
-        th.Property("subsidiaryid", th.StringType),
-        th.Property("date", th.DateTimeType),
-        th.Property("externalid", th.StringType),
-        th.Property("firstname", th.StringType),
-        th.Property("lastname", th.StringType),
-        th.Property("name", th.StringType),
-        th.Property("num", th.StringType),
-        th.Property("periodname", th.StringType),
-        th.Property("postingperiod", th.StringType),
-        th.Property("split", th.StringType),
-        th.Property("startdate", th.DateTimeType),
-        th.Property("tranid", th.StringType),
-        th.Property("transactiontype", th.StringType),
-        th.Property("memo", th.StringType),
-        th.Property("class", th.StringType),
-        th.Property("classid", th.StringType),
-        th.Property("department", th.StringType),
-        th.Property("departmentid", th.StringType),
-        th.Property("locationid", th.StringType),
-        th.Property("locationname", th.StringType),
-        th.Property("currency", th.StringType),
-        th.Property("accountid", th.StringType),
+        th.Property("accountName", th.StringType),
+        th.Property("fullyQualifiedAccountName", th.StringType),
+        th.Property("accountType", th.StringType),
+        th.Property("accountNumber", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("entityName", th.DateTimeType),
+        th.Property("entityFirstName", th.StringType),
+        th.Property("entityLastName", th.StringType),
+        th.Property("entityId", th.StringType),
+        th.Property("entityType", th.StringType),
+        th.Property("externalId", th.StringType),
+        th.Property("transactionType", th.StringType),
+        th.Property("transactionDate", th.DateTimeType),
         th.Property("transactionnumber", th.StringType),
-        th.Property("trandisplayname", th.StringType),
-        th.Property("entityid", th.StringType),
-        th.Property("entitytype", th.StringType),
+        th.Property("trandisplayname", th.DateTimeType),
+        th.Property("memo", th.StringType),
+        th.Property("entryType", th.StringType),
+        th.Property("creditAmount", th.NumberType),
+        th.Property("debitAmount", th.NumberType),
+        th.Property("departmentId", th.StringType),
+        th.Property("departmentName", th.StringType),
+        th.Property("locationId", th.StringType),
+        th.Property("locationName", th.StringType),
+        th.Property("currencyId", th.StringType),
+        th.Property("currencyName", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangeRate", th.StringType),
+        th.Property("subsidiaryId", th.StringType),
+        th.Property("subsidiaryName", th.StringType),
+        th.Property("classId", th.StringType),
+        th.Property("className", th.StringType),
+        th.Property("postingPeriod", th.StringType),
+        th.Property("periodName", th.StringType),
+        th.Property("periodStartDate", th.StringType),
+        th.Property("periodEndtDate", th.StringType),
     ).to_dict()
-
-    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        if "amount" in row:
-            try:
-                row["amount"] = float(row["amount"])
-            except:
-                pass
-        return row
 
 
 class TransactionsStream(TransactionRootStream):
@@ -746,14 +729,21 @@ class TransactionsStream(TransactionRootStream):
 
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
-        ignore_queries = ['transaction.status_description AS status_description', 'transaction.approvalstatus_description AS approvalstatus_description']
+        ignore_queries = [
+            "transaction.status_description AS status_description",
+            "transaction.approvalstatus_description AS approvalstatus_description",
+        ]
 
         for q in ignore_queries:
             if q in selected_properties:
                 selected_properties.remove(q)
 
-        selected_properties.append('BUILTIN.DF( Transaction.Status ) AS status_description')
-        selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
+        selected_properties.append(
+            "BUILTIN.DF( Transaction.Status ) AS status_description"
+        )
+        selected_properties.append(
+            "BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description"
+        )
 
         return selected_properties
 
@@ -853,8 +843,8 @@ class TransactionLinesStream(TransactionRootStream):
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
 
-        if 'transactionline.recordtype AS recordtype' in selected_properties:
-            selected_properties.remove('transactionline.recordtype AS recordtype')
+        if "transactionline.recordtype AS recordtype" in selected_properties:
+            selected_properties.remove("transactionline.recordtype AS recordtype")
 
         return selected_properties
 
@@ -870,7 +860,9 @@ class TransactionLinesStream(TransactionRootStream):
         ]
         # get order query
         prefix = self.table
-        order_by = f"ORDER BY {prefix}.{self.replication_key}, transactionline.uniquekey"
+        order_by = (
+            f"ORDER BY {prefix}.{self.replication_key}, transactionline.uniquekey"
+        )
 
         # get filter query
         start_date = self.start_date or self.get_starting_time(context)
@@ -884,7 +876,9 @@ class TransactionLinesStream(TransactionRootStream):
             end_date_str = self.end_date.strftime(time_format)
             timeframe = f"{start_date_str} to {end_date_str}"
 
-            filters.append(f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}")
+            filters.append(
+                f"{prefix}.{self.replication_key}>={start_date_str} AND {prefix}.{self.replication_key}<{end_date_str}"
+            )
 
             filters = "WHERE " + " AND ".join(filters)
 
@@ -952,7 +946,11 @@ class SubsidiariesStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
-    child_context_keys = ["return_address_ids", "main_address_ids", "shipping_address_ids"]
+    child_context_keys = [
+        "return_address_ids",
+        "main_address_ids",
+        "shipping_address_ids",
+    ]
 
     default_fields = [
         th.Property("externalid", th.StringType),
@@ -963,10 +961,17 @@ class SubsidiariesStream(BulkParentStream):
 
     def get_child_context(self, record, context) -> dict:
         return {
-            "return_address_ids": [record["returnaddress"]] if record.get("returnaddress") is not None else [],
-            "main_address_ids": [record["mainaddress"]] if record.get("mainaddress") is not None else [],
-            "shipping_address_ids": [record["shippingaddress"]] if record.get("shippingaddress") is not None else [],
+            "return_address_ids": [record["returnaddress"]]
+            if record.get("returnaddress") is not None
+            else [],
+            "main_address_ids": [record["mainaddress"]]
+            if record.get("mainaddress") is not None
+            else [],
+            "shipping_address_ids": [record["shippingaddress"]]
+            if record.get("shippingaddress") is not None
+            else [],
         }
+
 
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_return_address"
@@ -975,7 +980,7 @@ class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
+        ids = ", ".join(f"'{id}'" for id in context["return_address_ids"]) or "NULL"
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -987,7 +992,7 @@ class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
+        ids = ", ".join(f"'{id}'" for id in context["main_address_ids"]) or "NULL"
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -999,7 +1004,7 @@ class SubsidiaryShippingAddressStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["shipping_address_ids"]) or "NULL"
+        ids = ", ".join(f"'{id}'" for id in context["shipping_address_ids"]) or "NULL"
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1019,14 +1024,19 @@ class AccountsStream(NetsuiteDynamicStream):
         th.Property("class", th.StringType),
         th.Property("department", th.StringType),
         th.Property("currency", th.StringType),
-        th.Property("generalrate",th.StringType),
-        th.Property("fullname", th.StringType)
+        th.Property("generalrate", th.StringType),
+        th.Property("fullname", th.StringType),
     ]
-    
+
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
         # add accountsearchdisplayname as fullname as default field
-        selected_properties = ["account.accountsearchdisplayname AS fullname" if prop == "account.fullname AS fullname" else prop for prop in selected_properties]
+        selected_properties = [
+            "account.accountsearchdisplayname AS fullname"
+            if prop == "account.fullname AS fullname"
+            else prop
+            for prop in selected_properties
+        ]
         return selected_properties
 
 
@@ -1047,21 +1057,23 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
 class CustomersStream(BulkParentStream):
     name = "customers"
     primary_keys = ["id"]
-    table = "customer"
+    table = "customer c"
     always_add_default_fields = True
+    select = "c.*, csr.subsidiary, csr.entity"
+    join = "JOIN customersubsidiaryrelationship csr ON csr.entity = c.id"
+    replication_key = "lastmodifieddate"
+    replication_key_prefix = "c"
 
     default_fields = [
         th.Property("defaultbillingaddress", th.StringType),
-        th.Property("parent", th.StringType)
+        th.Property("parent", th.StringType),
+        th.Property("subsidiary", th.StringType),
     ]
 
     def get_child_context(self, record, context) -> dict:
         address_keys = ["defaultbillingaddress", "defaultshippingaddress"]
         # Collect valid address IDs
-        address_ids = {
-            record.get(key) for key in address_keys 
-            if record.get(key)
-        }
+        address_ids = {record.get(key) for key in address_keys if record.get(key)}
         return {"ids": list(address_ids)}
 
 
@@ -1137,11 +1149,10 @@ class RelatedTransactionLinesStream(TransactionRootStream):
         th.Property("transactiontype", th.StringType),
     ).to_dict()
 
-
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        row["compositeid"] = (
-            f"{row['transactionid']}-{row['lineno']}-{row['relatedtransactionid']}"
-        )
+        row[
+            "compositeid"
+        ] = f"{row['transactionid']}-{row['lineno']}-{row['relatedtransactionid']}"
         return row
 
 
@@ -1567,6 +1578,7 @@ class SubscriptionLineStatusStream(NetSuiteStream):
         th.Property("name", th.StringType),
     ).to_dict()
 
+
 class SubscriptionLineTypeStream(NetSuiteStream):
     name = "subscription_line_type"
     primary_keys = ["key"]
@@ -1577,6 +1589,7 @@ class SubscriptionLineTypeStream(NetSuiteStream):
         th.Property("key", th.StringType),
         th.Property("name", th.StringType),
     ).to_dict()
+
 
 class SubscriptionPriceIntervalStream(NetSuiteStream):
     name = "subscription_price_interval"
@@ -1647,10 +1660,9 @@ class VendorEntityAddressesStream(NetsuiteDynamicStream):
     parent_stream_type = VendorStream
     custom_filter = ""
 
-
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1668,10 +1680,9 @@ class CustomerEntityAddressesStream(NetsuiteDynamicStream):
     parent_stream_type = CustomersStream
     custom_filter = ""
 
-
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1690,7 +1701,7 @@ class ItemVendorStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"item IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1702,7 +1713,7 @@ class ItemPriceStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch addresses filtering by addres id from vendor parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"item IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1728,7 +1739,7 @@ class BillLinesStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1744,7 +1755,7 @@ class BillExpensesStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill expenses filtering by transaction id from bills parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1775,7 +1786,7 @@ class BillPaymentsStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill payments filtering by transaction id from bill parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1791,10 +1802,7 @@ class InvoicesStream(BulkParentStream):
         # get addresses ids
         address_keys = ["billingaddress", "shippingaddress"]
         # Collect valid address IDs
-        address_ids = {
-            record.get(key) for key in address_keys 
-            if record.get(key)
-        }
+        address_ids = {record.get(key) for key in address_keys if record.get(key)}
         return {"ids": [record["id"]], "addresses": list(address_ids)}
 
 
@@ -1807,7 +1815,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice lines filtering by transaction id
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1838,7 +1846,7 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice payments filtering by transaction id from parent stream
-        ids = ', '.join(f"'{id}'" for id in context["ids"])
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1851,6 +1859,6 @@ class InvoiceAddressesStream(NetsuiteDynamicStream):
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice addresses filtering by addres id from invoice parent stream
-        ids = ', '.join(f"'{id}'" for id in context["addresses"])
+        ids = ", ".join(f"'{id}'" for id in context["addresses"])
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
