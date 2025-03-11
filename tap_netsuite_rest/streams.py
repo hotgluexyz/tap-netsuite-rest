@@ -647,7 +647,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     name = "general_ledger_report"
-    select = "Account.accountsearchdisplayname as accountName, Account.displaynamewithhierarchy as fullyQualifiedAccountName, Account.AcctType accountType, Account.acctnumber as accountNumber, Account.id as accountId, Entity.altname as entityName, Entity.firstname entityFirstName, Entity.lastname entityLastName, Entity.id as entityId, Entity.Type as entityType, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid externalId, Transaction.abbrevtype as transactionType, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as transactionDate, Transaction.transactionnumber, Transaction.trandisplayname, TransactionLine.memo memo, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entryType, TransactionAccountingLine.credit creditAmount, TransactionAccountingLine.debit debitAmount, department.id as departmentId, department.fullname as departmentName, TransactionLine.location as locationId, Location.name as locationName, Transaction.currency currencyId, Currency.name as currencyName, Currency.symbol as currency, TransactionAccountingLine.exchangeRate as exchangeRate, TransactionLine.subsidiary as subsidiaryId, Subsidiary.fullname as subsidiaryName, Classification.id as classId, Classification.name as className, Transaction.postingPeriod, AccountingPeriod.PeriodName as periodName, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as periodStartDate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as periodEndDate"
+    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, Entity.altname as name, Entity.firstname, Entity.lastname, Entity.id as entityid, Entity.Type as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Transaction.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
     table = "Transaction"
     join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity ON (Transaction.entity = Entity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Transaction.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
@@ -659,41 +659,45 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
 
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
-        th.Property("accountName", th.StringType),
-        th.Property("fullyQualifiedAccountName", th.StringType),
-        th.Property("accountType", th.StringType),
-        th.Property("accountNumber", th.StringType),
-        th.Property("accountId", th.StringType),
-        th.Property("entityName", th.DateTimeType),
-        th.Property("entityFirstName", th.StringType),
-        th.Property("entityLastName", th.StringType),
-        th.Property("entityId", th.StringType),
-        th.Property("entityType", th.StringType),
-        th.Property("externalId", th.StringType),
-        th.Property("transactionType", th.StringType),
-        th.Property("transactionDate", th.DateTimeType),
-        th.Property("transactionnumber", th.StringType),
-        th.Property("trandisplayname", th.DateTimeType),
+        th.Property("accttype", th.StringType),
+        th.Property("amount", th.NumberType),
+        th.Property("categories", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("subsidiaryid", th.StringType),
+        th.Property("date", th.DateTimeType),
+        th.Property("externalid", th.StringType),
+        th.Property("firstname", th.StringType),
+        th.Property("lastname", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("num", th.StringType),
+        th.Property("periodname", th.StringType),
+        th.Property("postingperiod", th.StringType),
+        th.Property("split", th.StringType),
+        th.Property("startdate", th.DateTimeType),
+        th.Property("enddate", th.DateTimeType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactiontype", th.StringType),
         th.Property("memo", th.StringType),
-        th.Property("entryType", th.StringType),
-        th.Property("creditAmount", th.NumberType),
-        th.Property("debitAmount", th.NumberType),
-        th.Property("departmentId", th.StringType),
-        th.Property("departmentName", th.StringType),
-        th.Property("locationId", th.StringType),
-        th.Property("locationName", th.StringType),
-        th.Property("currencyId", th.StringType),
-        th.Property("currencyName", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("classid", th.StringType),
+        th.Property("department", th.StringType),
+        th.Property("departmentid", th.StringType),
+        th.Property("locationid", th.StringType),
+        th.Property("locationname", th.StringType),
         th.Property("currency", th.StringType),
-        th.Property("exchangeRate", th.StringType),
-        th.Property("subsidiaryId", th.StringType),
-        th.Property("subsidiaryName", th.StringType),
-        th.Property("classId", th.StringType),
-        th.Property("className", th.StringType),
-        th.Property("postingPeriod", th.StringType),
-        th.Property("periodName", th.StringType),
-        th.Property("periodStartDate", th.StringType),
-        th.Property("periodEndtDate", th.StringType),
+        th.Property("currencyid", th.StringType),
+        th.Property("currencysymbol", th.StringType),
+        th.Property("accountid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("entityid", th.StringType),
+        th.Property("entitytype", th.StringType),
+        th.Property("journaltype", th.StringType),
+        th.Property("linememo", th.StringType),
+        th.Property("entrytype", th.StringType),
+        th.Property("creditamount", th.NumberType),
+        th.Property("debitamount", th.NumberType),
+        th.Property("exchangerate", th.StringType),
     ).to_dict()
 
 
@@ -1723,6 +1727,7 @@ class BillsStream(BulkParentStream):
     table = "transaction"
     custom_filter = "type = 'VendBill'"
     replication_key = "lastmodifieddate"
+    select = "*, BUILTIN.DF(status) status"
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
@@ -1736,6 +1741,12 @@ class BillLinesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     custom_filter = "mainline = 'F' and accountinglinetype is not null"
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
@@ -1797,6 +1808,11 @@ class InvoicesStream(BulkParentStream):
     custom_filter = "type = 'CustInvc'"
     child_context_keys = ["ids", "addresses"]
     replication_key = "lastmodifieddate"
+    select = "*, BUILTIN.DF(status) status"
+
+    default_fields = [
+        th.Property("shipdate", th.DateTimeType),
+    ]
 
     def get_child_context(self, record, context) -> dict:
         # get addresses ids
@@ -1812,6 +1828,12 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     parent_stream_type = InvoicesStream
     select = "*"
     custom_filter = "mainline = 'F'"
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice lines filtering by transaction id
