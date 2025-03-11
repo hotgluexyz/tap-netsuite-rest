@@ -409,7 +409,6 @@ class LocationsStream(BulkParentStream):
     name = "locations"
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
-    replication_key = "lastmodifieddate"
     select = """
         *
         """
@@ -533,7 +532,6 @@ class ClassificationStream(NetSuiteStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "classification"
     type_filter = False
-    replication_key = "lastmodifieddate"
 
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
@@ -940,14 +938,12 @@ class DepartmentsStream(NetsuiteDynamicStream):
     name = "departments"
     primary_keys = ["id"]
     table = "department"
-    replication_key = "lastmodifieddate"
 
 
 class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
-    replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
     child_context_keys = [
