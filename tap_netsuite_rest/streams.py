@@ -67,6 +67,20 @@ class SalesTransactionsStream(TransactionRootStream):
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
 
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+
+    def get_selected_properties(self):
+        transaction_properties = super().get_selected_properties()
+        transaction_properties.extend([
+            "COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress",
+            "COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress"
+        ])
+        return transaction_properties
+
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
         th.Property("actualshipdate", th.DateTimeType),
@@ -116,18 +130,26 @@ class SalesTransactionsStream(TransactionRootStream):
     ).to_dict()
 
 
-class VendorBillsStream(NetSuiteStream):
+class VendorBillsStream(TransactionRootStream):
     name = "vendor_bill_transactions"
     primary_keys = ["id"]
     table = "transaction"
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
 
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+
     schema = th.PropertiesList(
         th.Property("abbrevtype", th.StringType),
         th.Property("approvalstatus", th.StringType),
         th.Property("balsegstatus", th.StringType),
         th.Property("billingstatus", th.StringType),
+        th.Property("billingaddress", th.StringType),
+        th.Property("shippingaddress", th.StringType),
         th.Property("closedate", th.DateTimeType),
         th.Property("createdby", th.StringType),
         th.Property("createddate", th.DateTimeType),
@@ -166,6 +188,14 @@ class VendorBillsStream(NetSuiteStream):
         th.Property("voided", th.StringType),
     ).to_dict()
 
+    def get_selected_properties(self):
+        transaction_properties = super().get_selected_properties()
+        transaction_properties.extend([
+            "COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress",
+            "COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress"
+        ])
+        return transaction_properties
+    
 
 class SalesTransactionLinesStream(TransactionRootStream):
     name = "sales_transactions_lines"
@@ -308,18 +338,20 @@ class VendorStream(BulkParentStream):
         return {"ids": list(address_ids)}
 
 
-class ShippingAddressStream(NetsuiteDynamicStream):
-    name = "shipping_address"
-    primary_keys = ["nkey"]
-    table = "TransactionShippingAddress"
-    replication_key = "lastmodifieddate"
+# The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
+# Instead, shipping + billing address is joined on transaction streams
+# class ShippingAddressStream(NetsuiteDynamicStream):
+#     name = "shipping_address"
+#     primary_keys = ["nkey"]
+#     table = "TransactionShippingAddress"
+#     replication_key = "lastmodifieddate"
 
 
-class BillingAddressStream(NetsuiteDynamicStream):
-    name = "billing_address"
-    primary_keys = ["nkey"]
-    table = "TransactionBillingAddress"
-    replication_key = "lastmodifieddate"
+# class BillingAddressStream(NetsuiteDynamicStream):
+#     name = "billing_address"
+#     primary_keys = ["nkey"]
+#     table = "TransactionBillingAddress"
+#     replication_key = "lastmodifieddate"
 
 
 class TermStream(NetsuiteDynamicStream):
@@ -712,10 +744,19 @@ class TransactionsStream(TransactionRootStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
+
+
+    join = """
+        LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
+        LEFT JOIN TransactionBillingAddress tba ON transaction.billingaddress = tba.nkey
+    """
+    
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
         th.Property("entity", th.StringType),
+        th.Property("shippingaddress", th.StringType),
+        th.Property("billingaddress", th.StringType),
         th.Property("otherrefnum", th.StringType),
         th.Property("closedate", th.DateType),
         th.Property("duedate", th.DateType),
@@ -748,12 +789,14 @@ class TransactionsStream(TransactionRootStream):
             if q in selected_properties:
                 selected_properties.remove(q)
 
-        selected_properties.append(
-            "BUILTIN.DF( Transaction.Status ) AS status_description"
-        )
-        selected_properties.append(
-            "BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description"
-        )
+
+        selected_properties.append('BUILTIN.DF( Transaction.Status ) AS status_description')
+        selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
+        
+        # Build Formatted Addresses
+        selected_properties.append("COALESCE(tsa.addr1, '') || ', ' || COALESCE(tsa.addr2, '') || ', ' || COALESCE(tsa.addr3, '') || ', ' || COALESCE(tsa.city, '') || ', ' || COALESCE(tsa.state, '') || ', ' || COALESCE(tsa.zip, '') || ', ' || COALESCE(tsa.country, '') as shippingaddress")
+        selected_properties.append("COALESCE(tba.addr1, '') || ', ' || COALESCE(tba.addr2, '') || ', ' || COALESCE(tba.addr3, '') || ', ' || COALESCE(tba.city, '') || ', ' || COALESCE(tba.state, '') || ', ' || COALESCE(tba.zip, '') || ', ' || COALESCE(tba.country, '') as billingaddress")
+        
 
         return selected_properties
 
