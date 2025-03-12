@@ -17,13 +17,17 @@ import logging
 include_streams = os.environ.get('INCLUDE_STREAMS', "").split(',') if os.environ.get('INCLUDE_STREAMS', "") else []
 logging.info(f"INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
 
+# 2. Get the environment variable IGNORE_STREAMS and split by commas
+ignore_streams = os.environ.get('IGNORE_STREAMS', "").split(',') if os.environ.get('IGNORE_STREAMS', "") else []
+logging.info(f"IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
+
 # Function to filter streams to be tested
-def streams_to_sync(self, stream_classes):
+def streams_to_sync(self, include_streams, ignore_streams):
     stream_types = []
     
     for name, cls in inspect.getmembers(streams,inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
-            if stream_classes and name not in stream_classes:
+            if (include_streams and name not in include_streams) or name in ignore_streams:
                 continue
             stream_types.append(cls(self))
     return stream_types
@@ -49,7 +53,7 @@ class TapNetSuite(Tap):
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
-        streams = streams_to_sync(self, include_streams)
+        streams = streams_to_sync(self, include_streams, ignore_streams)
         return streams
 
 
