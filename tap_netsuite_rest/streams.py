@@ -698,6 +698,14 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("exchangerate", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if "amount" in row:
+            try:
+                row["amount"] = float(row["amount"])
+            except:
+                pass
+        return row
+
 
 class TransactionsStream(TransactionRootStream):
     name = "transactions"
