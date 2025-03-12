@@ -952,7 +952,7 @@ class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
-    select = None
+    select = "*"
     filter_fields = True
     child_context_keys = [
         "return_address_ids",
