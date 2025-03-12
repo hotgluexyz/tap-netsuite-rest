@@ -1065,7 +1065,8 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
 class CustomersStream(BulkParentStream):
     name = "customers"
     primary_keys = ["id"]
-    table = "customer c"
+    table = "customer"
+    query_table = "customer c"
     always_add_default_fields = True
     select = "c.*, csr.subsidiary, csr.entity"
     join = "JOIN customersubsidiaryrelationship csr ON csr.entity = c.id"
