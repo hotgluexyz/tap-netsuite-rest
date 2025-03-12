@@ -859,6 +859,7 @@ class TransactionRootStream(NetsuiteDynamicStream):
     # Remove double spaces that might result from empty address fields
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         # Collapse duplicate spaces in address fields
+        row = super().post_process(row, context)
         if row.get("shippingaddress"):
             row["shippingaddress"] = re.sub(r'(, )+', ', ', row["shippingaddress"]).strip(', ')
             if row["shippingaddress"] == "":
