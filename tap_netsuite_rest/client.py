@@ -492,7 +492,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             prepared_req.headers.update({"Accept": "application/schema+json"})
             response = s.send(prepared_req)
             response.raise_for_status()
-            self.schema_response = response.json()
+            res_json = response.json()
+            self.schema_response = res_json
+            self.schema_response["properties"] = {k.lower():v for k,v in res_json.get("properties").items()}
+            self._tap.tables_metadata.update({self.name: self.schema_response})
         except:
             pass
 
@@ -571,23 +574,24 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         if self.schema_response:
             response = self.schema_response
             properties_list = []
-            for field, value in response.get("properties").items():
+            stream_properties_res = response.get("properties")
+            for field, value in stream_properties_res.items():
                 if self.fields and self.filter_fields and field.lower() not in self.fields:
                     continue
 
                 if value.get("format") == 'date-time':
-                    properties_list.append(th.Property(field.lower(), th.DateTimeType))
+                    properties_list.append(th.Property(field, th.DateTimeType))
                 elif value.get("format") == "date":
-                    properties_list.append(th.Property(field.lower(), th.DateType))
+                    properties_list.append(th.Property(field, th.DateType))
                 elif value["type"] == "string":
-                    properties_list.append(th.Property(field.lower(), th.StringType))
+                    properties_list.append(th.Property(field, th.StringType))
                 elif value["type"] == "boolean":
-                    properties_list.append(th.Property(field.lower(), th.BooleanType))
+                    properties_list.append(th.Property(field, th.BooleanType))
                 elif value["type"] in ["number", "integer"]:
-                    properties_list.append(th.Property(field.lower(), th.NumberType))
+                    properties_list.append(th.Property(field, th.NumberType))
                 else:
                     #Object and array as custom types
-                    properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
+                    properties_list.append(th.Property(field, th.CustomType({"type": [value["type"],"string"]})))
             return th.PropertiesList(*properties_list).to_dict()
     
    
