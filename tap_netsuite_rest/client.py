@@ -474,11 +474,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         s = self.get_session()
 
         try:
-            if self.use_dynamic_fields:
-                # TODO: refactor this to not force the except like this lol
-                raise Exception("Switching to dynamic fields...")
-
-            self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+            self.logger.info(f"Getting schema for {self.table} from metadata API - stream: {self.name}")
 
             account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
             url = f"https://{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
@@ -493,16 +489,22 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             response = s.send(prepared_req)
             response.raise_for_status()
             res_json = response.json()
-            self.schema_response = res_json
-            self.schema_response["properties"] = {k.lower():v for k,v in res_json.get("properties").items()}
-            self._tap.tables_metadata.update({self.name: self.schema_response})
+            schema_response = {}
+            schema_response["properties"] = {k.lower():v for k,v in res_json.get("properties").items()}
+
+            if self.use_dynamic_fields:
+                self.logger.info(f"Skipping schema for {self.table} from metadata API - stream: {self.name}. Reason: use_dynamic_fields = True")
+            else:
+                self.schema_response = res_json
+                self.schema_response["properties"] = schema_response["properties"]
+            self._tap.tables_metadata.update({self.name: schema_response})
         except:
-            pass
+            self.logger.warning(f"Failed to get schema for {self.table} from metadata API - stream: {self.name}")
 
         if not self.schema_response or self.filter_fields:
             self.fields = set()
 
-            self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+            self.logger.info(f"Getting schema for {self.table} from Query - stream: {self.name}")
             url = f"{self.url_base}?offset=0&limit=1000"
 
             prepared_req = s.prepare_request(
@@ -548,7 +550,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 # Can't query links, so we remove it
                 self.fields.remove("links")
             except:
-                self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
+                self.logger.warning(f"Failed to get schema for {self.table} from Query - stream: {self.name}")
                 pass
 
 
