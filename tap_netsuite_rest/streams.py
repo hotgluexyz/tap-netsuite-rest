@@ -889,7 +889,8 @@ class CurrenciesStream(NetsuiteDynamicStream):
     name = "currencies"
     primary_keys = ["id"]
     table = "currency"
-    replication_key = "lastmodifieddate"
+    # NOTE: we are purposely making this a full sync stream, see HGI-7432
+    # replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
 
