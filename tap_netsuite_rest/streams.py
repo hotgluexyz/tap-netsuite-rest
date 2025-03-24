@@ -1788,7 +1788,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     select = "t.recordtype, tl.*"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F' and accountinglinetype is not null"
+    custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1875,7 +1875,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     table = "transactionline"
     parent_stream_type = InvoicesStream
     select = "*"
-    custom_filter = "mainline = 'F'"
+    custom_filter = "mainline = 'T' and accountinglinetype = 'INCOME'"
 
     default_fields = [
         th.Property("item", th.StringType),
