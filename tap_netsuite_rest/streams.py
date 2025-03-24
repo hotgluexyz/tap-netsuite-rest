@@ -1875,7 +1875,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     table = "transactionline"
     parent_stream_type = InvoicesStream
     select = "*"
-    custom_filter = "mainline = 'T' and accountinglinetype = 'INCOME'"
+    custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
 
     default_fields = [
         th.Property("item", th.StringType),

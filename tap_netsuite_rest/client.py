@@ -473,6 +473,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
+    float_fields = []
+    integer_fields = []
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -506,7 +508,35 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.schema_response = response.json()
         except:
             pass
+        
+        # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
 
+        # fetch custom fields
+        if not self.schema_response  and self._tap.custom_fields is None:
+            # request custom fields types
+            offset = 0
+            custom_fields = {}
+
+            self.logger.info(f"Fetching custom fields data")
+            while offset is not None:
+                prepared_req = s.prepare_request(
+                    requests.Request(
+                        method="POST",
+                        url=f"{self.url_base}?offset={offset}&limit=1000",
+                        headers=self.http_headers,
+                        json={
+                            "q": f"SELECT * FROM customfield"
+                        }
+                    )
+                )
+                response = s.send(prepared_req)
+                offset = self.get_next_page_token(response, offset)
+                custom_fields.update({cf.get("scriptid").lower(): cf.get("fieldvaluetype") for cf in response.json().get("items", [])})
+            
+            self._tap.custom_fields = custom_fields
+
+
+        # fetch top 1000 records to infer fields and types
         if not self.schema_response or self.filter_fields:
             self.fields = set()
 
@@ -555,6 +585,28 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
                 # Can't query links, so we remove it
                 self.fields.remove("links")
+
+                # for bills and invoices add/update custom fields and its types
+                if self._tap.custom_fields:
+                    cf_prefix = None
+                    if self.name in ["invoices", "bills"]:
+                        cf_prefix = "custbody"
+                    elif self.name in ["invoice_lines", "bill_lines", "bill_expenses"]:
+                        cf_prefix = "custcol"
+                    
+                    # add fields and types to build schema
+                    if cf_prefix:
+                        table_cf = {k:v for k,v in self._tap.custom_fields.items() if k.startswith(cf_prefix)}
+                        self.fields.update(table_cf.keys())              
+                        for cf, cf_type in table_cf.items():
+                            if cf_type in ["Decimal Number", "Percent"]:
+                                self.float_fields.append(cf)
+                            elif cf_type in ["Integer Number"]:
+                                self.integer_fields.append(cf)
+                            elif cf_type in ["Date/Time"]:
+                                self.date_fields.append(cf)
+                            elif cf_type in ["Check Box"]:
+                                self.bool_fields .append(cf)
             except:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
@@ -574,6 +626,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
                 elif field in self.bool_fields:
                     properties_list.append(th.Property(field.lower(), th.BooleanType))
+                elif field in self.float_fields:
+                    properties_list.append(th.Property(field.lower(), th.NumberType))
+                elif field in self.integer_fields:
+                    properties_list.append(th.Property(field.lower(), th.IntegerType))
                 else:
                     properties_list.append(th.Property(field.lower(), th.StringType))
 
