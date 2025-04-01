@@ -32,7 +32,8 @@ from singer_sdk.helpers._state import (
     log_sort_error,
 )
 from singer_sdk.exceptions import InvalidStreamSortException
-
+import singer
+from singer import StateMessage
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -463,6 +464,17 @@ class NetSuiteStream(RESTStream):
                 )
             # Cycle until get_next_page_token() no longer returns a value
             finished = next_page_token is None
+    
+    def _write_state_message(self) -> None:
+        """Write out a STATE message with the latest state."""
+        tap_state = self.tap_state
+
+        if tap_state and tap_state.get("bookmarks"):
+            for stream_name in tap_state.get("bookmarks").keys():
+                if tap_state["bookmarks"][stream_name].get("partitions"):
+                    tap_state["bookmarks"][stream_name]["partitions"] = []
+
+        singer.write_message(StateMessage(value=tap_state))
 
 
 class NetsuiteDynamicSchema(NetSuiteStream):
@@ -512,7 +524,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
 
         # fetch custom fields
-        if not self.schema_response  and self._tap.custom_fields is None:
+        add_custom_fields_streams = ["invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"]
+        if not self.schema_response  and self._tap.custom_fields is None and self.name in add_custom_fields_streams:
             # request custom fields types
             offset = 0
             custom_fields = {}
