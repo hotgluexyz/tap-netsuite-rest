@@ -1,10 +1,10 @@
 name: Smoke Test
 
-
 on:
+  repository_dispatch:
+    types: [smoke_test]  # Custom event type
   pull_request:
     types: [opened, synchronize, reopened]
-
 
 jobs:
   smoke-test:
