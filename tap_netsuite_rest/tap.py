@@ -36,6 +36,7 @@ class TapNetSuite(Tap):
     """NetSuite tap class."""
 
     name = "tap-netsuite-rest"
+    custom_fields = None
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
