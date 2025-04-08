@@ -9,7 +9,7 @@ import re
 
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, Optional, cast, Iterable
+from typing import Any, Callable, Dict, Optional, cast, Iterable, List
 
 from memoization import cached
 from oauthlib import oauth1
@@ -26,6 +26,14 @@ from http.client import RemoteDisconnected
 from dateutil.relativedelta import relativedelta
 import pytz
 from copy import deepcopy
+import copy
+from singer_sdk.helpers._state import (
+    finalize_state_progress_markers,
+    log_sort_error,
+)
+from singer_sdk.exceptions import InvalidStreamSortException
+import singer
+from singer import StateMessage
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -56,6 +64,8 @@ class NetSuiteStream(RESTStream):
     order_by = None
     append_select = None
     time_jump = relativedelta(months=1)
+    always_add_default_fields = False
+    query_table = None
 
     def __init__(
         self,
@@ -353,9 +363,10 @@ class NetSuiteStream(RESTStream):
             select = self.append_select + select
 
         join = self.join if self.join else ""
+        table = self.query_table or self.table
 
         payload = dict(
-            q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
+            q=f"SELECT {select} FROM {table} {join} {filters} {order_by}"
         )
         self.logger.info(f"Making query ({payload['q']})")
         return payload
@@ -453,6 +464,17 @@ class NetSuiteStream(RESTStream):
                 )
             # Cycle until get_next_page_token() no longer returns a value
             finished = next_page_token is None
+    
+    def _write_state_message(self) -> None:
+        """Write out a STATE message with the latest state."""
+        tap_state = self.tap_state
+
+        if tap_state and tap_state.get("bookmarks"):
+            for stream_name in tap_state.get("bookmarks").keys():
+                if tap_state["bookmarks"][stream_name].get("partitions"):
+                    tap_state["bookmarks"][stream_name]["partitions"] = []
+
+        singer.write_message(StateMessage(value=tap_state))
 
 
 class NetsuiteDynamicSchema(NetSuiteStream):
@@ -463,6 +485,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
+
+    def __init__(self, *args, **kwargs):
+        self.float_fields = []
+        self.integer_fields = []
+        return super().__init__(*args, **kwargs)
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -496,7 +523,36 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.schema_response = response.json()
         except:
             pass
+        
+        # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
 
+        # fetch custom fields
+        add_custom_fields_streams = ["invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"]
+        if not self.schema_response  and self._tap.custom_fields is None and self.name in add_custom_fields_streams:
+            # request custom fields types
+            offset = 0
+            custom_fields = {}
+
+            self.logger.info(f"Fetching custom fields data")
+            while offset is not None:
+                prepared_req = s.prepare_request(
+                    requests.Request(
+                        method="POST",
+                        url=f"{self.url_base}?offset={offset}&limit=1000",
+                        headers=self.http_headers,
+                        json={
+                            "q": f"SELECT * FROM customfield"
+                        }
+                    )
+                )
+                response = s.send(prepared_req)
+                offset = self.get_next_page_token(response, offset)
+                custom_fields.update({cf.get("scriptid").lower(): cf.get("fieldvaluetype") for cf in response.json().get("items", [])})
+            
+            self._tap.custom_fields = custom_fields
+
+
+        # fetch top 1000 records to infer fields and types
         if not self.schema_response or self.filter_fields:
             self.fields = set()
 
@@ -545,6 +601,28 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
                 # Can't query links, so we remove it
                 self.fields.remove("links")
+
+                # for bills and invoices add/update custom fields and its types
+                if self._tap.custom_fields:
+                    cf_prefix = None
+                    if self.name in ["invoices", "bills"]:
+                        cf_prefix = "custbody"
+                    elif self.name in ["invoice_lines", "bill_lines", "bill_expenses"]:
+                        cf_prefix = "custcol"
+                    
+                    # add fields and types to build schema
+                    if cf_prefix:
+                        table_cf = {k:v for k,v in self._tap.custom_fields.items() if k.startswith(cf_prefix)}
+                        self.fields.update(table_cf.keys())              
+                        for cf, cf_type in table_cf.items():
+                            if cf_type in ["Decimal Number", "Percent"]:
+                                self.float_fields.append(cf)
+                            elif cf_type in ["Integer Number"]:
+                                self.integer_fields.append(cf)
+                            elif cf_type in ["Date/Time"]:
+                                self.date_fields.append(cf)
+                            elif cf_type in ["Check Box"]:
+                                self.bool_fields .append(cf)
             except:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
@@ -564,6 +642,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
                 elif field in self.bool_fields:
                     properties_list.append(th.Property(field.lower(), th.BooleanType))
+                elif field in self.float_fields:
+                    properties_list.append(th.Property(field.lower(), th.NumberType))
+                elif field in self.integer_fields:
+                    properties_list.append(th.Property(field.lower(), th.IntegerType))
                 else:
                     properties_list.append(th.Property(field.lower(), th.StringType))
 
@@ -571,7 +653,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         if self.schema_response:
             response = self.schema_response
-            properties_list = []
+            properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
             for field, value in response.get("properties").items():
                 if self.fields and self.filter_fields and field.lower() not in self.fields:
                     continue
@@ -711,6 +793,90 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         row = self.process_types(row)
         return row
 
+
+class BulkParentStream(NetsuiteDynamicStream):
+
+    child_context_keys = ["ids"]
+
+    def _sync_records(  # noqa C901  # too complex
+        self, context: Optional[dict] = None
+    ) -> None:
+        record_count = 0
+        current_context: Optional[dict]
+        context_list: Optional[List[dict]]
+        context_list = [context] if context is not None else self.partitions
+        selected = self.selected
+
+        for current_context in context_list or [{}]:
+            partition_record_count = 0
+            current_context = current_context or None
+            state = self.get_context_state(current_context)
+            state_partition_context = self._get_state_partition_context(current_context)
+            self._write_starting_replication_value(current_context)
+            child_context: Optional[dict] = (
+                None if current_context is None else copy.copy(current_context)
+            )
+            child_context_bulk = {key: [] for key in self.child_context_keys}
+            for record_result in self.get_records(current_context):
+                if isinstance(record_result, tuple):
+                    # Tuple items should be the record and the child context
+                    record, child_context = record_result
+                else:
+                    record = record_result
+                child_context = copy.copy(
+                    self.get_child_context(record=record, context=child_context)
+                )
+                for key, val in (state_partition_context or {}).items():
+                    # Add state context to records if not already present
+                    if key not in record:
+                        record[key] = val
+
+                # Sync children, except when primary mapper filters out the record
+                if self.stream_maps[0].get_filter_result(record):
+                    # add id to child_context_bulk ids
+                    for key, value in child_context.items():                        
+                        child_context_bulk[key].extend(child_context[key]) if value else None
+                
+                if any(len(v) > self.page_size for v in child_context_bulk.values()):
+                    self._sync_children(child_context_bulk)
+                    child_context_bulk = {key: [] for key in self.child_context_keys}
+
+                self._check_max_record_limit(record_count)
+                if selected:
+                    if (record_count - 1) % self.STATE_MSG_FREQUENCY == 0:
+                        self._write_state_message()
+                    self._write_record_message(record)
+                    try:
+                        self._increment_stream_state(record, context=current_context)
+                    except InvalidStreamSortException as ex:
+                        log_sort_error(
+                            log_fn=self.logger.error,
+                            ex=ex,
+                            record_count=record_count + 1,
+                            partition_record_count=partition_record_count + 1,
+                            current_context=current_context,
+                            state_partition_context=state_partition_context,
+                            stream_name=self.name,
+                        )
+                        raise ex
+
+                record_count += 1
+                partition_record_count += 1
+            # process remaining child context if len < 1000
+            if any(v != [] for v in child_context_bulk.values()):
+                self._sync_children(child_context_bulk)
+            #----
+            if current_context == state_partition_context:
+                # Finalize per-partition state only if 1:1 with context
+                finalize_state_progress_markers(state)
+        if not context:
+            # Finalize total stream only if we have the full full context.
+            # Otherwise will be finalized by tap at end of sync.
+            finalize_state_progress_markers(self.stream_state)
+        self._write_record_count_log(record_count=record_count, context=context)
+        # Reset interim bookmarks before emitting final STATE message:
+        self._write_state_message()
+
 class TransactionRootStream(NetsuiteDynamicStream):
     select = None
     start_date = None
@@ -764,8 +930,8 @@ class TransactionRootStream(NetsuiteDynamicStream):
 
     # Remove double spaces that might result from empty address fields
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        row = super().post_process(row, context)
         # Collapse duplicate spaces in address fields
+        row = super().post_process(row, context)
         if row.get("shippingaddress"):
             row["shippingaddress"] = re.sub(r'(, )+', ', ', row["shippingaddress"]).strip(', ')
             if row["shippingaddress"] == "":
