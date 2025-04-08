@@ -485,8 +485,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
-    float_fields = []
-    integer_fields = []
+
+    def __init__(self, *args, **kwargs):
+        self.float_fields = []
+        self.integer_fields = []
+        return super().__init__(*args, **kwargs)
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
