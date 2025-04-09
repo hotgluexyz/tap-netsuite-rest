@@ -733,11 +733,10 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     ).to_dict()
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
-        if "amount" in row:
-            try:
-                row["amount"] = float(row["amount"])
-            except:
-                pass
+        amount_fields = ["amount", "creditamount", "debitamount"]
+        for amount_field in amount_fields:
+            if row.get(amount_field):
+                row[amount_field] = self.process_number(amount_field, row[amount_field])
         return row
 
 
