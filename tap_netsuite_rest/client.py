@@ -475,7 +475,27 @@ class NetSuiteStream(RESTStream):
                     tap_state["bookmarks"][stream_name]["partitions"] = []
 
         singer.write_message(StateMessage(value=tap_state))
-
+    
+    def process_number(self, field, value):
+        return_value = value
+        # Attempt to cast to float only if the value is a string with decimals
+        if isinstance(value, str) and "." in value:
+            try:
+                return_value = float(value)
+            except ValueError:
+                self.logger.error(
+                    f"Could not cast {field} : `{value}` to number / integer"
+                )
+                raise Exception(ValueError)
+        else:
+            # Attempt to cast to int if there are no decimals
+            try:
+                return_value = int(value)
+            except ValueError:
+                self.logger.error(f"Could not cast {field} : `{value}` to integer")
+                raise Exception(ValueError)
+        return return_value
+    
 
 class NetsuiteDynamicSchema(NetSuiteStream):
     schema_response = None
@@ -683,26 +703,6 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     bool_fields = []
     use_dynamic_fields = False
     default_fields = []
-
-    def process_number(self, field, value):
-        return_value = value
-        # Attempt to cast to float only if the value is a string with decimals
-        if isinstance(value, str) and "." in value:
-            try:
-                return_value = float(value)
-            except ValueError:
-                self.logger.error(
-                    f"Could not cast {field} : `{value}` to number / integer"
-                )
-                raise Exception(ValueError)
-        else:
-            # Attempt to cast to int if there are no decimals
-            try:
-                return_value = int(value)
-            except ValueError:
-                self.logger.error(f"Could not cast {field} : `{value}` to integer")
-                raise Exception(ValueError)
-        return return_value
     
     def process_types(self, row, schema=None):
         if schema is None:
