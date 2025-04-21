@@ -297,10 +297,10 @@ class NetSuiteStream(RESTStream):
             self.start_date_f = start_date.strftime("%Y-%m-01")
         self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
-    def get_selected_properties(self):
+    def get_selected_properties(self, select_all_by_default=False):
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key) == 2 and value.selected:
+            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True):
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
@@ -703,6 +703,14 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     bool_fields = []
     use_dynamic_fields = False
     default_fields = []
+
+    @property
+    def select(self):
+        if not self.selected and self.has_selected_descendents:
+            selected_properties = self.get_selected_properties(select_all_by_default=True)
+            return ",".join(selected_properties)
+        else:
+            return None
     
     def process_types(self, row, schema=None):
         if schema is None:
