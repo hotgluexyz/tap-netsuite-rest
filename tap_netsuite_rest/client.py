@@ -385,9 +385,8 @@ class NetSuiteStream(RESTStream):
                         raise RetryRequest(response.text)
                     
             if "Search error occurred: Field" in response.text:
-                # Extract field name from error message
                 error_details = response.json()["o:errorDetails"][0]["detail"]
-                # Extract all field names from error message
+                # Extract all field names from error message and drop it from the select
                 field_matches = re.finditer(r"Field '(\w+)' for record", error_details)
                 for field_match in field_matches:
                     field_name = field_match.group(1)
@@ -397,6 +396,7 @@ class NetSuiteStream(RESTStream):
                         self.invalid_fields.append(field_name)
                         self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
                 if field_matches:
+                    self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
                 
         if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
@@ -714,7 +714,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
    
 
 class NetsuiteDynamicStream(NetsuiteDynamicSchema):
-    select = "*"
     schema_response = None
     fields = None
     date_fields = []
@@ -727,9 +726,9 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         if not self.selected and self.has_selected_descendents:
             selected_properties = self.get_selected_properties(select_all_by_default=True)
             return ",".join(selected_properties)
-        elif self.selected and self._select:
+        elif self.selected and hasattr(self, "_select"):
             selected_fields = self._select.split(",")
-            if any(f for f in selected_fields if f.endswith(".*")):
+            if any(f for f in selected_fields if f.endswith("*")):
                 # For .* queries, keep the wildcard but explicitly format datetime fields
                 datetime_fields = []
                 for field_name, field_info in self.schema["properties"].items():
@@ -737,18 +736,18 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
                     field_format = field_info.get("format")
                     if field_type == "string" and field_format in ["date-time", "date"] and field_name not in self.invalid_fields:
                         prefix = self.select_prefix or self.table
-                        formatted_field = f"TO_CHAR({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}_string"
+                        formatted_field = f"TO_CHAR({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
                         datetime_fields.append(formatted_field)
 
                 # Replace any .* with explicit datetime fields + .*
                 modified_fields = []
                 for field in selected_fields:
-                    if field.endswith(".*"):
+                    if datetime_fields:
                         modified_fields.extend(datetime_fields)
-                        modified_fields.append(field)
+                    if field.endswith("*"):
+                        modified_fields.insert(0, field)
                     else:
                         modified_fields.append(field)
-                
                 return ",".join(modified_fields)
             else:
                 return self._select
