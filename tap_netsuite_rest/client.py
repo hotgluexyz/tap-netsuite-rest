@@ -297,15 +297,19 @@ class NetSuiteStream(RESTStream):
             self.start_date_f = start_date.strftime("%Y-%m-01")
         self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
-    def get_selected_properties(self):
+    def format_date_query(self, field_name):
+        prefix = self.select_prefix or self.table
+        return f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
+
+    def get_selected_properties(self, select_all_by_default=False):
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key) == 2 and value.selected:
+            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True):
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
                 if field_type.get("format") == "date-time":
-                    field_name = f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
+                    field_name = self.format_date_query(field_name)
                 else:
                     field_name = f"{prefix}.{field_name} AS {field_name}"
                 selected_properties.append(field_name)
@@ -373,15 +377,32 @@ class NetSuiteStream(RESTStream):
 
     def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response."""
-        if hasattr(self,"entities_fallback") and self.entities_fallback and response.status_code == 400:
-            for entity in self.entities_fallback:
-                if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
-                    self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
-                    if "select_replace" in entity:
-                        self.select = self.select.replace(entity['select_replace'], "")
-                    if "join_replace" in entity:  
-                        self.join = self.join.replace(entity['join_replace'], "")
+        if response.status_code == 400:
+            if hasattr(self,"entities_fallback") and self.entities_fallback:
+                for entity in self.entities_fallback:
+                    if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
+                        self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
+                        if "select_replace" in entity:
+                            self.select = self.select.replace(entity['select_replace'], "")
+                        if "join_replace" in entity:  
+                            self.join = self.join.replace(entity['join_replace'], "")
+                        raise RetryRequest(response.text)
+                    
+            if "Search error occurred: Field" in response.text:
+                error_details = response.json()["o:errorDetails"][0]["detail"]
+                # Extract all field names from error message and drop it from the select
+                field_matches = re.finditer(r"Field '(\w+)' for record", error_details)
+                for field_match in field_matches:
+                    field_name = field_match.group(1)
+                    if not hasattr(self, "invalid_fields"):
+                        self.invalid_fields = []
+                    if field_name not in self.invalid_fields:
+                        self.invalid_fields.append(field_name)
+                        self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
+                if field_matches:
+                    self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
+                
         if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
             msg = (
                 f"{response.status_code} Server Error: "
@@ -509,6 +530,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
+        self.invalid_fields = []
         return super().__init__(*args, **kwargs)
 
     @backoff.on_exception(backoff.expo, (
@@ -698,13 +720,43 @@ class NetsuiteDynamicSchema(NetSuiteStream):
    
 
 class NetsuiteDynamicStream(NetsuiteDynamicSchema):
-    select = "*"
     schema_response = None
     fields = None
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
     default_fields = []
+
+    @property
+    def select(self):
+        if not self.selected and self.has_selected_descendents:
+            selected_properties = self.get_selected_properties(select_all_by_default=True)
+            return ",".join(selected_properties)
+        elif self.selected and hasattr(self, "_select"):
+            selected_fields = self._select.split(",")
+            if any(f for f in selected_fields if f.endswith("*")):
+                # For .* queries, keep the wildcard but explicitly format datetime fields
+                datetime_fields = []
+                for field_name, field_info in self.schema["properties"].items():
+                    field_type = field_info.get("type", ["null"])[0]
+                    field_format = field_info.get("format")
+                    if field_type == "string" and field_format in ["date-time", "date"] and field_name not in self.invalid_fields:
+                        datetime_fields.append(self.format_date_query(field_name))
+
+                # Replace any .* with explicit datetime fields + .*
+                modified_fields = []
+                for field in selected_fields:
+                    if datetime_fields:
+                        modified_fields.extend(datetime_fields)
+                    if field.endswith("*"):
+                        modified_fields.insert(0, field)
+                    else:
+                        modified_fields.append(field)
+                return ",".join(modified_fields)
+            else:
+                return self._select
+        else:
+            return None
     
     def process_types(self, row, schema=None):
         if schema is None:

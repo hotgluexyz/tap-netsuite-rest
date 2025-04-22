@@ -318,11 +318,12 @@ class VendorStream(BulkParentStream):
     primary_keys = ["id"]
     table = "vendor"
     query_table = "vendor v"
-    select = "v.*, vsr.subsidiary, vsr.entity"
+    _select = "v.*, vsr.subsidiary, vsr.entity"
     join = "JOIN vendorsubsidiaryrelationship vsr ON vsr.entity = v.id"
     replication_key = "lastmodifieddate"
     replication_key_prefix = "v"
     always_add_default_fields = True
+    select_prefix = "v"
 
     default_fields = [
         th.Property("defaultbillingaddress", th.StringType)
@@ -441,9 +442,6 @@ class LocationsStream(BulkParentStream):
     name = "locations"
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
-    select = """
-        *
-        """
     join = """
         INNER JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
         """
@@ -996,7 +994,6 @@ class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
-    select = "*"
     filter_fields = True
     child_context_keys = [
         "return_address_ids",
@@ -1112,7 +1109,8 @@ class CustomersStream(BulkParentStream):
     table = "customer"
     query_table = "customer c"
     always_add_default_fields = True
-    select = "c.*, csr.subsidiary, csr.entity"
+    _select = "c.*, csr.subsidiary, csr.entity"
+    select_prefix = "c"
     join = "JOIN customersubsidiaryrelationship csr ON csr.entity = c.id"
     replication_key = "lastmodifieddate"
     replication_key_prefix = "c"
@@ -1401,7 +1399,6 @@ class BillingSchedulesStream(NetSuiteStream):
     name = "billing_schedules"
     primary_keys = ["id"]
     table = "billingschedule"
-    select = "*"
 
     schema = th.PropertiesList(
         th.Property("applytosubtotal", th.StringType),
@@ -1585,7 +1582,6 @@ class SubscriptionLineRevisionStream(NetsuiteDynamicStream):
     name = "subscription_line_revision"
     primary_keys = ["subscription", "subscriptionline", "subscriptionrevision"]
     table = "subscriptionlinerevision"
-    select = "*"
     use_dynamic_fields = True
 
     schema = th.PropertiesList(
@@ -1776,7 +1772,7 @@ class BillsStream(BulkParentStream):
     table = "transaction"
     custom_filter = "type = 'VendBill'"
     replication_key = "lastmodifieddate"
-    select = "*, BUILTIN.DF(status) status"
+    _select = "*, BUILTIN.DF(status) status"
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
@@ -1786,7 +1782,8 @@ class BillLinesStream(NetsuiteDynamicStream):
     name = "bill_lines"
     table = "transactionline"
     parent_stream_type = BillsStream
-    select = "t.recordtype, tl.*"
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
@@ -1808,7 +1805,8 @@ class BillExpensesStream(NetsuiteDynamicStream):
     name = "bill_expenses"
     table = "transactionline"
     parent_stream_type = BillsStream
-    select = "t.recordtype, tl.*"
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     custom_filter = "mainline = 'F' and accountinglinetype is null"
@@ -1857,7 +1855,7 @@ class InvoicesStream(BulkParentStream):
     custom_filter = "type = 'CustInvc'"
     child_context_keys = ["ids", "addresses"]
     replication_key = "lastmodifieddate"
-    select = "*, BUILTIN.DF(status) status"
+    _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
@@ -1875,7 +1873,6 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     name = "invoice_lines"
     table = "transactionline"
     parent_stream_type = InvoicesStream
-    select = "*"
     custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
 
     default_fields = [
@@ -1926,7 +1923,6 @@ class InvoiceAddressesStream(NetsuiteDynamicStream):
     name = "invoice_addresses"
     table = "transactionaddressmappingaddress"
     parent_stream_type = InvoicesStream
-    select = "*"
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice addresses filtering by addres id from invoice parent stream
