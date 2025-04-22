@@ -318,11 +318,12 @@ class VendorStream(BulkParentStream):
     primary_keys = ["id"]
     table = "vendor"
     query_table = "vendor v"
-    select = "v.*, vsr.subsidiary, vsr.entity"
+    _select = "v.*, vsr.subsidiary, vsr.entity"
     join = "JOIN vendorsubsidiaryrelationship vsr ON vsr.entity = v.id"
     replication_key = "lastmodifieddate"
     replication_key_prefix = "v"
     always_add_default_fields = True
+    select_prefix = "v"
 
     default_fields = [
         th.Property("defaultbillingaddress", th.StringType)

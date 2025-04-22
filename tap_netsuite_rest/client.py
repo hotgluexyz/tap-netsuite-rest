@@ -373,15 +373,32 @@ class NetSuiteStream(RESTStream):
 
     def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response."""
-        if hasattr(self,"entities_fallback") and self.entities_fallback and response.status_code == 400:
-            for entity in self.entities_fallback:
-                if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
-                    self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
-                    if "select_replace" in entity:
-                        self.select = self.select.replace(entity['select_replace'], "")
-                    if "join_replace" in entity:  
-                        self.join = self.join.replace(entity['join_replace'], "")
+        if response.status_code == 400:
+            if hasattr(self,"entities_fallback") and self.entities_fallback:
+                for entity in self.entities_fallback:
+                    if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
+                        self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
+                        if "select_replace" in entity:
+                            self.select = self.select.replace(entity['select_replace'], "")
+                        if "join_replace" in entity:  
+                            self.join = self.join.replace(entity['join_replace'], "")
+                        raise RetryRequest(response.text)
+                    
+            if "Search error occurred: Field" in response.text:
+                # Extract field name from error message
+                error_details = response.json()["o:errorDetails"][0]["detail"]
+                # Extract all field names from error message
+                field_matches = re.finditer(r"Field '(\w+)' for record", error_details)
+                for field_match in field_matches:
+                    field_name = field_match.group(1)
+                    if not hasattr(self, "invalid_fields"):
+                        self.invalid_fields = []
+                    if field_name not in self.invalid_fields:
+                        self.invalid_fields.append(field_name)
+                        self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
+                if field_matches:
                     raise RetryRequest(response.text)
+                
         if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
             msg = (
                 f"{response.status_code} Server Error: "
@@ -509,6 +526,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
+        self.invalid_fields = []
         return super().__init__(*args, **kwargs)
 
     @backoff.on_exception(backoff.expo, (
@@ -709,6 +727,31 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         if not self.selected and self.has_selected_descendents:
             selected_properties = self.get_selected_properties(select_all_by_default=True)
             return ",".join(selected_properties)
+        elif self.selected and self._select:
+            selected_fields = self._select.split(",")
+            if any(f for f in selected_fields if f.endswith(".*")):
+                # For .* queries, keep the wildcard but explicitly format datetime fields
+                datetime_fields = []
+                for field_name, field_info in self.schema["properties"].items():
+                    field_type = field_info.get("type", ["null"])[0]
+                    field_format = field_info.get("format")
+                    if field_type == "string" and field_format in ["date-time", "date"] and field_name not in self.invalid_fields:
+                        prefix = self.select_prefix or self.table
+                        formatted_field = f"TO_CHAR({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}_string"
+                        datetime_fields.append(formatted_field)
+
+                # Replace any .* with explicit datetime fields + .*
+                modified_fields = []
+                for field in selected_fields:
+                    if field.endswith(".*"):
+                        modified_fields.extend(datetime_fields)
+                        modified_fields.append(field)
+                    else:
+                        modified_fields.append(field)
+                
+                return ",".join(modified_fields)
+            else:
+                return self._select
         else:
             return None
     
