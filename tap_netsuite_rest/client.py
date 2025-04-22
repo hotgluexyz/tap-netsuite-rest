@@ -297,6 +297,10 @@ class NetSuiteStream(RESTStream):
             self.start_date_f = start_date.strftime("%Y-%m-01")
         self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
 
+    def format_date_query(self, field_name):
+        prefix = self.select_prefix or self.table
+        return f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
+
     def get_selected_properties(self, select_all_by_default=False):
         selected_properties = []
         for key, value in self.metadata.items():
@@ -305,7 +309,7 @@ class NetSuiteStream(RESTStream):
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
                 if field_type.get("format") == "date-time":
-                    field_name = f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
+                    field_name = self.format_date_query(field_name)
                 else:
                     field_name = f"{prefix}.{field_name} AS {field_name}"
                 selected_properties.append(field_name)
@@ -735,9 +739,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
                     field_type = field_info.get("type", ["null"])[0]
                     field_format = field_info.get("format")
                     if field_type == "string" and field_format in ["date-time", "date"] and field_name not in self.invalid_fields:
-                        prefix = self.select_prefix or self.table
-                        formatted_field = f"TO_CHAR({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
-                        datetime_fields.append(formatted_field)
+                        datetime_fields.append(self.format_date_query(field_name))
 
                 # Replace any .* with explicit datetime fields + .*
                 modified_fields = []
