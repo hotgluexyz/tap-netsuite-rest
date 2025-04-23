@@ -679,6 +679,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         if self.fields is not None and not self.schema_response:
             fields = self.fields
             properties_list = deepcopy(self.default_fields)
+            # Remove any fields that are already in default_fields to avoid overriding the type
+            fields = {f for f in fields if not any(df.name == f.lower() for df in self.default_fields)}
             for field in fields:
                 if field == self.replication_key or field in self.date_fields:
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))

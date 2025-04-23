@@ -549,7 +549,7 @@ class ItemStream(BulkParentStream):
         th.Property("location", th.StringType),
         th.Property("class", th.StringType),
         th.Property("department", th.StringType),
-        th.Property("isinactive", th.StringType),
+        th.Property("isinactive", th.BooleanType),
         th.Property("createddate", th.DateTimeType),
     ]
 
