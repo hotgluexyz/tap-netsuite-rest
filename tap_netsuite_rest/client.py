@@ -389,10 +389,10 @@ class NetSuiteStream(RESTStream):
                             self.join = self.join.replace(entity['join_replace'], "")
                         raise RetryRequest(response.text)
                     
-            if "Search error occurred: Field" in response.text:
+            if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
                 error_details = response.json()["o:errorDetails"][0]["detail"]
                 # Extract all field names from error message and drop it from the select
-                field_matches = re.finditer(r"Field '(\w+)' for record", error_details)
+                field_matches = re.finditer(r"(?i)field '(\w+)'", error_details)
                 for field_match in field_matches:
                     field_name = field_match.group(1)
                     if not hasattr(self, "invalid_fields"):
