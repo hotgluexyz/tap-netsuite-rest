@@ -304,7 +304,7 @@ class NetSuiteStream(RESTStream):
     def get_selected_properties(self, select_all_by_default=False):
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True):
+            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True) and key[1] not in self.invalid_fields:
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
