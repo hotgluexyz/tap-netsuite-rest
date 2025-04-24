@@ -84,6 +84,7 @@ class NetSuiteStream(RESTStream):
         """
         super().__init__(name=name, schema=schema, tap=tap, path=path)
         self.record_ids = []
+        self.invalid_fields = []
 
     @property
     def http_headers(self) -> dict:
@@ -530,7 +531,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
-        self.invalid_fields = []
         return super().__init__(*args, **kwargs)
 
     @backoff.on_exception(backoff.expo, (
