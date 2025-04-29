@@ -561,6 +561,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 if "links" in self.fields:
                     self.fields.remove("links")
             except:
+                if "Invalid login attempt" in response.text:
+                    raise FatalAPIError(f"Invalid login attempt. Please check your credentials. {response.text}")
+
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
