@@ -1929,3 +1929,33 @@ class InvoiceAddressesStream(NetsuiteDynamicStream):
         ids = ", ".join(f"'{id}'" for id in context["addresses"])
         self.custom_filter = f"nkey IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+
+
+class ItemReceiptsStream(BulkParentStream):
+    name = "item_receipts"
+    table = "transaction"
+    custom_filter = "type = 'ItemRcpt'"
+    replication_key = "lastmodifieddate"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+
+class ItemReceiptLinesStream(NetsuiteDynamicStream):
+    name = "item_receipt_lines"
+    table = "transactionline"
+    parent_stream_type = ItemReceiptsStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    custom_filter = "mainline = 'F'"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill lines filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        if self.custom_filter:
+            self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        else:
+            self.custom_filter = f"tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
