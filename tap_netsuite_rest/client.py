@@ -672,6 +672,15 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     @property
     def schema(self):
+        
+        # During sync, if we have a catalog, use the schema from the catalog
+        if hasattr(self, '_tap') and hasattr(self._tap, 'input_catalog') and self._tap.input_catalog:
+            # Find this stream in the catalog
+            for stream_entry in self._tap.input_catalog.streams:
+                if stream_entry.tap_stream_id == self.name:
+                    self.logger.debug(f"Using schema from catalog for {self.name}")
+                    return stream_entry.schema.to_dict()
+        
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
             self.get_schema()
