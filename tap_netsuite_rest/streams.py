@@ -681,6 +681,29 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     table = "Transaction"
     join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity ON (Transaction.entity = Entity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Transaction.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
+    entities_fallback = [
+        {
+            "name": "department",
+            "select_replace": "department.id as departmentid, department.fullname as department,",
+            "join_replace": "LEFT JOIN department ON (TransactionLine.department = department.id)",
+        },
+        {
+            "name": "classification",
+            "select_replace": "Classification.id as classid, Classification.name as class,",
+            "join_replace": "LEFT JOIN Classification On ( Transactionline.class = Classification.id )",
+        },
+        {
+            "name": "location",
+            "select_replace": ", Location.name as locationname",
+            "join_replace": "LEFT JOIN Location On ( Transactionline.location = Location.id )",
+        },
+        {
+            "name": "currency",
+            "select_replace": ", Currency.name as currency, Currency.symbol as currencysymbol",
+            "join_replace": "INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )",
+        },
+    ]
+
     @property
     def custom_filter(self):
         return "( Transaction.TranDate BETWEEN TO_DATE( '{start_date}', 'YYYY-MM-DD' ) AND TO_DATE( '{end_date}', 'YYYY-MM-DD' ) ) AND ( Transaction.Posting = 'T' ) AND TransactionAccountingLine.amount !=0"
