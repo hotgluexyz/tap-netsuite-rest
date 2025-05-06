@@ -151,6 +151,10 @@ class NetSuiteStream(RESTStream):
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
         self.logger.info(f"[{self.name}] Total results = {totalResults}. Offset = {offset}")
 
+        if self.name == "inventory_item_locations" and totalResults > 100_000:
+            # NOTE: this is to avoid a case where we miss data, better to report an error than to miss data
+            raise Exception("totalResults is greater than 100,000 records. This should not happen.")
+
         if has_next:
             if (
                 isinstance(self, TransactionRootStream)
@@ -211,6 +215,26 @@ class NetSuiteStream(RESTStream):
                     )
 
             return offset
+
+        if self.name == "inventory_item_locations" and not has_next:
+            max_item_value = 100_000 # TODO: this probably should be more dynamic
+            interval_increment = 2500 # TODO: maybe we should lower this even further or make it dynamic
+            # in the case we need to keep iterating, we should increment
+            if self.custom_filter == f"item >= {max_item_value}":
+                return None
+
+            # extract the current range from the custom filter
+            current_range = self.custom_filter.split("AND")
+            min_value = int(current_range[0].split(">=")[1])
+            max_value = int(current_range[1].split("<")[1])
+
+            if min_value == max_item_value:
+                self.custom_filter = f"item >= {max_item_value}"
+            else:
+                self.custom_filter = f"item >= {min_value + interval_increment} AND item < {max_value + interval_increment}"
+
+            return 0
+
 
         if isinstance(self, TransactionRootStream) and self.config.get("transaction_lines_monthly") and not has_next:
             today = datetime.now()
@@ -672,6 +696,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     @property
     def schema(self):
+        if self._tap.input_catalog and self._tap.input_catalog.get(self.name):
+            return self._tap.input_catalog.get(self.name).schema.properties
+
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
             self.get_schema()
