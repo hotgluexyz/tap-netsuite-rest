@@ -1533,3 +1533,15 @@ class TaxTypeStream(NetsuiteDynamicStream):
     name = "tax_type"
     primary_keys = ["id"]
     table = "taxtype"
+
+
+class SourceDetailsStream(NetSuiteStream):
+    name = "source_details"
+    table = "sourceDetails"
+
+    schema = th.PropertiesList(
+        th.Property("links", th.ArrayType(th.StringType)),
+        th.Property("revenueelement", th.StringType),
+        th.Property("sourceid", th.StringType),
+        th.Property("sourcetype", th.StringType),
+    ).to_dict()
