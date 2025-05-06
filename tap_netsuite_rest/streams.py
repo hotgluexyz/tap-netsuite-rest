@@ -1960,3 +1960,15 @@ class ItemReceiptLinesStream(NetsuiteDynamicStream):
         else:
             self.custom_filter = f"tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+
+
+class SourceDetailsStream(NetSuiteStream):
+    name = "source_details"
+    table = "sourceDetails"
+
+    schema = th.PropertiesList(
+        th.Property("links", th.ArrayType(th.StringType)),
+        th.Property("revenueelement", th.StringType),
+        th.Property("sourceid", th.StringType),
+        th.Property("sourcetype", th.StringType),
+    ).to_dict()
