@@ -697,7 +697,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     @property
     def schema(self):
         if self._tap.input_catalog and self._tap.input_catalog.get(self.name):
-            return self._tap.input_catalog.get(self.name).schema.properties
+            return self._tap.input_catalog.get(self.name).schema.to_dict()
 
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
