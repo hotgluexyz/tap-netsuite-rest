@@ -83,7 +83,7 @@ class NetSuiteStream(RESTStream):
             path: URL path for this entity stream.
         """
         super().__init__(name=name, schema=schema, tap=tap, path=path)
-        self.record_ids = []
+        self.record_ids = set()
         self.invalid_fields = []
 
     @property
@@ -488,13 +488,13 @@ class NetSuiteStream(RESTStream):
             for row in self.parse_response(resp):
                 # need to use final_row otherwise the pk may be missing
                 final_row = self.post_process(row, dict())
-                if self.primary_keys:
+                if "_report" in self.name and self.primary_keys:
                     if len(self.primary_keys) == 1:
                         pk = final_row[self.primary_keys[0]]
                     else:
                         pk = "-".join([str(final_row[key]) for key in self.primary_keys])
                     if pk not in self.record_ids:
-                        self.record_ids.append(pk)
+                        self.record_ids.add(pk)
                         yield row
                 else:
                     yield row
