@@ -488,7 +488,7 @@ class NetSuiteStream(RESTStream):
             for row in self.parse_response(resp):
                 # need to use final_row otherwise the pk may be missing
                 final_row = self.post_process(row, dict())
-                if "_report" in self.name and self.primary_keys:
+                if self.primary_keys:
                     if len(self.primary_keys) == 1:
                         pk = final_row[self.primary_keys[0]]
                     else:
@@ -498,7 +498,6 @@ class NetSuiteStream(RESTStream):
                         yield row
                 else:
                     yield row
-
             previous_token = copy.deepcopy(next_page_token)
             next_page_token = self.get_next_page_token(
                 response=resp, previous_token=previous_token
@@ -696,7 +695,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     @property
     def schema(self):
-        if self._tap.input_catalog and self._tap.input_catalog.get(self.name):
+        if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
         # Get netsuite schema for table
