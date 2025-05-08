@@ -83,7 +83,7 @@ class NetSuiteStream(RESTStream):
             path: URL path for this entity stream.
         """
         super().__init__(name=name, schema=schema, tap=tap, path=path)
-        self.record_ids = []
+        self.record_ids = set()
         self.invalid_fields = []
 
     @property
@@ -494,11 +494,10 @@ class NetSuiteStream(RESTStream):
                     else:
                         pk = "-".join([str(final_row[key]) for key in self.primary_keys])
                     if pk not in self.record_ids:
-                        self.record_ids.append(pk)
+                        self.record_ids.add(pk)
                         yield row
                 else:
                     yield row
-
             previous_token = copy.deepcopy(next_page_token)
             next_page_token = self.get_next_page_token(
                 response=resp, previous_token=previous_token
@@ -696,8 +695,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     @property
     def schema(self):
-        if self._tap.input_catalog and self._tap.input_catalog.get(self.name):
-            return self._tap.input_catalog.get(self.name).schema.properties
+        if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
+            return self._tap.input_catalog.get(self.name).schema.to_dict()
 
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
