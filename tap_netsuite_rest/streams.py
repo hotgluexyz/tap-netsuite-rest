@@ -21,45 +21,6 @@ from singer_sdk.helpers._state import (
 from singer_sdk.exceptions import InvalidStreamSortException
 
 
-class SalesOrdersStream(NetSuiteStream):
-    name = "sales_orders"
-    primary_keys = ["transaction_id", "lastmodifieddate"]
-    entities_fallback = [
-        {
-            "name": "salesordered",
-            "select_replace": "so.amount,",
-            "join_replace": "INNER JOIN salesordered so ON (so.transaction = t.id AND so.tranline = tl.id)",
-        }
-    ]
-    select = """
-        TO_CHAR (t.trandate, 'YYYY-MM-DD HH24:MI:SS') AS trandate,
-        TO_CHAR (t.lastmodifieddate, 'YYYY-MM-DD HH24:MI:SS') AS lastmodifieddate,
-        t.recordtype, tl.item AS ns_item_id, tl.class,
-        tl.quantity, so.amount, t.id AS transaction_id, tl.id AS transaction_line_id
-        """
-    table = "transaction t"
-    join = """
-        INNER JOIN transactionline tl ON t.id = tl.transaction
-        INNER JOIN salesordered so ON (so.transaction = t.id AND so.tranline = tl.id)
-        """
-    custom_filter = "tl.itemtype='InvtPart' AND t.recordtype = 'salesorder'"
-    replication_key_prefix = "t"
-
-    replication_key = "lastmodifieddate"
-
-    schema = th.PropertiesList(
-        th.Property("amount", th.StringType),
-        th.Property("class", th.StringType),
-        th.Property("ns_item_id", th.StringType),
-        th.Property("quantity", th.StringType),
-        th.Property("recordtype", th.StringType),
-        th.Property("trandate", th.DateTimeType),
-        th.Property("transaction_id", th.StringType),
-        th.Property("transaction_line_id", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-    ).to_dict()
-
-
 class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
     primary_keys = ["id", "lastmodifieddate"]
@@ -1972,3 +1933,71 @@ class SourceDetailsStream(NetSuiteStream):
         th.Property("sourceid", th.StringType),
         th.Property("sourcetype", th.StringType),
     ).to_dict()
+
+
+class PurchaseOrdersStream(BulkParentStream):
+    name = "purchase_orders"
+    table = "transaction"
+    custom_filter = "type = 'PurchOrd'"
+    replication_key = "lastmodifieddate"
+    _select = "*, BUILTIN.DF(status) status"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+
+class PurchaseOrderLinesStream(NetsuiteDynamicStream):
+    name = "purchase_order_lines"
+    table = "transactionline"
+    parent_stream_type = PurchaseOrdersStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the purchase order in the UI
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill lines filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+
+class SalesOrdersStream(BulkParentStream):
+    name = "sales_orders"
+    table = "transaction"
+    custom_filter = "type = 'SalesOrd'"
+    replication_key = "lastmodifieddate"
+    _select = "*, BUILTIN.DF(status) status"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+
+class SalesOrderLinesStream(NetsuiteDynamicStream):
+    name = "sales_order_lines"
+    table = "transactionline"
+    parent_stream_type = SalesOrdersStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the sales order in the UI + discount items if exists
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill lines filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
