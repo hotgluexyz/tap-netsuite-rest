@@ -97,12 +97,14 @@ class NetSuiteStream(RESTStream):
         .. _requests.Session:
             https://docs.python-requests.org/en/latest/api/#request-sessions
         """
+        ns_account = self.config["ns_account"].replace("-", "_").upper()
+
         return OAuth1Session(
             client_key=self.config["ns_consumer_key"],
             client_secret=self.config["ns_consumer_secret"],
             resource_owner_key=self.config["ns_token_key"],
             resource_owner_secret=self.config["ns_token_secret"],
-            realm=self.config["ns_account"],
+            realm=ns_account,
             signature_method=oauth1.SIGNATURE_HMAC_SHA256,
         )
 
