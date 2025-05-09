@@ -1169,57 +1169,6 @@ class RelatedTransactionLinesStream(TransactionRootStream):
         return row
 
 
-class PurchaseOrdersStream(NetSuiteStream):
-    name = "purchase_orders"
-    primary_keys = ["id", "lastmodifieddate"]
-    select = """
-        CONCAT(CONCAT(t.id, '_'), tl.id) as id,
-        TO_CHAR (t.trandate, 'YYYY-MM-DD HH24:MI:SS') AS trandate,
-        TO_CHAR (t.lastmodifieddate, 'YYYY-MM-DD HH24:MI:SS') AS lastmodifieddate,
-        t.recordtype, tl.item AS ns_item_id, tl.class,
-        t.transactionnumber,t.tranid,t.trandisplayname, tl.creditforeignamount,tl.foreignamount,
-        tl.netamount,tl.debitforeignamount,t.foreigntotal,tl.quantitybilled,tl.quantitypacked,
-        tl.quantitypicked,tl.quantityrejected,tl.quantityshiprecv,tl.rate,t.status,t.posting,
-        tl.quantity, t.id AS transaction_id, tl.id AS transaction_line_id
-        """
-    table = "transaction t"
-    join = """
-        INNER JOIN transactionline tl ON t.id = tl.transaction
-        """
-    custom_filter = "t.recordtype = 'purchaseorder'"
-    replication_key_prefix = "t"
-
-    replication_key = "lastmodifieddate"
-
-    schema = th.PropertiesList(
-        th.Property("id", th.StringType),
-        th.Property("transactionnumber", th.StringType),
-        th.Property("tranid", th.StringType),
-        th.Property("trandisplayname", th.StringType),
-        th.Property("creditforeignamount", th.StringType),
-        th.Property("foreignamount", th.StringType),
-        th.Property("netamount", th.StringType),
-        th.Property("debitforeignamount", th.StringType),
-        th.Property("foreigntotal", th.StringType),
-        th.Property("class", th.StringType),
-        th.Property("ns_item_id", th.StringType),
-        th.Property("quantity", th.StringType),
-        th.Property("quantitybilled", th.StringType),
-        th.Property("quantitypacked", th.StringType),
-        th.Property("quantitypicked", th.StringType),
-        th.Property("quantityrejected", th.StringType),
-        th.Property("quantityshiprecv", th.StringType),
-        th.Property("rate", th.StringType),
-        th.Property("status", th.StringType),
-        th.Property("posting", th.StringType),
-        th.Property("recordtype", th.StringType),
-        th.Property("trandate", th.DateTimeType),
-        th.Property("transaction_id", th.StringType),
-        th.Property("transaction_line_id", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-    ).to_dict()
-
-
 class SubscriptionsStream(NetsuiteDynamicStream):
     name = "subscriptions"
     primary_keys = ["id"]
