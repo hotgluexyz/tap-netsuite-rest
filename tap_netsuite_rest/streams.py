@@ -289,7 +289,7 @@ class VendorStream(NetsuiteDynamicStream):
     filter_fields = True
 
     join = """
-        INNER JOIN vendorCategory vc ON(vendor.category = vc.id)
+        LEFT JOIN vendorCategory vc ON(vendor.category = vc.id)
         """
     default_fields = [
         th.Property("categoryname", th.StringType),
