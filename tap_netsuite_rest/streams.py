@@ -541,7 +541,7 @@ class InventoryItemLocationsStream(NetSuiteStream):
     name = "inventory_item_locations"
     primary_keys = []
     table = "inventoryitemlocations"
-    custom_filter = "item >= 0 AND item < 5000"
+    custom_filter = "item >= 0 AND item < 2500"
 
     schema = th.PropertiesList(
         th.Property("averagecostmli", th.StringType),
