@@ -1697,7 +1697,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
+    _custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1708,6 +1708,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1720,11 +1721,12 @@ class BillExpensesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F' and accountinglinetype is null"
+    _custom_filter = "mainline = 'F' and accountinglinetype is null"
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill expenses filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1736,7 +1738,7 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
     query_table = "NextTransactionLineLink AS NTLL"
     join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
-    custom_filter = "NT.recordtype = 'vendorpayment'"
+    _custom_filter = "NT.recordtype = 'vendorpayment'"
     order_by = "ORDER BY NT.id"
 
     schema = th.PropertiesList(
@@ -1756,6 +1758,7 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill payments filtering by transaction id from bill parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1784,7 +1787,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     name = "invoice_lines"
     table = "transactionline"
     parent_stream_type = InvoicesStream
-    custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
+    _custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1795,6 +1798,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice lines filtering by transaction id
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1806,7 +1810,7 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
     select = "DISTINCT NTLL.previousdoc transaction, NT.id id, NT.account account, NT.trandate, NT.type, NT.tranid, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
     query_table = "NextTransactionLineLink AS NTLL"
     join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
-    custom_filter = "NT.recordtype = 'customerpayment'"
+    _custom_filter = "NT.recordtype = 'customerpayment'"
     order_by = "ORDER BY NT.id"
 
     schema = th.PropertiesList(
@@ -1826,6 +1830,7 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch invoice payments filtering by transaction id from parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1860,15 +1865,13 @@ class ItemReceiptLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F'"
+    _custom_filter = "mainline = 'F'"
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
-        if self.custom_filter:
-            self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
-        else:
-            self.custom_filter = f"tl.transaction IN ({ids})"
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
 
@@ -1903,7 +1906,7 @@ class PurchaseOrderLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the purchase order in the UI
+    _custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the purchase order in the UI
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1914,6 +1917,7 @@ class PurchaseOrderLinesStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
@@ -1937,7 +1941,7 @@ class SalesOrderLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the sales order in the UI + discount items if exists
+    _custom_filter = "mainline = 'F'" # this filter returns the same amount of lines as the sales order in the UI + discount items if exists
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1948,5 +1952,6 @@ class SalesOrderLinesStream(NetsuiteDynamicStream):
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill lines filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
