@@ -880,6 +880,10 @@ class BulkParentStream(NetsuiteDynamicStream):
 
     child_context_keys = ["ids"]
 
+    @property
+    def child_context_size(self):
+        return self.config.get("child_context_size", 250)
+
     def _sync_records(  # noqa C901  # too complex
         self, context: Optional[dict] = None
     ) -> None:
@@ -919,7 +923,7 @@ class BulkParentStream(NetsuiteDynamicStream):
                     for key, value in child_context.items():                        
                         child_context_bulk[key].extend(child_context[key]) if value else None
                 
-                if any(len(v) > self.page_size for v in child_context_bulk.values()):
+                if any(len(v) >= self.child_context_size for v in child_context_bulk.values()):
                     self._sync_children(child_context_bulk)
                     child_context_bulk = {key: [] for key in self.child_context_keys}
 
