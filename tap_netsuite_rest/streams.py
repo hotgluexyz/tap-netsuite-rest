@@ -422,7 +422,7 @@ class LocationsStream(NetSuiteStream):
         *
         """
     join = """
-        INNER JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
+        LEFT JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
         """
     # Merge group and order by
     order_by = """
