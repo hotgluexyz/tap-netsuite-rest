@@ -404,7 +404,7 @@ class LocationsStream(BulkParentStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "location"
     join = """
-        INNER JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
+        LEFT JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
         """
     # Merge group and order by
     order_by = """
