@@ -541,7 +541,23 @@ class InventoryItemLocationsStream(NetSuiteStream):
     name = "inventory_item_locations"
     primary_keys = []
     table = "inventoryitemlocations"
-    custom_filter = "item >= 0 AND item < 2500"
+    replication_key = "lastquantityavailablechange"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.stream_state.get("replication_key"):
+            self._custom_filter = "item >= 0 AND item < 2500"
+        else:
+            self._custom_filter = ""
+
+    @property
+    def custom_filter(self):
+        return self._custom_filter
+
+    @custom_filter.setter
+    def custom_filter(self, value):
+        self._custom_filter = value
+
 
     schema = th.PropertiesList(
         th.Property("averagecostmli", th.StringType),
@@ -555,6 +571,7 @@ class InventoryItemLocationsStream(NetSuiteStream):
         th.Property("quantitybackordered", th.StringType),
         th.Property("quantitycommitted", th.StringType),
         th.Property("quantityonhand", th.StringType),
+        th.Property("lastquantityavailablechange", th.DateTimeType),
     ).to_dict()
 
 
