@@ -1961,17 +1961,15 @@ class kitItemMemberStream(NetsuiteDynamicStream):
     name = "kit_item_members"
     table = "kititemmember"
     parent_stream_type = ItemStream
-    select = "kititemmember.*, parentitem.id as parentitemid, parentitem.itemid as parentitemname, memberitem.id as memberitemid, memberitem.itemid as memberitemname"
+    select = "kititemmember.*, parentitem.id as parentitemid, parentitem.itemid as parentitemname, memberitem.id as memberitemid, memberitem.itemid as itemname"
     select_prefix = "kititemmember"
     query_table = "item as parentitem"
     join = "INNER JOIN kititemmember ON ( kititemmember.parentitem = parentitem.id ) INNER JOIN item AS memberitem ON ( memberitem.ID = kititemmember.item )"
     order_by = "ORDER BY kititemmember.linenumber"
 
     default_fields = [
-        th.Property("parentitemid", th.StringType),
         th.Property("parentitemname", th.StringType),
-        th.Property("memberitemid", th.StringType),
-        th.Property("memberitemname", th.StringType),
+        th.Property("itemname", th.StringType),
     ]
     
     def prepare_request_payload(self, context, next_page_token):
