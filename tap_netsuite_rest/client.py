@@ -426,7 +426,7 @@ class NetSuiteStream(RESTStream):
                     if field_name not in self.invalid_fields:
                         self.invalid_fields.append(field_name)
                         self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
-                if next(field_matches, None) is not None:
+                if self.invalid_fields:
                     self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
                 
