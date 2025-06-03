@@ -21,6 +21,52 @@ from singer_sdk.helpers._state import (
 from singer_sdk.exceptions import InvalidStreamSortException
 
 
+class VendorCreditStream(BulkParentStream):
+    name = "vendor_credits"
+    table = "transaction"
+    custom_filter = "type = 'VendCred'"
+    replication_key = "lastmodifieddate"
+    _select = "*, BUILTIN.DF(status) status"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+class VendorCreditLinesStream(NetsuiteDynamicStream):
+    name = "vendor_credit_lines"
+    table = "transactionline"
+    parent_stream_type = VendorCreditStream
+    _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice lines filtering by transaction id
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+class VendorCreditExpensesStream(NetsuiteDynamicStream):
+    name = "vendor_credit_expenses"
+    table = "transactionline"
+    parent_stream_type = VendorCreditStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' and accountinglinetype is NULL"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
 class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
     primary_keys = ["id", "lastmodifieddate"]
@@ -1715,7 +1761,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    _custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
+    _custom_filter = "mainline = 'F' and AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
 
     default_fields = [
         th.Property("item", th.StringType),
