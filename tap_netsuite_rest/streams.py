@@ -2050,3 +2050,8 @@ class kitItemMemberStream(NetsuiteDynamicStream):
         ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"parentitem.id IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+
+class EmployeesStream(NetsuiteDynamicStream):
+    name = "employees"
+    primary_keys = ["id"]
+    table = "employee"
