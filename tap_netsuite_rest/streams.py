@@ -1761,7 +1761,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    _custom_filter = "mainline = 'F' and AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
+    _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
 
     default_fields = [
         th.Property("item", th.StringType),
