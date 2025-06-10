@@ -1799,7 +1799,7 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     name = "bill_payments"
     table = "transactionline"
     parent_stream_type = BillsStream
-    select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
+    select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber, NT.externalId, NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
     query_table = "NextTransactionLineLink AS NTLL"
     join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
     _custom_filter = "NT.recordtype = 'vendorpayment'"
@@ -1815,6 +1815,7 @@ class BillPaymentsStream(NetsuiteDynamicStream):
         th.Property("trandate", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType),
         th.Property("entity", th.StringType),
         th.Property("subsidiary", th.StringType),
         th.Property("type", th.StringType),
@@ -1876,9 +1877,9 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
     name = "invoice_payments"
     table = "transactionline"
     parent_stream_type = InvoicesStream
-    select = "DISTINCT NTLL.previousdoc transaction, NT.id id, NT.account account, NT.trandate, NT.type, NT.tranid, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
+    select = "DISTINCT NTLL.PreviousDoc transaction, NT.ID id, NT.transactionNumber, NT.externalId, NT.account account, NT.TranDate, NT.Type, NT.TranID, BUILTIN.DF(NT.Status) status, NT.ForeignTotal amount, currency, exchangeRate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
     query_table = "NextTransactionLineLink AS NTLL"
-    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
+    join = "INNER JOIN Transaction AS NT ON (NT.ID = NTLL.NextDoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
     _custom_filter = "NT.recordtype = 'customerpayment'"
     order_by = "ORDER BY NT.id"
 
@@ -1892,6 +1893,7 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
         th.Property("trandate", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType),
         th.Property("type", th.StringType),
         th.Property("entity", th.StringType),
         th.Property("subsidiary", th.StringType),
