@@ -21,6 +21,52 @@ from singer_sdk.helpers._state import (
 from singer_sdk.exceptions import InvalidStreamSortException
 
 
+class VendorCreditStream(BulkParentStream):
+    name = "vendor_credits"
+    table = "transaction"
+    custom_filter = "type = 'VendCred'"
+    replication_key = "lastmodifieddate"
+    _select = "*, BUILTIN.DF(status) status"
+
+    def get_child_context(self, record, context) -> dict:
+        return {"ids": [record["id"]]}
+
+class VendorCreditLinesStream(NetsuiteDynamicStream):
+    name = "vendor_credit_lines"
+    table = "transactionline"
+    parent_stream_type = VendorCreditStream
+    _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice lines filtering by transaction id
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+class VendorCreditExpensesStream(NetsuiteDynamicStream):
+    name = "vendor_credit_expenses"
+    table = "transactionline"
+    parent_stream_type = VendorCreditStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' and accountinglinetype is NULL"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
 class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
     primary_keys = ["id", "lastmodifieddate"]
@@ -656,7 +702,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     end_date = None
     primary_keys = ["id"]
     name = "general_ledger_report"
-    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, Entity.altname as name, Entity.firstname, Entity.lastname, Entity.id as entityid, Entity.Type as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Transaction.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
+    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, Entity.altname as name, Entity.firstname, Entity.lastname, Entity.id as entityid, Entity.Type as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Transaction.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
     table = "Transaction"
     join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity ON (Transaction.entity = Entity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Transaction.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
@@ -679,6 +725,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("lastname", th.StringType),
         th.Property("name", th.StringType),
         th.Property("num", th.StringType),
+        th.Property("postingdate", th.DateTimeType),
         th.Property("periodname", th.StringType),
         th.Property("postingperiod", th.StringType),
         th.Property("split", th.StringType),
@@ -1714,7 +1761,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     select_prefix = "tl"
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
-    _custom_filter = "mainline = 'F' and accountinglinetype = 'EXPENSE'"
+    _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -1752,9 +1799,9 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     name = "bill_payments"
     table = "transactionline"
     parent_stream_type = BillsStream
-    select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber,NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
+    select = "DISTINCT NTLL.previousdoc transaction, NT.ID id, NT.tranid, NT.transactionnumber, NT.externalId, NT.account account, NT.trandate, NT.type, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
     query_table = "NextTransactionLineLink AS NTLL"
-    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
+    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
     _custom_filter = "NT.recordtype = 'vendorpayment'"
     order_by = "ORDER BY NT.id"
 
@@ -1768,8 +1815,14 @@ class BillPaymentsStream(NetsuiteDynamicStream):
         th.Property("trandate", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("subsidiary", th.StringType),
         th.Property("type", th.StringType),
         th.Property("tranid", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
     ).to_dict()
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1824,9 +1877,9 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
     name = "invoice_payments"
     table = "transactionline"
     parent_stream_type = InvoicesStream
-    select = "DISTINCT NTLL.previousdoc transaction, NT.id id, NT.account account, NT.trandate, NT.type, NT.tranid, BUILTIN.DF(NT.status) status, NT.foreigntotal amount, currency, exchangerate"
+    select = "DISTINCT NTLL.PreviousDoc transaction, NT.ID id, NT.transactionNumber, NT.externalId, NT.account account, NT.TranDate, NT.Type, NT.TranID, BUILTIN.DF(NT.Status) status, NT.ForeignTotal amount, currency, exchangeRate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
     query_table = "NextTransactionLineLink AS NTLL"
-    join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc)"
+    join = "INNER JOIN Transaction AS NT ON (NT.ID = NTLL.NextDoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
     _custom_filter = "NT.recordtype = 'customerpayment'"
     order_by = "ORDER BY NT.id"
 
@@ -1840,8 +1893,14 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
         th.Property("trandate", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType),
         th.Property("type", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("subsidiary", th.StringType),
         th.Property("tranid", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
     ).to_dict()
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1973,7 +2032,6 @@ class SalesOrderLinesStream(NetsuiteDynamicStream):
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
-
 class kitItemMemberStream(NetsuiteDynamicStream):
     name = "kit_item_members"
     table = "kititemmember"
@@ -1994,3 +2052,8 @@ class kitItemMemberStream(NetsuiteDynamicStream):
         ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"parentitem.id IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+
+class EmployeesStream(NetsuiteDynamicStream):
+    name = "employees"
+    primary_keys = ["id"]
+    table = "employee"
