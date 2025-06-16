@@ -1,6 +1,6 @@
 """NetSuite tap class."""
 
-from typing import List
+from typing import List, cast
 
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
@@ -13,6 +13,7 @@ class TapNetSuite(Tap):
     """NetSuite tap class."""
 
     name = "tap-netsuite-rest"
+    tables_metadata = {}
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
@@ -33,6 +34,22 @@ class TapNetSuite(Tap):
         return [
            cls(self) for name, cls in inspect.getmembers(streams,inspect.isclass) if cls.__module__ == 'tap_netsuite_rest.streams'
         ]
+
+    @property
+    def catalog_dict(self) -> dict:
+        """Get catalog dictionary.
+
+        Returns:
+            The tap's catalog as a dict
+        """
+        catalog = cast(dict, self._singer_catalog.to_dict())
+        streams = catalog["streams"]
+        for stream in streams:
+            stream_id = stream["tap_stream_id"]
+            stream_metadata = self.tables_metadata.get(stream_id, {}).get("properties", {})
+            for field in stream["schema"]["properties"]:
+                stream["schema"]["properties"][field]["field_meta"] = stream_metadata.get(field, {})
+        return catalog
 
 
 if __name__ == "__main__":
