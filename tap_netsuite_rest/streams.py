@@ -28,6 +28,10 @@ class VendorCreditStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
 
+    default_fields = [
+        th.Property("externalid", th.StringType)
+    ]
+
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
 
@@ -801,6 +805,7 @@ class TransactionsStream(TransactionRootStream):
         th.Property("lastmodifieddate", th.DateTimeType),
         th.Property("tranid", th.StringType),
         th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType)
     ]
 
     def get_selected_properties(self):
@@ -1749,6 +1754,10 @@ class BillsStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
 
+    default_fields = [
+        th.Property("externalid", th.StringType)
+    ]
+
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
 
@@ -1843,6 +1852,7 @@ class InvoicesStream(BulkParentStream):
 
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
+        th.Property("externalid", th.StringType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -1928,6 +1938,10 @@ class ItemReceiptsStream(BulkParentStream):
     table = "transaction"
     custom_filter = "type = 'ItemRcpt'"
     replication_key = "lastmodifieddate"
+    
+    default_fields = [
+        th.Property("externalid", th.StringType)
+    ]
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
@@ -1970,6 +1984,10 @@ class PurchaseOrdersStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
 
+    default_fields = [
+        th.Property("externalid", th.StringType)
+    ]
+
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
 
@@ -2004,6 +2022,10 @@ class SalesOrdersStream(BulkParentStream):
     custom_filter = "type = 'SalesOrd'"
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
+
+    default_fields = [
+        th.Property("externalid", th.StringType)
+    ]
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
