@@ -31,7 +31,7 @@ from singer_sdk.helpers._state import (
     log_sort_error,
 )
 from singer_sdk.exceptions import InvalidStreamSortException
-
+import re
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -79,6 +79,7 @@ class NetSuiteStream(RESTStream):
         """
         super().__init__(name=name, schema=schema, tap=tap, path=path)
         self.record_ids = []
+        self.invalid_fields = []
 
     @property
     def http_headers(self) -> dict:
@@ -297,7 +298,7 @@ class NetSuiteStream(RESTStream):
     def get_selected_properties(self):
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key) == 2 and value.selected:
+            if isinstance(key, tuple) and len(key) == 2 and key[1] not in self.invalid_fields:
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
@@ -378,15 +379,32 @@ class NetSuiteStream(RESTStream):
 
     def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response."""
-        if hasattr(self,"entities_fallback") and self.entities_fallback and response.status_code == 400:
-            for entity in self.entities_fallback:
-                if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
-                    self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
-                    if "select_replace" in entity:
-                        self.select = self.select.replace(entity['select_replace'], "")
-                    if "join_replace" in entity:  
-                        self.join = self.join.replace(entity['join_replace'], "")
+        if response.status_code == 400:
+            if hasattr(self,"entities_fallback") and self.entities_fallback:
+                for entity in self.entities_fallback:
+                    if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
+                        self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
+                        if "select_replace" in entity:
+                            self.select = self.select.replace(entity['select_replace'], "")
+                        if "join_replace" in entity:  
+                            self.join = self.join.replace(entity['join_replace'], "")
+                        raise RetryRequest(response.text)
+                    
+            if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
+                error_details = response.json()["o:errorDetails"][0]["detail"]
+                # Extract all field names from error message and drop it from the select
+                field_matches = re.finditer(r"(?i)field '(\w+)'", error_details)
+                for field_match in field_matches:
+                    field_name = field_match.group(1)
+                    if not hasattr(self, "invalid_fields"):
+                        self.invalid_fields = []
+                    if field_name not in self.invalid_fields:
+                        self.invalid_fields.append(field_name)
+                        self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
+                if field_matches:
+                    self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
+                
         if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
             msg = (
                 f"{response.status_code} Server Error: "
