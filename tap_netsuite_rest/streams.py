@@ -717,7 +717,7 @@ class TransactionLinesStream(TransactionRootStream):
     end_date = None
 
     append_select = "Transaction.type as recordtype, "
-    join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction )"""
+    join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction ) LEFT JOIN TransactionTaxDetail as ttd ON (TransactionLine.transaction = ttd.transaction) AND (TransactionLine.item = ttd.taxcode) AND (TransactionLine.netamount = ttd.taxamount)"""
     custom_filter_prefix = "transactionline"
 
     default_fields = [
@@ -799,6 +799,7 @@ class TransactionLinesStream(TransactionRootStream):
         th.Property("quantitybackordered", th.NumberType),
         th.Property("isbillable", th.BooleanType),
         th.Property("billingschedule", th.StringType),
+        th.Property("belongsto", th.StringType),
     ]
 
     def get_selected_properties(self):
@@ -806,7 +807,9 @@ class TransactionLinesStream(TransactionRootStream):
 
         if 'transactionline.recordtype AS recordtype' in selected_properties:
             selected_properties.remove('transactionline.recordtype AS recordtype')
-
+        
+        # add transactiontaxdetail table line to know which linetax is related to which transactionline
+        selected_properties.append("ttd.line AS belongsto")
         return selected_properties
 
     def prepare_request_payload(
