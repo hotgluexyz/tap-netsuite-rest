@@ -1849,6 +1849,7 @@ class InvoicesStream(BulkParentStream):
     child_context_keys = ["ids", "addresses"]
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
+    address_ids = []
 
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
@@ -1859,9 +1860,13 @@ class InvoicesStream(BulkParentStream):
         # get addresses ids
         address_keys = ["billingaddress", "shippingaddress"]
         # Collect valid address IDs
-        address_ids = {record.get(key) for key in address_keys if record.get(key)}
+        address_ids = {record.get(key) for key in address_keys if record.get(key) and record.get(key) not in self.address_ids}
+        self.address_ids.extend(list(address_ids))
         return {"ids": [record["id"]], "addresses": list(address_ids)}
-
+    
+    def _sync_children(self, child_context: dict):
+        if child_context is not None and "addresses" in child_context and len(child_context["addresses"]) > 0:
+            super()._sync_children(child_context)
 
 class InvoiceLinesStream(NetsuiteDynamicStream):
     name = "invoice_lines"
