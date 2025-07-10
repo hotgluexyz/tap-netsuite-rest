@@ -613,6 +613,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     )
                 )
                 response = s.send(prepared_req)
+                if response.status_code not in [200]:
+                    self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
+                    break
                 offset = self.get_next_page_token(response, offset)
                 custom_fields.update({cf.get("scriptid").lower(): cf.get("fieldvaluetype") for cf in response.json().get("items", [])})
             
