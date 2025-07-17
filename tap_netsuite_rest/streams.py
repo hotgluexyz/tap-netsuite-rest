@@ -2084,3 +2084,8 @@ class EmployeesStream(NetsuiteDynamicStream):
     name = "employees"
     primary_keys = ["id"]
     table = "employee"
+
+class ProjectsStream(NetsuiteDynamicStream):
+    name = "projects"
+    primary_keys = ["id"]
+    table = "job"
