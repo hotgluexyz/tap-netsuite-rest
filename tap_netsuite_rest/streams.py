@@ -719,17 +719,17 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "classification",
             "select_replace": "Classification.id as classid, Classification.name as class,",
-            "join_replace": "LEFT JOIN Classification On ( Transactionline.class = Classification.id )",
+            "join_replace": "LEFT JOIN Classification On (Transactionline.class = Classification.id)",
         },
         {
             "name": "location",
             "select_replace": ", Location.name as locationname",
-            "join_replace": "LEFT JOIN Location On ( Transactionline.location = Location.id )",
+            "join_replace": "LEFT JOIN Location ON (Transactionline.location = Location.id)",
         },
         {
             "name": "currency",
             "select_replace": ", Currency.name as currency, Currency.symbol as currencysymbol",
-            "join_replace": "INNER JOIN Currency ON ( Currency.ID = Transaction.Currency )",
+            "join_replace": "INNER JOIN Currency ON (Currency.ID = Transaction.Currency)",
         },
     ]
 
