@@ -321,11 +321,11 @@ class NetSuiteStream(RESTStream):
             start_date = parse(self.config["start_date"])
             self.start_date_f = start_date.strftime("%Y-%m-01")
         elif self.name == "general_ledger_report":
-            min_time = datetime.min.time()
             today = date.today()
-            today = datetime.combine(today, min_time)
-            start_date = today - relativedelta(months=report_periods)
+            beginning_of_month = today.replace(day=1)
+            start_date = (beginning_of_month - relativedelta(months=report_periods - 1))
             self.start_date_f = start_date.strftime("%Y-%m-%d")
+            self.logger.info(f"Not initial sync, fetching GL entries for last {report_periods} months, starting from {self.start_date_f}")
         else:
             start_date = self.get_starting_time({})
             self.start_date_f = start_date.strftime("%Y-%m-01")
