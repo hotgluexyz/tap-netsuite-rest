@@ -8,7 +8,7 @@ import copy
 import re
 
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Any, Callable, Dict, Optional, cast, Iterable, List
 
 from memoization import cached
@@ -313,12 +313,19 @@ class NetSuiteStream(RESTStream):
     def get_date_boundaries(self):
         rep_key = self.stream_state
         window = self.config.get("window_days")
+        report_periods = self.config.get("report_periods", 3)
         if self.query_date:
             start_date = self.query_date
             self.start_date_f = start_date.strftime("%Y-%m-%d")
         elif (self.name == "general_ledger_report" and self.config.get("gl_full_sync")) or ("replication_key" not in rep_key):
             start_date = parse(self.config["start_date"])
             self.start_date_f = start_date.strftime("%Y-%m-01")
+        elif self.name == "general_ledger_report":
+            today = date.today()
+            beginning_of_month = today.replace(day=1)
+            start_date = (beginning_of_month - relativedelta(months=report_periods - 1))
+            self.start_date_f = start_date.strftime("%Y-%m-%d")
+            self.logger.info(f"Not initial sync, fetching GL entries for last {report_periods} months, starting from {self.start_date_f}")
         else:
             start_date = self.get_starting_time({})
             self.start_date_f = start_date.strftime("%Y-%m-01")
