@@ -531,10 +531,11 @@ class NetSuiteStream(RESTStream):
                 return_value = float(value)
             except ValueError:
                 self.logger.error(
-                    f"Could not cast {field} : `{value}` to number / integer"
+                    f"Could not cast {field} : `{value}` to number"
                 )
                 raise Exception(ValueError)
-        else:
+        # only parse if it's a string
+        elif isinstance(value, str):
             # Attempt to cast to int if there are no decimals
             try:
                 return_value = int(value)
