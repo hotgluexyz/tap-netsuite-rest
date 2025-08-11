@@ -697,11 +697,6 @@ class ProfitLossReportStream(NetSuiteStream):
 
 
 class GeneralLedgerReportStream(ProfitLossReportStream):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.replication_key = None
-
     start_date_f = None
     end_date = None
     primary_keys = ["id"]
