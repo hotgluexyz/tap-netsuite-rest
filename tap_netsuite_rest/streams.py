@@ -70,6 +70,23 @@ class VendorCreditExpensesStream(NetsuiteDynamicStream):
         self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+    
+class VendorCreditTaxLinesStream(NetsuiteDynamicStream):
+    name = "vendor_credit_tax_lines"
+    table = "transactionline"
+    parent_stream_type = VendorCreditStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' and taxline = 'T'"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
 
 class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
@@ -562,6 +579,7 @@ class ItemStream(BulkParentStream):
         th.Property("department", th.StringType),
         th.Property("isinactive", th.BooleanType),
         th.Property("createddate", th.DateTimeType),
+        th.Property("externalid", th.DateTimeType),
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -1860,6 +1878,23 @@ class BillPaymentsStream(NetsuiteDynamicStream):
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
+class BillTaxLinesStream(NetsuiteDynamicStream):
+    name = "bill_tax_lines"
+    table = "transactionline"
+    parent_stream_type = BillsStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' and taxline = 'T'"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
 
 class InvoicesStream(BulkParentStream):
     name = "invoices"
@@ -1872,6 +1907,7 @@ class InvoicesStream(BulkParentStream):
 
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
+        th.Property("taxtotal", th.NumberType),
         th.Property("externalid", th.StringType)
     ]
 
@@ -1897,6 +1933,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
         th.Property("item", th.StringType),
         th.Property("quantity", th.NumberType),
         th.Property("rate", th.NumberType),
+        th.Property("externalid", th.StringType),
     ]
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1942,6 +1979,23 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
         ids = ", ".join(f"'{id}'" for id in context["ids"])
         self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+class InvoiceTaxLinesStream(NetsuiteDynamicStream):
+    name = "invoice_tax_lines"
+    table = "transactionline"
+    parent_stream_type = InvoicesStream
+    _select = "t.recordtype, tl.*"
+    select_prefix = "tl"
+    query_table = "transaction t"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' and taxline = 'T'"
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill expenses filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
         return super().prepare_request_payload(context, next_page_token)
 
 
