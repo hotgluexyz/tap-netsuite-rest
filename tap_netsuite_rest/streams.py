@@ -579,7 +579,7 @@ class ItemStream(BulkParentStream):
         th.Property("department", th.StringType),
         th.Property("isinactive", th.BooleanType),
         th.Property("createddate", th.DateTimeType),
-        th.Property("externalid", th.DateTimeType),
+        th.Property("externalid", th.StringType),
     ]
 
     def get_child_context(self, record, context) -> dict:
