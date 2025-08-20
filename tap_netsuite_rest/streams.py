@@ -29,6 +29,7 @@ class VendorCreditStream(BulkParentStream):
     _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
+        th.Property("taxtotal", th.NumberType),
         th.Property("externalid", th.StringType)
     ]
 
@@ -45,6 +46,7 @@ class VendorCreditLinesStream(NetsuiteDynamicStream):
         th.Property("item", th.StringType),
         th.Property("quantity", th.NumberType),
         th.Property("rate", th.NumberType),
+        th.Property("taxamount", th.NumberType),
     ]
 
     def prepare_request_payload(self, context, next_page_token):
@@ -63,6 +65,10 @@ class VendorCreditExpensesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     _custom_filter = "mainline = 'F' and accountinglinetype is NULL"
+
+    default_fields = [
+        th.Property("taxamount", th.NumberType),
+    ]
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill expenses filtering by transaction id from bills parent stream
@@ -1813,6 +1819,7 @@ class BillLinesStream(NetsuiteDynamicStream):
         th.Property("item", th.StringType),
         th.Property("quantity", th.NumberType),
         th.Property("rate", th.NumberType),
+        th.Property("taxamount", th.NumberType),
     ]
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1832,6 +1839,10 @@ class BillExpensesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     _custom_filter = "mainline = 'F' and accountinglinetype is null"
+
+    default_fields = [
+        th.Property("taxamount", th.NumberType),
+    ]
 
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill expenses filtering by transaction id from bills parent stream
@@ -1934,6 +1945,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
         th.Property("quantity", th.NumberType),
         th.Property("rate", th.NumberType),
         th.Property("externalid", th.StringType),
+        th.Property("taxamount", th.NumberType),
     ]
 
     def prepare_request_payload(self, context, next_page_token):
