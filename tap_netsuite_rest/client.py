@@ -37,7 +37,8 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
 class RetryRequest(Exception):
-    pass  
+    pass
+
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
 
@@ -61,6 +62,7 @@ class NetSuiteStream(RESTStream):
     order_by = None
     append_select = None
     time_jump = relativedelta(months=1)
+    ignore_parent_stream = False
 
     def __init__(
         self,
@@ -401,7 +403,7 @@ class NetSuiteStream(RESTStream):
                     if field_name not in self.invalid_fields:
                         self.invalid_fields.append(field_name)
                         self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
-                if field_matches:
+                if self.invalid_fields:
                     self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
                 
@@ -748,6 +750,11 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         """As needed, append or transform raw data to match expected structure."""
         row = self.process_types(row)
         return row
+    
+    def _ignore_parent_stream(self):
+        if self.config.get("get_bill_reference_data"):
+            return False
+        return True
 
 class TransactionRootStream(NetsuiteDynamicStream):
     select = None
