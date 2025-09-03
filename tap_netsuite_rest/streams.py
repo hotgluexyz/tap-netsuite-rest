@@ -667,7 +667,7 @@ class TransactionsStream(TransactionRootStream, BulkParentStream):
         return selected_properties
     
     def get_child_context(self, record, context) -> dict:
-        if self.config.get("get_bill_reference_data"):
+        if self.config.get("get_transactions_reference_data"):
             return {
                 "vendor_ids": [record["entity"]] if record.get("entity") is not None else [],
             }
@@ -829,7 +829,7 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
         return payload
     
     def get_child_context(self, record, context) -> dict:
-        if self.config.get("get_bill_reference_data"):
+        if self.config.get("get_transactions_reference_data"):
             return {
                 "account_ids": [record["expenseaccount"]] if record.get("expenseaccount") is not None else [],
                 "item_ids": [record["item"]] if record.get("item") is not None else [],

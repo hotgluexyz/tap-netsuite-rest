@@ -752,7 +752,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         return row
     
     def _ignore_parent_stream(self):
-        if self.config.get("get_bill_reference_data"):
+        if self.config.get("get_transactions_reference_data"):
             return False
         return True
 
