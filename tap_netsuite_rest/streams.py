@@ -471,7 +471,6 @@ class ClassificationStream(NetSuiteStream):
     primary_keys = ["id", "lastmodifieddate"]
     table = "classification"
     type_filter = False
-    replication_key = "lastmodifieddate"
 
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
