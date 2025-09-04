@@ -6,6 +6,7 @@ from typing import Any, Dict, Optional, Union
 from singer_sdk import typing as th
 
 from tap_netsuite_rest.client import NetSuiteStream, NetsuiteDynamicStream, TransactionRootStream, BulkParentStream
+from tap_netsuite_rest.child_stream_client import DynamicChildStreamClient
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
@@ -280,35 +281,6 @@ class InventoryPricingStream(NetSuiteStream):
     ).to_dict()
 
 
-class VendorStream(NetsuiteDynamicStream):
-    name = "vendor"
-    primary_keys = ["id"]
-    table = "vendor"
-    replication_key = "lastmodifieddate"
-    select = None
-    filter_fields = True
-
-    join = """
-        LEFT JOIN vendorCategory vc ON(vendor.category = vc.id)
-        """
-    default_fields = [
-        th.Property("categoryname", th.StringType),
-    ]
-
-    def get_selected_properties(self):
-        selected_properties = super().get_selected_properties()
-        fields_to_replace = [
-            ('vendor.categoryname AS categoryname', 'vc.name AS categoryname'),
-        ]
-       
-        for old_field, new_field in fields_to_replace:
-            if old_field in selected_properties:
-                selected_properties.remove(old_field)
-                selected_properties.append(new_field)
-
-        return selected_properties
-
-
 class ShippingAddressStream(NetsuiteDynamicStream):
     name = "shipping_address"
     primary_keys = ["nkey"]
@@ -453,25 +425,11 @@ class CostStream(NetSuiteStream):
     ).to_dict()
 
 
-class ItemStream(TransactionRootStream):
-    name = "item"
-    primary_keys = ["id", "lastmodifieddate"]
-    table = "item"
-    type_filter = False
-    replication_key = "lastmodifieddate"
-
-    default_fields = [
-        th.Property("id", th.StringType),
-        th.Property("lastmodifieddate", th.DateTimeType),
-    ]
-
-
 class ClassificationStream(NetSuiteStream):
     name = "classification"
     primary_keys = ["id", "lastmodifieddate"]
     table = "classification"
     type_filter = False
-    replication_key = "lastmodifieddate"
 
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
@@ -664,11 +622,12 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         return row
 
 
-class TransactionsStream(TransactionRootStream):
+class TransactionsStream(TransactionRootStream, BulkParentStream):
     name = "transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
+    child_context_keys = ["vendor_ids"]
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
@@ -706,9 +665,19 @@ class TransactionsStream(TransactionRootStream):
         selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
 
         return selected_properties
+    
+    def get_child_context(self, record, context) -> dict:
+        if self.config.get("get_transactions_reference_data"):
+            return {
+                "vendor_ids": [record["entity"]] if record.get("entity") is not None else [],
+            }
+    
+    def _sync_children(self, child_context: Optional[dict] = None) -> None:
+        if child_context:
+            return super()._sync_children(child_context)
 
 
-class TransactionLinesStream(TransactionRootStream):
+class TransactionLinesStream(TransactionRootStream, BulkParentStream):
     name = "transaction_lines"
     primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
@@ -719,6 +688,7 @@ class TransactionLinesStream(TransactionRootStream):
     append_select = "Transaction.type as recordtype, "
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction ) LEFT JOIN TransactionTaxDetail as ttd ON (TransactionLine.transaction = ttd.transaction) AND (TransactionLine.item = ttd.taxcode) AND (TransactionLine.netamount = ttd.taxamount)"""
     custom_filter_prefix = "transactionline"
+    child_context_keys = ["account_ids", "item_ids"]
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -857,6 +827,17 @@ class TransactionLinesStream(TransactionRootStream):
         )
         self.logger.info(f"Making query ({timeframe})")
         return payload
+    
+    def get_child_context(self, record, context) -> dict:
+        if self.config.get("get_transactions_reference_data"):
+            return {
+                "account_ids": [record["expenseaccount"]] if record.get("expenseaccount") is not None else [],
+                "item_ids": [record["item"]] if record.get("item") is not None else [],
+            }
+    
+    def _sync_children(self, child_context: Optional[dict] = None) -> None:
+        if child_context:
+            return super()._sync_children(child_context)
 
 
 class TransactionAccountingLinesStream(NetSuiteStream):
@@ -964,13 +945,15 @@ class SubsidiaryShippingAddressStream(NetsuiteDynamicStream):
         return super().prepare_request_payload(context, next_page_token)
 
 
-class AccountsStream(NetsuiteDynamicStream):
+class AccountsStream(NetsuiteDynamicStream, DynamicChildStreamClient):
     name = "accounts"
     primary_keys = ["id"]
     table = "account"
     replication_key = "lastmodifieddate"
     select = None
     use_dynamic_fields = True
+    parent = TransactionLinesStream
+    child_context_key = "account_ids"
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1579,3 +1562,50 @@ class TaxTypeStream(NetsuiteDynamicStream):
     name = "tax_type"
     primary_keys = ["id"]
     table = "taxtype"
+
+
+class ItemStream(TransactionRootStream, DynamicChildStreamClient):
+    name = "item"
+    primary_keys = ["id", "lastmodifieddate"]
+    table = "item"
+    type_filter = False
+    replication_key = "lastmodifieddate"
+    parent = TransactionLinesStream
+    child_context_key = "item_ids"
+
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+    ]
+
+
+class VendorStream(NetsuiteDynamicStream, DynamicChildStreamClient):
+    name = "vendor"
+    primary_keys = ["id"]
+    table = "vendor"
+    replication_key = "lastmodifieddate"
+    select = None
+    filter_fields = True
+    parent = TransactionsStream
+    child_context_key = "vendor_ids"
+    
+    join = """
+        LEFT JOIN vendorCategory vc ON(vendor.category = vc.id)
+        """
+    default_fields = [
+        th.Property("categoryname", th.StringType),
+    ]
+
+    def get_selected_properties(self):
+        selected_properties = super().get_selected_properties()
+        fields_to_replace = [
+            ('vendor.categoryname AS categoryname', 'vc.name AS categoryname'),
+        ]
+       
+        for old_field, new_field in fields_to_replace:
+            if old_field in selected_properties:
+                selected_properties.remove(old_field)
+                selected_properties.append(new_field)
+
+        return selected_properties
+    
