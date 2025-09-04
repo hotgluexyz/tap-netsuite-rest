@@ -10,6 +10,7 @@ from singer_sdk.helpers._compat import final
 
 from tap_netsuite_rest import streams
 from tap_netsuite_rest.streams import AccountsStream, TransactionLinesStream
+from tap_netsuite_rest.constants import TRANSACTION_REFERENCE_DATA_STREAMS
 
 class TapNetSuite(Tap):
     """NetSuite tap class."""
@@ -34,8 +35,18 @@ class TapNetSuite(Tap):
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
         return [
+            AccountsStream(self), TransactionLinesStream(self)
+        ]
+        return [
            cls(self) for name, cls in inspect.getmembers(streams,inspect.isclass) if cls.__module__ == 'tap_netsuite_rest.streams'
         ]
+    
+    def ignore_parent_stream(self, stream, parents):
+        if stream.name in TRANSACTION_REFERENCE_DATA_STREAMS:
+            if not self.config.get("get_transactions_reference_data") or not parents[0].selected:
+                return True
+            return False
+        return stream.ignore_parent_stream
     
     @final
     def load_streams(self) -> List[Stream]:
@@ -59,12 +70,15 @@ class TapNetSuite(Tap):
 
         # Initialize child streams list for parents
         for stream_type, streams in streams_by_type.items():
-            # add child streams to parent streams if parent stream type is defined and ignore parent stream is not True
-            ignore_parent_stream = stream_type(self).ignore_parent_stream if hasattr(stream_type, 'parent') else stream_type.ignore_parent_stream
-
-            if stream_type.parent_stream_type or (hasattr(stream_type, 'parent') and not ignore_parent_stream):
+            if stream_type.parent_stream_type or (hasattr(stream_type, 'parent')):
+                # add child streams to parent streams if parent stream type is defined and ignore parent stream is not True
                 parent = stream_type.parent if hasattr(stream_type, 'parent') else stream_type.parent_stream_type
                 parents = streams_by_type[parent]
+                ignore_parent_stream = self.ignore_parent_stream(stream_type, parents)
+
+                if ignore_parent_stream:
+                    continue
+
                 # add parent to child stream
                 stream_type.parent_stream_type = parent
                 for parent in parents:

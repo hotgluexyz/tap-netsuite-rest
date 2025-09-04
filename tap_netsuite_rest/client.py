@@ -750,11 +750,6 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         """As needed, append or transform raw data to match expected structure."""
         row = self.process_types(row)
         return row
-    
-    def _ignore_parent_stream(self):
-        if self.config.get("get_transactions_reference_data"):
-            return False
-        return True
 
 class TransactionRootStream(NetsuiteDynamicStream):
     select = None
