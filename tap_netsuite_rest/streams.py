@@ -791,6 +791,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         th.Property("debitamount", th.NumberType),
         th.Property("exchangerate", th.StringType),
         th.Property("transactioncurrencyid", th.StringType),
+        th.Property("accountingbook", th.StringType),
     ).to_dict()
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
