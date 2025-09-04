@@ -2123,3 +2123,23 @@ class ProjectsStream(NetsuiteDynamicStream):
     name = "projects"
     primary_keys = ["id"]
     table = "job"
+
+
+class AccountingBooksStream(NetsuiteDynamicStream):
+    name = "accounting_books"
+    primary_keys = ["id"]
+    table = "accountingbook"
+
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("isadjustmentonly", th.BooleanType),
+        th.Property("basebook", th.StringType),
+        th.Property("effectiveperiod", th.StringType),
+        th.Property("isconsolidated", th.BooleanType),
+        th.Property("contingentrevenuehandling", th.BooleanType),
+        th.Property("twosteprevenueallocation", th.BooleanType),
+        th.Property("externalid", th.StringType),
+        th.Property("isprimary", th.BooleanType),
+        th.Property("unbilledreceivablegrouping", th.StringType),
+    ]
