@@ -43,7 +43,11 @@ class TapNetSuite(Tap):
     
     def ignore_parent_stream(self, stream, parents):
         if stream.name in TRANSACTION_REFERENCE_DATA_STREAMS:
-            if not self.config.get("get_transactions_reference_data") or not parents[0].selected:
+            parent = parents[0]
+            raw_catalog = self.input_catalog
+            # check if parent stream is selected from raw catalog, otherwise when reading selected the first time it's always true
+            is_parent_selected = raw_catalog.get(parent.name).metadata.get((), {}).selected
+            if not self.config.get("get_transactions_reference_data") or not is_parent_selected:
                 return True
             return False
         return stream.ignore_parent_stream
@@ -75,12 +79,14 @@ class TapNetSuite(Tap):
                 parent = stream_type.parent if hasattr(stream_type, 'parent') else stream_type.parent_stream_type
                 parents = streams_by_type[parent]
                 ignore_parent_stream = self.ignore_parent_stream(stream_type, parents)
+                stream_type.ignore_parent_stream = ignore_parent_stream
 
                 if ignore_parent_stream:
                     continue
 
-                # add parent to child stream
+                # add parent and flag to child stream
                 stream_type.parent_stream_type = parent
+
                 for parent in parents:
                     for stream in streams:
                         parent.child_streams.append(stream)

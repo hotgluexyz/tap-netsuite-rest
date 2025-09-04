@@ -955,10 +955,6 @@ class AccountsStream(NetsuiteDynamicStream, DynamicChildStreamClient):
     parent = TransactionLinesStream
     child_context_key = "account_ids"
 
-    @property
-    def ignore_parent_stream(self):
-        return self._ignore_parent_stream()
-
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("parent", th.StringType),
@@ -1577,10 +1573,6 @@ class ItemStream(TransactionRootStream, DynamicChildStreamClient):
     parent = TransactionLinesStream
     child_context_key = "item_ids"
 
-    @property
-    def ignore_parent_stream(self):
-        return self._ignore_parent_stream()
-
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("lastmodifieddate", th.DateTimeType),
@@ -1603,10 +1595,6 @@ class VendorStream(NetsuiteDynamicStream, DynamicChildStreamClient):
     default_fields = [
         th.Property("categoryname", th.StringType),
     ]
-
-    @property
-    def ignore_parent_stream(self):
-        return self._ignore_parent_stream()
 
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
