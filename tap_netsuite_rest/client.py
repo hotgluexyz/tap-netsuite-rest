@@ -735,28 +735,27 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             return th.PropertiesList(*properties_list).to_dict()
 
         if self.schema_response:
-            response = self.schema_response
+            response = self.schema_response 
             properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
-            for field, value in response.get("properties").items():
-                if self.fields and self.filter_fields and field.lower() not in self.fields:
-                    continue
+            if response is not None and response.get("properties"):
+                for field, value in response.get("properties").items():
+                    if self.fields and self.filter_fields and field.lower() not in self.fields:
+                        continue
 
-                if value.get("format") == 'date-time':
-                    properties_list.append(th.Property(field.lower(), th.DateTimeType))
-                elif value.get("format") == "date":
-                    properties_list.append(th.Property(field.lower(), th.DateType))
-                elif value["type"] == "string":
-                    properties_list.append(th.Property(field.lower(), th.StringType))
-                elif value["type"] == "boolean":
-                    properties_list.append(th.Property(field.lower(), th.BooleanType))
-                elif value["type"] in ["number", "integer"]:
-                    properties_list.append(th.Property(field.lower(), th.NumberType))
-                else:
-                    #Object and array as custom types
-                    properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
+                    if value.get("format") == 'date-time':
+                        properties_list.append(th.Property(field.lower(), th.DateTimeType))
+                    elif value.get("format") == "date":
+                        properties_list.append(th.Property(field.lower(), th.DateType))
+                    elif value["type"] == "string":
+                        properties_list.append(th.Property(field.lower(), th.StringType))
+                    elif value["type"] == "boolean":
+                        properties_list.append(th.Property(field.lower(), th.BooleanType))
+                    elif value["type"] in ["number", "integer"]:
+                        properties_list.append(th.Property(field.lower(), th.NumberType))
+                    else:
+                        #Object and array as custom types
+                        properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
             return th.PropertiesList(*properties_list).to_dict()
-    
-   
 
 class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     schema_response = None

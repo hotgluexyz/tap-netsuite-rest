@@ -20,6 +20,13 @@ from singer_sdk.helpers._state import (
 )
 from singer_sdk.exceptions import InvalidStreamSortException
 
+import os
+job_id = os.environ.get("JOB_ID")
+if job_id:
+    sync_output_folder = f"/tmp/{job_id}/sync-output"
+    os.makedirs(sync_output_folder, exist_ok=True)
+else:
+    sync_output_folder = "."
 
 class VendorCreditStream(BulkParentStream):
     name = "vendor_credits"
@@ -1859,8 +1866,59 @@ class BillPaymentsStream(NetsuiteDynamicStream):
         self.custom_filter = f"{self._custom_filter}"
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
+    
+class BillAttachmentsStream(NetsuiteDynamicStream):
+    name = "bill_attachments"
+    table = ""
+    parent_stream_type = BillsStream
+    always_add_default_fields = True
+    
+    default_fields = [
+        th.Property("tranid", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("file_id", th.StringType),
+        th.Property("file_name", th.StringType),
+        th.Property("file_type", th.StringType),
+        th.Property("file_url", th.StringType),
+        th.Property("downloaded_file", th.StringType)
+    ]
+    def get_url(self, context):
+        return "https://2945321.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=99&deploy=2"
+    
+    def prepare_request_payload(self, context, next_page_token):
+        if "26163" in context["ids"]:
+            pass
+        return {"vendorBillIds": context["ids"]}
+    
+    def get_next_page_token(self, response, previous_token):
+        return None
+    
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        import requests
 
+        file_id = row.get("file_id")
+        if file_id:
+            file_name = row.get("file_name")
+            transaction = row.get("transaction")
+            os.makedirs(f"{sync_output_folder}/{transaction}", exist_ok=True)
+            
+            url = f"https://2945321.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=100&deploy=1&compid=2945321&ns-at=AAEJ7tMQqAMOXHUDVcM4aEYjLDaFedWwOSkYWcSTIVZZQKLT1MA&fileId={file_id}"
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                # Save file content to disk or attach to row
+                # For example, save as a file named by file_id
+                filename = file_name
+                with open(f"{sync_output_folder}/{transaction}/{filename}", "wb") as f:
+                    f.write(response.content)
+                # Optionally, add the filename to the row
+                row["downloaded_file"] = f"{transaction}/{filename}"
+            except Exception as e:
+                self.logger.error(f"Error downloading file {file_name}: {str(e)}")
+                row["download_error"] = str(e)
+        return row
 
+    
 class InvoicesStream(BulkParentStream):
     name = "invoices"
     table = "transaction"
