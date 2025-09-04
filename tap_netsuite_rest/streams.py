@@ -23,7 +23,7 @@ from singer_sdk.exceptions import InvalidStreamSortException
 import os
 job_id = os.environ.get("JOB_ID")
 if job_id:
-    sync_output_folder = f"/tmp/{job_id}/sync-output"
+    sync_output_folder = f"/home/hotglue/{job_id}/sync-output"
     os.makedirs(sync_output_folder, exist_ok=True)
 else:
     sync_output_folder = "."
