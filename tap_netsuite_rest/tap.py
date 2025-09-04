@@ -35,9 +35,6 @@ class TapNetSuite(Tap):
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""
         return [
-            AccountsStream(self), TransactionLinesStream(self)
-        ]
-        return [
            cls(self) for name, cls in inspect.getmembers(streams,inspect.isclass) if cls.__module__ == 'tap_netsuite_rest.streams'
         ]
     
