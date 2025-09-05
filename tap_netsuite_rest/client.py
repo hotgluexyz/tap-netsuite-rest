@@ -420,6 +420,8 @@ class NetSuiteStream(RESTStream):
                             self.select = self.select.replace(entity['select_replace'], "")
                         if "join_replace" in entity:  
                             self.join = self.join.replace(entity['join_replace'], "")
+                        if entity['name'] == "accountingbook":
+                            self.gl_use_only_primary_accounting_book = lambda: False
                         raise RetryRequest(response.text)
                     
             if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
