@@ -676,7 +676,8 @@ class ProfitLossReportStream(NetSuiteStream):
             return offset
 
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
-        if offset > totalResults:
+
+        if offset >= totalResults:
             self.query_date = (parse(self.end_date) + timedelta(1)).replace(tzinfo=None)
             report_end_date = parse(self.config.get("report_end_date")).replace(tzinfo=None) if self.config.get("report_end_date") else None
             end_date = report_end_date or datetime.utcnow()
