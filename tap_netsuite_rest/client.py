@@ -843,8 +843,9 @@ class BulkParentStream(NetsuiteDynamicStream):
                 # Sync children, except when primary mapper filters out the record
                 if self.stream_maps[0].get_filter_result(record):
                     # add id to child_context_bulk ids
-                    for key, value in child_context.items():                        
-                        child_context_bulk[key].extend(child_context[key]) if value else None
+                    if child_context:
+                        for key, value in child_context.items():                        
+                            child_context_bulk[key].extend(child_context[key]) if value else None
                 
                 if any(len(v) > self.page_size for v in child_context_bulk.values()):
                     self._sync_children(child_context_bulk)
