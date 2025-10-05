@@ -685,10 +685,20 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
     start_date = None
     end_date = None
 
+    invalid_fields = []
+
     append_select = "Transaction.type as recordtype, "
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction ) LEFT JOIN TransactionTaxDetail as ttd ON (TransactionLine.transaction = ttd.transaction) AND (TransactionLine.item = ttd.taxcode) AND (TransactionLine.netamount = ttd.taxamount)"""
     custom_filter_prefix = "transactionline"
     child_context_keys = ["account_ids", "item_ids"]
+
+    entities_fallback = [
+        {
+            "name": "TransactionTaxDetail",
+            "join_replace": "LEFT JOIN TransactionTaxDetail as ttd ON (TransactionLine.transaction = ttd.transaction) AND (TransactionLine.item = ttd.taxcode) AND (TransactionLine.netamount = ttd.taxamount)",
+            "property_deselect": ["ttd.line AS belongsto", "transactionline.taxline AS taxline", "transactionline.belongsto AS belongsto"],
+        }
+    ]
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -780,6 +790,11 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
         
         # add transactiontaxdetail table line to know which linetax is related to which transactionline
         selected_properties.append("ttd.line AS belongsto")
+
+        for invalid_field in self.invalid_fields:
+            if invalid_field in selected_properties:
+                selected_properties.remove(invalid_field)
+
         return selected_properties
 
     def prepare_request_payload(

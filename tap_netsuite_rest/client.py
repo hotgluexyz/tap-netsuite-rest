@@ -384,12 +384,15 @@ class NetSuiteStream(RESTStream):
         if response.status_code == 400:
             if hasattr(self,"entities_fallback") and self.entities_fallback:
                 for entity in self.entities_fallback:
-                    if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
+                    error_str_match = "Record \'{}\' was not found.".lower().format(entity['name'])
+                    if error_str_match.lower() in response.text.lower():
                         self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
-                        if "select_replace" in entity:
+                        if "select_replace" in entity and self.select:
                             self.select = self.select.replace(entity['select_replace'], "")
-                        if "join_replace" in entity:  
+                        if "join_replace" in entity and self.join:  
                             self.join = self.join.replace(entity['join_replace'], "")
+                        if "property_deselect" in entity and hasattr(self, "invalid_fields"):
+                            self.invalid_fields.extend(entity['property_deselect'])
                         raise RetryRequest(response.text)
                     
             if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
