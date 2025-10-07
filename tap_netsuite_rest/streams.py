@@ -2210,3 +2210,26 @@ class AccountingBooksStream(NetsuiteDynamicStream):
         th.Property("isprimary", th.BooleanType),
         th.Property("unbilledreceivablegrouping", th.StringType),
     ]
+
+class CustomFieldsStream(NetsuiteDynamicStream):
+    name = "custom_fields"
+    primary_keys = ["id"]
+    table = "customfield"
+
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("visibleontransactions", th.StringType),
+        th.Property("lastmodifieddate", th.StringType),
+        th.Property("scriptid", th.StringType),
+        th.Property("ismandatory", th.BooleanType),
+        th.Property("description", th.StringType),
+        th.Property("fieldvaluetyperecord", th.StringType),
+        th.Property("isshowinlist", th.BooleanType),
+        th.Property("fieldvaluetype", th.StringType),
+        th.Property("internalid", th.StringType),
+        th.Property("fieldtype", th.StringType),
+        th.Property("isstored", th.BooleanType),
+        th.Property("owner", th.StringType),
+        th.Property("recordtype", th.StringType),
+    ]
