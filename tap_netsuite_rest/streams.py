@@ -515,6 +515,12 @@ class LocationsStream(BulkParentStream):
             if record.get("mainaddress") is not None
             else [],
         }
+    
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        row = super().post_process(row, context)
+        if not row.get("lastmodifieddate"):
+            row["lastmodifieddate"] = datetime.now()
+        return row
 
 
 class LocationReturnAddressStream(NetsuiteDynamicStream):
