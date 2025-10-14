@@ -384,7 +384,7 @@ class LocationsStream(NetSuiteStream):
     table = "location"
     replication_key = "lastmodifieddate"
     select = """
-        *
+        *, location.lastmodifieddate
         """
     join = """
         LEFT JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
@@ -409,12 +409,6 @@ class LocationsStream(NetSuiteStream):
         th.Property("recordowner", th.StringType),
         th.Property("subsidiary", th.StringType),
     ).to_dict()
-
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
-        row = super().post_process(row, context)
-        if not row.get("lastmodifieddate"):
-            row["lastmodifieddate"] = datetime.now()
-        return row
 
 
 class CostStream(NetSuiteStream):
