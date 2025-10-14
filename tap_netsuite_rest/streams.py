@@ -410,6 +410,12 @@ class LocationsStream(NetSuiteStream):
         th.Property("subsidiary", th.StringType),
     ).to_dict()
 
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        row = super().post_process(row, context)
+        if not row.get("lastmodifieddate"):
+            row["lastmodifieddate"] = datetime.now()
+        return row
+
 
 class CostStream(NetSuiteStream):
     name = "cost"
