@@ -33,6 +33,9 @@ from singer_sdk.helpers._state import (
 from singer_sdk.exceptions import InvalidStreamSortException
 import re
 
+import singer
+from singer import StateMessage
+
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
@@ -492,6 +495,17 @@ class NetSuiteStream(RESTStream):
                 )
             # Cycle until get_next_page_token() no longer returns a value
             finished = next_page_token is None
+    
+    def _write_state_message(self) -> None:
+        """Write out a STATE message with the latest state."""
+        tap_state = self.tap_state
+
+        if tap_state and tap_state.get("bookmarks"):
+            for stream_name in tap_state.get("bookmarks").keys():
+                if tap_state["bookmarks"][stream_name].get("partitions"):
+                    tap_state["bookmarks"][stream_name]["partitions"] = []
+
+        singer.write_message(StateMessage(value=tap_state))
 
 
 class NetsuiteDynamicSchema(NetSuiteStream):

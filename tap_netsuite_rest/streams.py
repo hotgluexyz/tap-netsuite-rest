@@ -384,7 +384,7 @@ class LocationsStream(NetSuiteStream):
     table = "location"
     replication_key = "lastmodifieddate"
     select = """
-        *
+        *, location.lastmodifieddate
         """
     join = """
         LEFT JOIN locationMainAddress ma ON(location.mainaddress = ma.nkey)
