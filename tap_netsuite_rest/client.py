@@ -326,7 +326,7 @@ class NetSuiteStream(RESTStream):
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
-
+        self.logger.debug(f"Preparing request payload for {self.name} TESTING DEBUG LOGS!!!")
         filters = self.build_config_filters()
         order_by = ""
         time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
