@@ -59,6 +59,7 @@ class TapNetSuite(Tap):
         Returns:
             A list of discovered streams, ordered by name.
         """
+        self.logger.debug("Loading streams TESTING DEBUG LOGS!!!")
         # Build the parent-child dependency DAG
 
         # Index streams by type
