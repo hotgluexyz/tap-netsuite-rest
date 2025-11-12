@@ -840,7 +840,7 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
         payload = dict(
             q=f"SELECT {select} FROM {self.table} {join} {filters} {order_by}"
         )
-        self.logger.info(f"Making query ({timeframe})")
+        self.logger.debug(f"Making query ({timeframe})")
         return payload
     
     def get_child_context(self, record, context) -> dict:
