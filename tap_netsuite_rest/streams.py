@@ -1,7 +1,8 @@
 """Stream type classes for tap-netsuite-rest."""
 
+import copy
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Iterable, Optional, Union
 
 from singer_sdk import typing as th
 
@@ -14,6 +15,8 @@ from uuid import uuid4
 from dateutil.relativedelta import relativedelta
 
 import requests
+
+from tap_netsuite_rest.constants import STANDARD_NETSUITE_OBJECTS_MAP, STANDARD_NETSUITE_OBJECTS_SELECT_MAP
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -1628,6 +1631,7 @@ class CustomFieldsStream(NetsuiteDynamicStream):
     name = "custom_fields"
     primary_keys = ["id"]
     table = "customfield"
+    select = "*, BUILTIN.DF(FieldValueTypeRecord) AS fieldvaluetyperecordname"
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1645,4 +1649,123 @@ class CustomFieldsStream(NetsuiteDynamicStream):
         th.Property("isstored", th.BooleanType),
         th.Property("owner", th.StringType),
         th.Property("recordtype", th.StringType),
+        th.Property("fieldvaluetyperecordname", th.StringType),
     ]
+    
+    def get_child_context(self, record, context) -> dict:
+        if record.get("fieldvaluetype") == "List/Record":
+            return {
+                "customfieldid": record["id"],
+                "fieldvaluetyperecord": record["fieldvaluetyperecord"],
+                "fieldvaluetyperecordname": record["fieldvaluetyperecordname"],
+            }
+        return None
+    
+    def _sync_children(self, child_context: Optional[dict] = None) -> None:
+        if child_context:
+            return super()._sync_children(child_context)
+
+class CustomFieldOptionsStream(NetsuiteDynamicStream):
+    name = "custom_field_options"
+    primary_keys = None
+    parent = CustomFieldsStream
+    table = None
+    select = None
+    custom_lists_map = None
+    custom_record_types_map = None
+
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("customfieldid", th.StringType),
+        th.Property("record_type", th.StringType),
+    ).to_dict()
+    
+    def _fetch_custom_lists(self) -> None:
+        if self.custom_lists_map is not None:
+            return
+
+        has_more = True
+        offset = 0
+        self.custom_lists_map = {}
+        while has_more:
+            response = self._request_data(
+                "POST",
+                params={"limit": 1000, "offset": offset},
+                json={"q": "SELECT * FROM customlist WHERE isinactive = 'F'"}
+            )
+            custom_lists = response.get("items", [])
+            self.custom_lists_map.update({f"{custom_list['internalid']}__{custom_list['name']}": custom_list for custom_list in custom_lists})
+            if len(custom_lists) < 1000:
+                has_more = False
+            else:
+                offset += 1000
+                
+    def _fetch_custom_record_types(self) -> None:
+        if self.custom_record_types_map is not None:
+            return
+
+        has_more = True
+        offset = 0
+        self.custom_record_types_map = {}
+        while has_more:
+            response = self._request_data(
+                "POST",
+                params={"limit": 1000, "offset": offset},
+                json={"q": "SELECT internalid, name, scriptid FROM CustomRecordType WHERE isinactive = 'F'"}
+            )
+            custom_record_types = response.get("items", [])
+            self.custom_record_types_map.update({f"{custom_record_type['internalid']}__{custom_record_type['name']}": custom_record_type for custom_record_type in custom_record_types})
+            if len(custom_record_types) < 1000:
+                has_more = False
+            else:
+                offset += 1000
+
+    def prepare_request_payload(self, context: Optional[dict], next_page_token: Optional[Any]) -> Optional[dict]:
+        self._fetch_custom_lists()
+        self._fetch_custom_record_types()
+        fieldvaluetyperecord_id = context["fieldvaluetyperecord"]
+        fieldvaluetyperecord_name = context["fieldvaluetyperecordname"]
+        
+        custom_list = self.custom_lists_map.get(f"{fieldvaluetyperecord_id}__{fieldvaluetyperecord_name}")
+        if custom_list:
+            self.select = "id, name"
+            self.table = custom_list["scriptid"]
+            self.custom_filter = "isinactive = 'F'"
+            return super().prepare_request_payload(context, next_page_token)
+        
+        custom_record_type = self.custom_record_types_map.get(f"{fieldvaluetyperecord_id}__{fieldvaluetyperecord_name}")
+        if custom_record_type:
+            self.select = "id, name"
+            self.table = custom_record_type["scriptid"]
+            self.custom_filter = "isinactive = 'F'"
+            return super().prepare_request_payload(context, next_page_token)
+        
+        self.custom_filter = None # Reset custom filter to avoid filtering by inactive records
+        self.select = STANDARD_NETSUITE_OBJECTS_SELECT_MAP.get(fieldvaluetyperecord_name, "id, name")
+        self.table = STANDARD_NETSUITE_OBJECTS_MAP.get(fieldvaluetyperecord_name)
+        return super().prepare_request_payload(context, next_page_token)
+    
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        # override the request_records method to handle updated query
+        next_page_token: Any = None
+        finished = False
+        decorated_request = self.request_decorator(self.make_request)
+
+        while not finished:
+            resp = decorated_request(context, next_page_token)
+            for row in self.parse_response(resp):
+                row["record_type"] = context.get("fieldvaluetyperecordname", None)
+                yield row
+
+            previous_token = copy.deepcopy(next_page_token)
+            next_page_token = self.get_next_page_token(
+                response=resp, previous_token=previous_token
+            )
+            if next_page_token and next_page_token == previous_token:
+                raise RuntimeError(
+                    f"Loop detected in pagination. "
+                    f"Pagination token {next_page_token} is identical to prior token."
+                )
+            # Cycle until get_next_page_token() no longer returns a value
+            finished = next_page_token is None
