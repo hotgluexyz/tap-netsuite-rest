@@ -140,6 +140,7 @@ STANDARD_NETSUITE_OBJECTS_SELECT_MAP = {
     "Imported Employee Expense Status": "id, description as name",
     "Item": "id, displayname as name",
     "Item Type": "id, itemtype as name",
+    "Location": "id, fullname as name",
     "Negative Number Format": "key as id, name",
     "Number Format": "key as id, name",
     "Nexus": "id, description as name",
