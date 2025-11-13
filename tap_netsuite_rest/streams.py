@@ -16,7 +16,11 @@ from dateutil.relativedelta import relativedelta
 
 import requests
 
-from tap_netsuite_rest.constants import STANDARD_NETSUITE_OBJECTS_MAP, STANDARD_NETSUITE_OBJECTS_SELECT_MAP
+from tap_netsuite_rest.constants import (
+    STANDARD_NETSUITE_OBJECTS_MAP,
+    STANDARD_NETSUITE_OBJECTS_SELECT_MAP,
+    BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES
+)
 
 
 class SalesOrdersStream(NetSuiteStream):
@@ -1760,6 +1764,10 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
         self._set_custom_field_options_attributes(context)
         
         if self.table is None:
+            return
+        
+        if self.table in BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES:
+            self.logger.warning(f"Skipping {self.table} because it is in the blacklist of custom field options record types")
             return
 
         next_page_token: Any = None
