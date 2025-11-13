@@ -107,7 +107,7 @@ STANDARD_NETSUITE_OBJECTS_MAP = {
     "Tax Period": "taxPeriod", # TODO: not supported in Nesuite catalog
     "Tax Type": "taxType",
     "Text Enhance Action": "TextEnhanceAction",
-    "Transaction": "transaction",
+    # "Transaction": "transaction", # Can't fetch transaction records with custom fields, there are millions of them
     "Transaction Form": "Formtemplate", # TODO: not supported in Nesuite catalog
     "Transaction Status": "TaxLiabilityPaymentStatus", # TODO: not supported in Nesuite catalog
     "Transaction Type": "CustomFieldTranType", # TODO: not supported in Nesuite catalog

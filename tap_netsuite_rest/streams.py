@@ -2,7 +2,7 @@
 
 import copy
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Optional, Union, cast
 
 from singer_sdk import typing as th
 
@@ -1694,7 +1694,12 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
                 params={"limit": 1000, "offset": offset},
                 json={"q": "SELECT * FROM customlist WHERE isinactive = 'F'"}
             )
-            custom_lists = response.get("items", [])
+            if response.status_code == 400:
+                self.logger.warning(f"Unable to fetch custom lists: {response.text}, Missing custom list permission. Skipping...")
+                break
+
+            response.raise_for_status()
+            custom_lists = response.json().get("items", [])
             self.custom_lists_map.update({f"{custom_list['internalid']}__{custom_list['name']}": custom_list for custom_list in custom_lists})
             if len(custom_lists) < 1000:
                 has_more = False
@@ -1714,14 +1719,19 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
                 params={"limit": 1000, "offset": offset},
                 json={"q": "SELECT internalid, name, scriptid FROM CustomRecordType WHERE isinactive = 'F'"}
             )
-            custom_record_types = response.get("items", [])
+            if response.status_code == 400:
+                self.logger.warning(f"Unable to fetch custom record record types: {response.text}, Missing custom record type permission. Skipping...")
+                break
+
+            response.raise_for_status()
+            custom_record_types = response.json().get("items", [])
             self.custom_record_types_map.update({f"{custom_record_type['internalid']}__{custom_record_type['name']}": custom_record_type for custom_record_type in custom_record_types})
             if len(custom_record_types) < 1000:
                 has_more = False
             else:
                 offset += 1000
 
-    def prepare_request_payload(self, context: Optional[dict], next_page_token: Optional[Any]) -> Optional[dict]:
+    def _set_custom_field_options_attributes(self, context: Optional[dict]) -> None:
         self._fetch_custom_lists()
         self._fetch_custom_record_types()
         fieldvaluetyperecord_id = context["fieldvaluetyperecord"]
@@ -1732,22 +1742,26 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
             self.select = "id, name"
             self.table = custom_list["scriptid"]
             self.custom_filter = "isinactive = 'F'"
-            return super().prepare_request_payload(context, next_page_token)
+            return
         
         custom_record_type = self.custom_record_types_map.get(f"{fieldvaluetyperecord_id}__{fieldvaluetyperecord_name}")
         if custom_record_type:
             self.select = "id, name"
             self.table = custom_record_type["scriptid"]
             self.custom_filter = "isinactive = 'F'"
-            return super().prepare_request_payload(context, next_page_token)
+            return
         
         self.custom_filter = None # Reset custom filter to avoid filtering by inactive records
         self.select = STANDARD_NETSUITE_OBJECTS_SELECT_MAP.get(fieldvaluetyperecord_name, "id, name")
         self.table = STANDARD_NETSUITE_OBJECTS_MAP.get(fieldvaluetyperecord_name)
-        return super().prepare_request_payload(context, next_page_token)
     
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         # override the request_records method to handle updated query
+        self._set_custom_field_options_attributes(context)
+        
+        if self.table is None:
+            return
+
         next_page_token: Any = None
         finished = False
         decorated_request = self.request_decorator(self.make_request)
@@ -1769,3 +1783,10 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
                 )
             # Cycle until get_next_page_token() no longer returns a value
             finished = next_page_token is None
+            
+    def validate_response(self, response: requests.Response) -> None:
+        if response.status_code == 400:
+            self.logger.warning(f"Unable to fetch custom field options: {response.text}, Missing custom field option permission. Skipping...")
+            return
+
+        return super().validate_response(response)
