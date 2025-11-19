@@ -146,11 +146,11 @@ class NetSuiteStream(RESTStream):
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
-        has_next = next(extract_jsonpath("$.hasMore", response.json()))
-        offset = next(extract_jsonpath("$.offset", response.json()))
+        has_next = next(extract_jsonpath("$.hasMore", response.json()), False)
+        offset = next(extract_jsonpath("$.offset", response.json()), 0)
         offset += self.page_size
 
-        totalResults = next(extract_jsonpath("$.totalResults", response.json()))
+        totalResults = next(extract_jsonpath("$.totalResults", response.json()), 0)
         self.logger.info(f"[{self.name}] Total results = {totalResults}. Offset = {offset}")
 
         if has_next:
@@ -444,6 +444,27 @@ class NetSuiteStream(RESTStream):
             factor=3,
         )(func)
         return decorator
+    
+    @backoff.on_exception(backoff.expo, (
+        HTTPError,
+        RetriableAPIError,
+        requests.exceptions.ReadTimeout,
+        requests.exceptions.ConnectionError,
+        RemoteDisconnected,
+    ), max_tries=5, factor=2)
+    def _request_data(self, method: str, **kwargs: Any) -> requests.Response:
+        client = self.get_session()
+        prepared_req = client.prepare_request(
+                requests.Request(
+                    method=method,
+                    url=self.url_base,
+                    headers=self.http_headers,
+                    **kwargs
+                )
+            )
+
+        response = client.send(prepared_req)
+        return response
 
     def last_day_of_month(self, any_day):
         # The day 28 exists in every month. 4 days later, it's always next month
