@@ -749,7 +749,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "currency",
             "select_replace": ", Currency.name as currency, Currency.symbol as currencysymbol",
-            "join_replace": "INNER JOIN Currency ON (Currency.ID = Transaction.Currency)",
+            "join_replace": "INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)",
         },
         {
             "name": "accountingbook",
