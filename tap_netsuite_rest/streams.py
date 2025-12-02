@@ -749,7 +749,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "currency",
             "select_replace": ", Currency.name as currency, Currency.symbol as currencysymbol",
-            "join_replace": "INNER JOIN Currency ON (Currency.ID = Transaction.Currency)",
+            "join_replace": "INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)",
         },
         {
             "name": "accountingbook",
@@ -1085,6 +1085,7 @@ class SubsidiariesStream(BulkParentStream):
     primary_keys = ["id"]
     table = "subsidiary"
     filter_fields = True
+    always_add_default_fields = True
     child_context_keys = [
         "return_address_ids",
         "main_address_ids",
@@ -1096,6 +1097,7 @@ class SubsidiariesStream(BulkParentStream):
         th.Property("returnaddress", th.StringType),
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
+        th.Property("currency", th.StringType),
     ]
 
     def get_child_context(self, record, context) -> dict:
