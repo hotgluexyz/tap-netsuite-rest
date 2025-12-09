@@ -1,6 +1,6 @@
 """Stream type classes for tap-netsuite-rest."""
 
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Iterable
 
 from singer_sdk import typing as th
 
@@ -2235,3 +2235,30 @@ class CustomFieldsStream(NetsuiteDynamicStream):
         th.Property("owner", th.StringType),
         th.Property("recordtype", th.StringType),
     ]
+
+
+class CustomSegmentsStream(BulkParentStream):
+    child_context_size = 1
+    name = "custom_segments"
+    primary_keys = ["internalid"]
+    table = "customsegment"
+    child_context_keys = ["scriptid"]
+
+    schema = th.PropertiesList(
+        th.Property("internalid", th.StringType),
+        th.Property("balancing", th.BooleanType),
+        th.Property("displayorder", th.IntegerType),
+        th.Property("glimpact", th.BooleanType),
+        th.Property("internal", th.BooleanType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("name", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("scriptid", th.StringType),
+    ).to_dict()
+
+    def get_child_context(self, record, context) -> dict:
+        return {
+            "scriptid": [record["scriptid"]]
+            if record.get("scriptid") is not None
+            else []
+        }
