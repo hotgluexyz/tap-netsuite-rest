@@ -2262,3 +2262,47 @@ class CustomSegmentsStream(BulkParentStream):
             if record.get("scriptid") is not None
             else []
         }
+
+
+class CustomSegmentValuesStream(NetsuiteDynamicStream):
+    name = "custom_segment_values"
+    table = "CUSTOMRECORD_{scriptid}"
+    select = "*"
+    parent_stream_type = CustomSegmentsStream
+
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("lastmodified", th.DateType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("owner", th.StringType),
+        th.Property("parent", th.StringType),
+        th.Property("parent_scriptid", th.StringType),
+        th.Property("scriptid", th.StringType),
+        th.Property("recordid", th.StringType),
+        th.Property("subsidiary", th.StringType),
+
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        scriptid = context["scriptid"][0]
+        self.table = f"CUSTOMRECORD_{scriptid}"
+        return super().prepare_request_payload(context, next_page_token)
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        scriptid = context["scriptid"][0]
+        row["parent_scriptid"] = scriptid
+        row["subsidiary"] = row.get(f"{scriptid.lower()}_filterby_subsidiary", "")
+        row = super().post_process(row, context)
+        return row
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            scriptid = context["scriptid"][0].upper()
+            if f"Record \'CUSTOMRECORD_{scriptid}\' was not found" in str(e):
+                self.logger.warning(f"The current user doesn't have permissions to fetch custom segment values for {scriptid}: {e}")
+                return []
+            raise
