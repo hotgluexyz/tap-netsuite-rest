@@ -629,12 +629,172 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         return row
 
 
-class TransactionsStream(TransactionRootStream, BulkParentStream):
+class BillsStream(BulkParentStream):
+    name = "bills"
+    table = "transaction"
+    select = None
+    custom_filter = "type = 'VendBill'"
+    replication_key = "lastmodifieddate"
+    child_context_keys = ["ids", "vendor_ids"]
+
+    default_fields = [
+        th.Property("externalid", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("otherrefnum", th.StringType),
+        th.Property("closedate", th.DateType),
+        th.Property("duedate", th.DateType),
+        th.Property("createddate", th.DateTimeType),
+        th.Property("foreigntotal", th.NumberType),
+        th.Property("foreignamountpaid", th.NumberType),
+        th.Property("foreignamountunpaid", th.NumberType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.NumberType),
+        th.Property("status", th.StringType),
+        th.Property("status_description", th.StringType),
+        th.Property("approvalstatus", th.StringType),
+        th.Property("approvalstatus_description", th.StringType),
+        th.Property("trandate", th.DateType),
+        th.Property("trandisplayname", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("tranid", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        child_context = {"ids": [record["id"]]}
+        if self.config.get("get_transactions_reference_data"):
+            child_context["vendor_ids"] = [record["entity"]] if record.get("entity") is not None else []
+        return child_context
+    
+    def _sync_children(self, child_context: Optional[dict] = None) -> None:
+        if child_context:
+            return super()._sync_children(child_context)
+
+
+class BillLinesAndExpensesStream(BulkParentStream):
+    name = "bill_lines_and_expenses"
+    table = "transactionline"
+    select = None
+    parent_stream_type = BillsStream
+    select_prefix = "tl"
+    query_table = "transaction t"
+    order_by = "ORDER BY tl.linelastmodifieddate, tl.uniquekey"
+    join = "INNER JOIN transactionline tl on tl.transaction = t.id"
+    _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE' OR accountinglinetype is null)"
+    child_context_keys = ["account_ids", "item_ids"]
+
+    default_fields = [
+        th.Property("id", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("linelastmodifieddate", th.DateTimeType),
+        th.Property("linesequencenumber", th.IntegerType),
+        th.Property("transaction", th.StringType),
+        th.Property("createdfrom", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("accountinglinetype", th.StringType),
+        th.Property("foreignamount", th.NumberType),
+        th.Property("foreignamountpaid", th.NumberType),
+        th.Property("foreignamountunpaid", th.NumberType),
+        th.Property("revenueelement", th.StringType),
+        th.Property("revrecstartdate", th.DateType),
+        th.Property("revrecenddate", th.DateType),
+        th.Property("revrecterminmonths", th.NumberType),
+        th.Property("subscription", th.StringType),
+        th.Property("subscriptionline", th.StringType),
+        th.Property("memo", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("quantitybilled", th.NumberType),
+        th.Property("cleared", th.BooleanType),
+        th.Property("closedate", th.DateTimeType),
+        th.Property("commitmentfirm", th.BooleanType),
+        th.Property("costestimatetype", th.StringType),
+        th.Property("debitforeignamount", th.NumberType),
+        th.Property("department", th.StringType),
+        th.Property("donotdisplayline", th.BooleanType),
+        th.Property("eliminate", th.BooleanType),
+        th.Property("expenseaccount", th.StringType),
+        th.Property("fxamountlinked", th.NumberType),
+        th.Property("hasfulfillableitems", th.BooleanType),
+        th.Property("invsoebundle", th.BooleanType),
+        th.Property("isbillable", th.BooleanType),
+        th.Property("isclosed", th.BooleanType),
+        th.Property("iscogs", th.BooleanType),
+        th.Property("iscustomglline", th.BooleanType),
+        th.Property("isfullyshipped", th.BooleanType),
+        th.Property("isfxvariance", th.BooleanType),
+        th.Property("isinventoryaffecting", th.BooleanType),
+        th.Property("isrevrectransaction", th.BooleanType),
+        th.Property("deferrevrec", th.BooleanType),
+        th.Property("revrecschedule", th.StringType),
+        th.Property("revcommittingtransaction", th.StringType),
+        th.Property("kitcomponent", th.BooleanType),
+        th.Property("location", th.StringType),
+        th.Property("mainline", th.BooleanType),
+        th.Property("matchbilltoreceipt", th.BooleanType),
+        th.Property("needsrevenueelement", th.BooleanType),
+        th.Property("netamount", th.NumberType),
+        th.Property("oldcommitmentfirm", th.BooleanType),
+        th.Property("processedbyrevcommit", th.BooleanType),
+        th.Property("quantityrejected", th.NumberType),
+        th.Property("quantityshiprecv", th.NumberType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("taxline", th.BooleanType),
+        th.Property("transactiondiscount", th.BooleanType),
+        th.Property("uniquekey", th.IntegerType),
+        th.Property("item", th.StringType),
+        th.Property("itemtype", th.StringType),
+        th.Property("isallocation", th.BooleanType),
+        th.Property("price", th.StringType),
+        th.Property("transactionlinetype", th.StringType),
+        th.Property("acknowledgefulfillinstruction", th.BooleanType),
+        th.Property("actualshipdate", th.DateTimeType),
+        th.Property("quantityallocated", th.NumberType),
+        th.Property("quantitydemandallocated", th.NumberType),
+        th.Property("allocationalert", th.StringType),
+        th.Property("vsoeprice", th.NumberType),
+        th.Property("vsoesopgroup", th.StringType),
+        th.Property("amortizationenddate", th.DateTimeType),
+        th.Property("amortizationsched", th.StringType),
+        th.Property("amortizstartdate", th.DateTimeType),
+        th.Property("assembly", th.StringType),
+        th.Property("assemblycomponent", th.BooleanType),
+        th.Property("assemblyunits", th.StringType),
+        th.Property("quantitybackordered", th.NumberType),
+        th.Property("isbillable", th.BooleanType),
+        th.Property("billingschedule", th.StringType),
+        th.Property("belongsto", th.StringType),
+        th.Property("rate", th.NumberType),
+        th.Property("taxamount", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch bill lines filtering by transaction id from bills parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and tl.transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+    def get_child_context(self, record, context) -> dict:
+        if self.config.get("get_transactions_reference_data"):
+            return {
+                "account_ids": [record["expenseaccount"]] if record.get("expenseaccount") is not None else [],
+                "item_ids": [record["item"]] if record.get("item") is not None else [],
+            }
+    
+    def _sync_children(self, child_context: Optional[dict] = None) -> None:
+        if child_context:
+            return super()._sync_children(child_context)
+
+
+class TransactionsStream(TransactionRootStream):
     name = "transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
     replication_key = "lastmodifieddate"
-    child_context_keys = ["vendor_ids"]
+
     default_fields = [
         th.Property("id", th.StringType),
         th.Property("type", th.StringType),
@@ -672,19 +832,9 @@ class TransactionsStream(TransactionRootStream, BulkParentStream):
         selected_properties.append('BUILTIN.DF( Transaction.ApprovalStatus ) AS approvalstatus_description')
 
         return selected_properties
-    
-    def get_child_context(self, record, context) -> dict:
-        if self.config.get("get_transactions_reference_data"):
-            return {
-                "vendor_ids": [record["entity"]] if record.get("entity") is not None else [],
-            }
-    
-    def _sync_children(self, child_context: Optional[dict] = None) -> None:
-        if child_context:
-            return super()._sync_children(child_context)
 
 
-class TransactionLinesStream(TransactionRootStream, BulkParentStream):
+class TransactionLinesStream(TransactionRootStream):
     name = "transaction_lines"
     primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
@@ -697,7 +847,6 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
     append_select = "Transaction.type as recordtype, "
     join = """INNER JOIN Transaction ON ( Transaction.ID = TransactionLine.Transaction ) LEFT JOIN TransactionTaxDetail as ttd ON (TransactionLine.transaction = ttd.transaction) AND (TransactionLine.item = ttd.taxcode) AND (TransactionLine.netamount = ttd.taxamount)"""
     custom_filter_prefix = "transactionline"
-    child_context_keys = ["account_ids", "item_ids"]
 
     entities_fallback = [
         {
@@ -849,17 +998,6 @@ class TransactionLinesStream(TransactionRootStream, BulkParentStream):
         )
         self.logger.info(f"Making query ({timeframe})")
         return payload
-    
-    def get_child_context(self, record, context) -> dict:
-        if self.config.get("get_transactions_reference_data"):
-            return {
-                "account_ids": [record["expenseaccount"]] if record.get("expenseaccount") is not None else [],
-                "item_ids": [record["item"]] if record.get("item") is not None else [],
-            }
-    
-    def _sync_children(self, child_context: Optional[dict] = None) -> None:
-        if child_context:
-            return super()._sync_children(child_context)
 
 
 class TransactionAccountingLinesStream(NetSuiteStream):
@@ -974,7 +1112,7 @@ class AccountsStream(NetsuiteDynamicStream, DynamicChildStreamClient):
     replication_key = "lastmodifieddate"
     select = None
     use_dynamic_fields = True
-    parent = TransactionLinesStream
+    parent = BillLinesAndExpensesStream
     child_context_key = "account_ids"
 
     default_fields = [
@@ -1592,7 +1730,7 @@ class ItemStream(TransactionRootStream, DynamicChildStreamClient):
     table = "item"
     type_filter = False
     replication_key = "lastmodifieddate"
-    parent = TransactionLinesStream
+    parent = BillLinesAndExpensesStream
     child_context_key = "item_ids"
 
     default_fields = [
@@ -1608,7 +1746,7 @@ class VendorStream(NetsuiteDynamicStream, DynamicChildStreamClient):
     replication_key = "lastmodifieddate"
     select = None
     filter_fields = True
-    parent = TransactionsStream
+    parent = BillsStream
     child_context_key = "vendor_ids"
     
     join = """
