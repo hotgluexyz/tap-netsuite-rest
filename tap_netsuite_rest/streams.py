@@ -1902,6 +1902,7 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
         self._set_custom_field_options_attributes(context)
         
         if self.table is None:
+            self.logger.warning(f"Skipping {self.name} stream because customlist or customrecordtype tables are not accessible and custom field is not a standard netsuite object")
             return
         
         if self.table in BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES:
