@@ -1127,6 +1127,23 @@ class CurrenciesStream(NetsuiteDynamicStream):
     select = None
     filter_fields = True
 
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if f"Record \'currency\' was not found" in str(e):
+                self.logger.warning("""
+                Could not fetch Currencies. This feature is disabled for the current Netsuite Instance
+                or the current user doesn't have permissions to fetch currencies.
+                To enable this feature, please go to Setup > Company > Enable Features,
+                check the "Multiple Currencies" box.
+                Then give the current user permissions to fetch currencies.
+                Go to Setup > Setup Manager > Users/Roles > Manage Roles > Edit the desired role.
+                On the Permissions tab, go to Lists and add the "Currencies" permission.
+                """)
+                return []
+            raise
+
 
 class DepartmentsStream(NetsuiteDynamicStream):
     name = "departments"
