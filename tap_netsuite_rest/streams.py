@@ -803,7 +803,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
                     cs_field["scriptid"] = cs_field["scriptid"].lower()
 
                 if custom_segment_fields:
-                    self.select = self.select + ", " + ", ".join(f"'{cs_field['name']}' as custom_segment_{cs_field['scriptid']}, Transaction.{cs_field['scriptid']} as {cs_field['scriptid']}_value_id, BUILTIN.DF( Transaction.{cs_field['scriptid']} ) as {cs_field['scriptid']}_value_name" for cs_field in custom_segment_fields)
+                    self.select = self.select + ", " + ", ".join(f"'{cs_field['name']}' as custom_segment_{cs_field['scriptid']}, TransactionLine.{cs_field['scriptid']} as {cs_field['scriptid']}_value_id, BUILTIN.DF( TransactionLine.{cs_field['scriptid']} ) as {cs_field['scriptid']}_value_name" for cs_field in custom_segment_fields)
             except Exception as e:
                 self.logger.error(f"Error getting custom segments for stream: {self.name}, Error: {e}")
                 custom_segment_fields = []
