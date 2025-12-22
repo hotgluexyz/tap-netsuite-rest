@@ -2310,6 +2310,27 @@ class CustomSegmentsStream(BulkParentStream):
         th.Property("scriptid", th.StringType),
     ).to_dict()
 
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if "Search error occurred: Record 'customsegment' was not found" in str(e):
+                self.logger.warning(
+                    """
+                    Could not fetch Custom Segments. This feature is disabled for the current Netsuite Instance
+                    or the current user doesn't have permissions to fetch custom segments.
+                    To enable this feature, please go to Setup > Company > Enable Features, on the SuiteCloud tab enable
+                    the "Custom Segments" feature.
+                    Then give the current user permissions to fetch custom segments.
+                    Go to Setup > Setup Manager > Users/Roles > Manage Roles > Edit the desired role.
+                    On the Permissions tab, go to Setup and add the "Custom Segments" permission.
+                    Then go to Custom Record tab and add permissions for the desired custom segments.
+                    """
+                )
+                return []
+            else:
+                raise e
+
     def get_child_context(self, record, context) -> dict:
         return {
             "scriptid": [record["scriptid"]]
