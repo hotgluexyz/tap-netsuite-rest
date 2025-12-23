@@ -1,6 +1,7 @@
 """Stream type classes for tap-netsuite-rest."""
 
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Iterable
+import requests
 
 from singer_sdk import typing as th
 
@@ -725,6 +726,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     start_date_f = None
     end_date = None
     primary_keys = ["id"]
+    custom_segment_field_scriptids = None
     name = "general_ledger_report"
     select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, Entity.altname as name, Entity.firstname, Entity.lastname, Entity.id as entityid, Entity.Type as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
     table = "Transaction"
@@ -773,53 +775,105 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     order_by = "ORDER BY Transaction.TranDate DESC"
     replication_key = "date"
 
-    schema = th.PropertiesList(
-        th.Property("id", th.StringType),
-        th.Property("accttype", th.StringType),
-        th.Property("amount", th.NumberType),
-        th.Property("categories", th.StringType),
-        th.Property("subsidiary", th.StringType),
-        th.Property("subsidiaryid", th.StringType),
-        th.Property("date", th.DateTimeType),
-        th.Property("externalid", th.StringType),
-        th.Property("firstname", th.StringType),
-        th.Property("lastname", th.StringType),
-        th.Property("name", th.StringType),
-        th.Property("num", th.StringType),
-        th.Property("postingdate", th.DateTimeType),
-        th.Property("periodname", th.StringType),
-        th.Property("postingperiod", th.StringType),
-        th.Property("split", th.StringType),
-        th.Property("startdate", th.DateTimeType),
-        th.Property("enddate", th.DateTimeType),
-        th.Property("tranid", th.StringType),
-        th.Property("transactiontype", th.StringType),
-        th.Property("memo", th.StringType),
-        th.Property("class", th.StringType),
-        th.Property("classid", th.StringType),
-        th.Property("department", th.StringType),
-        th.Property("departmentid", th.StringType),
-        th.Property("locationid", th.StringType),
-        th.Property("locationname", th.StringType),
-        th.Property("currency", th.StringType),
-        th.Property("currencyid", th.StringType),
-        th.Property("currencysymbol", th.StringType),
-        th.Property("accountid", th.StringType),
-        th.Property("transactionnumber", th.StringType),
-        th.Property("trandisplayname", th.StringType),
-        th.Property("entityid", th.StringType),
-        th.Property("entitytype", th.StringType),
-        th.Property("journaltype", th.StringType),
-        th.Property("linememo", th.StringType),
-        th.Property("entrytype", th.StringType),
-        th.Property("creditamount", th.NumberType),
-        th.Property("debitamount", th.NumberType),
-        th.Property("exchangerate", th.StringType),
-        th.Property("transactioncurrencyid", th.StringType),
-        th.Property("accountingbook", th.StringType),
-    ).to_dict()
+    def get_custom_segment_fields_scriptids(self):
+        if self.custom_segment_field_scriptids is None:
+            custom_segment_fields = []
+            try:
+                self.logger.info(f"Getting custom segments for stream: {self.name}")
+
+                s = self.get_session()
+                prepared_req = s.prepare_request(
+                    requests.Request(
+                        method="POST",
+                        url=f"{self.url_base}?limit=1000",
+                        headers=self.http_headers,
+                        json={
+                            "q": f"SELECT name, scriptid FROM customsegment"
+                        }
+                    )
+                )
+                prepared_req.headers.update({"Content-Type": "application/json"})
+                response = s.send(prepared_req)
+                response.raise_for_status()
+                custom_segment_fields = response.json().get("items", [])
+                for cs_field in custom_segment_fields:
+                    # make it lowercase because we'll use it as db field name
+                    # and the db will return it lowercase, if it's not lowercase
+                    # well have problems because it won't be in the selected properties list
+                    cs_field["scriptid"] = cs_field["scriptid"].lower()
+
+                if custom_segment_fields:
+                    self.select = self.select + ", " + ", ".join(f"'{cs_field['name']}' as custom_segment_{cs_field['scriptid']}, TransactionLine.{cs_field['scriptid']} as {cs_field['scriptid']}_value_id, BUILTIN.DF( TransactionLine.{cs_field['scriptid']} ) as {cs_field['scriptid']}_value_name" for cs_field in custom_segment_fields)
+            except Exception as e:
+                self.logger.error(f"Error getting custom segments for stream: {self.name}, Error: {e}")
+                custom_segment_fields = []
+            
+            self.custom_segment_field_scriptids = [cs_field["scriptid"] for cs_field in custom_segment_fields]
+        return self.custom_segment_field_scriptids
+
+    @property
+    def schema(self):
+        properties_list = th.PropertiesList(
+            th.Property("id", th.StringType),
+            th.Property("accttype", th.StringType),
+            th.Property("amount", th.NumberType),
+            th.Property("categories", th.StringType),
+            th.Property("subsidiary", th.StringType),
+            th.Property("subsidiaryid", th.StringType),
+            th.Property("date", th.DateTimeType),
+            th.Property("externalid", th.StringType),
+            th.Property("firstname", th.StringType),
+            th.Property("lastname", th.StringType),
+            th.Property("name", th.StringType),
+            th.Property("num", th.StringType),
+            th.Property("postingdate", th.DateTimeType),
+            th.Property("periodname", th.StringType),
+            th.Property("postingperiod", th.StringType),
+            th.Property("split", th.StringType),
+            th.Property("startdate", th.DateTimeType),
+            th.Property("enddate", th.DateTimeType),
+            th.Property("tranid", th.StringType),
+            th.Property("transactiontype", th.StringType),
+            th.Property("memo", th.StringType),
+            th.Property("class", th.StringType),
+            th.Property("classid", th.StringType),
+            th.Property("department", th.StringType),
+            th.Property("departmentid", th.StringType),
+            th.Property("locationid", th.StringType),
+            th.Property("locationname", th.StringType),
+            th.Property("currency", th.StringType),
+            th.Property("currencyid", th.StringType),
+            th.Property("currencysymbol", th.StringType),
+            th.Property("accountid", th.StringType),
+            th.Property("transactionnumber", th.StringType),
+            th.Property("trandisplayname", th.StringType),
+            th.Property("entityid", th.StringType),
+            th.Property("entitytype", th.StringType),
+            th.Property("journaltype", th.StringType),
+            th.Property("linememo", th.StringType),
+            th.Property("entrytype", th.StringType),
+            th.Property("creditamount", th.NumberType),
+            th.Property("debitamount", th.NumberType),
+            th.Property("exchangerate", th.StringType),
+            th.Property("transactioncurrencyid", th.StringType),
+            th.Property("accountingbook", th.StringType),
+        )
+
+        custom_segment_fields_scriptids = self.get_custom_segment_fields_scriptids()
+        for custom_segment_field_scriptid in custom_segment_fields_scriptids:
+            properties_list.append(th.Property(f"custom_segment_{custom_segment_field_scriptid}", th.StringType))
+            properties_list.append(th.Property(f"{custom_segment_field_scriptid}_value_id", th.StringType))
+            properties_list.append(th.Property(f"{custom_segment_field_scriptid}_value_name", th.StringType))
+        
+        return properties_list.to_dict()
 
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if self.custom_segment_field_scriptids:
+            for cs_field_scriptid in self.custom_segment_field_scriptids:
+                # if the value id is not present, remove the custom segment name from the row
+                if not row.get(f"{cs_field_scriptid}_value_id") and row.get(f"custom_segment_{cs_field_scriptid}"):
+                    row.pop(f"custom_segment_{cs_field_scriptid}", None)
+
         amount_fields = ["amount", "creditamount", "debitamount"]
         for amount_field in amount_fields:
             if row.get(amount_field):
@@ -1072,6 +1126,23 @@ class CurrenciesStream(NetsuiteDynamicStream):
     table = "currency"
     select = None
     filter_fields = True
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if f"Record \'currency\' was not found" in str(e):
+                self.logger.warning("""
+                Could not fetch Currencies. This feature is disabled for the current Netsuite Instance
+                or the current user doesn't have permissions to fetch currencies.
+                To enable this feature, please go to Setup > Company > Enable Features,
+                check the "Multiple Currencies" box.
+                Then give the current user permissions to fetch currencies.
+                Go to Setup > Setup Manager > Users/Roles > Manage Roles > Edit the desired role.
+                On the Permissions tab, go to Lists and add the "Currencies" permission.
+                """)
+                return []
+            raise
 
 
 class DepartmentsStream(NetsuiteDynamicStream):
@@ -2235,3 +2306,95 @@ class CustomFieldsStream(NetsuiteDynamicStream):
         th.Property("owner", th.StringType),
         th.Property("recordtype", th.StringType),
     ]
+
+
+class CustomSegmentsStream(BulkParentStream):
+    child_context_size = 1
+    name = "custom_segments"
+    primary_keys = ["internalid"]
+    table = "customsegment"
+    child_context_keys = ["scriptid"]
+
+    schema = th.PropertiesList(
+        th.Property("internalid", th.StringType),
+        th.Property("balancing", th.BooleanType),
+        th.Property("displayorder", th.IntegerType),
+        th.Property("glimpact", th.BooleanType),
+        th.Property("internal", th.BooleanType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("name", th.StringType),
+        th.Property("recordtype", th.StringType),
+        th.Property("scriptid", th.StringType),
+    ).to_dict()
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if "Search error occurred: Record 'customsegment' was not found" in str(e):
+                self.logger.warning(
+                    """
+                    Could not fetch Custom Segments. This feature is disabled for the current Netsuite Instance
+                    or the current user doesn't have permissions to fetch custom segments.
+                    To enable this feature, please go to Setup > Company > Enable Features, on the SuiteCloud tab enable
+                    the "Custom Segments" feature.
+                    Then give the current user permissions to fetch custom segments.
+                    Go to Setup > Setup Manager > Users/Roles > Manage Roles > Edit the desired role.
+                    On the Permissions tab, go to Setup and add the "Custom Segments" permission.
+                    Then go to Custom Record tab and add permissions for the desired custom segments.
+                    """
+                )
+                return []
+            else:
+                raise e
+
+    def get_child_context(self, record, context) -> dict:
+        return {
+            "scriptid": [record["scriptid"]]
+            if record.get("scriptid") is not None
+            else []
+        }
+
+
+class CustomSegmentValuesStream(NetsuiteDynamicStream):
+    name = "custom_segment_values"
+    table = "CUSTOMRECORD_{scriptid}"
+    select = "*"
+    parent_stream_type = CustomSegmentsStream
+
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("lastmodified", th.DateType),
+        th.Property("lastmodifiedby", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("owner", th.StringType),
+        th.Property("parent", th.StringType),
+        th.Property("parent_scriptid", th.StringType),
+        th.Property("scriptid", th.StringType),
+        th.Property("recordid", th.StringType),
+        th.Property("subsidiary", th.StringType),
+
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        scriptid = context["scriptid"][0]
+        self.table = f"CUSTOMRECORD_{scriptid}"
+        return super().prepare_request_payload(context, next_page_token)
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        scriptid = context["scriptid"][0]
+        row["parent_scriptid"] = scriptid
+        row["subsidiary"] = row.get(f"{scriptid.lower()}_filterby_subsidiary", "")
+        row = super().post_process(row, context)
+        return row
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            scriptid = context["scriptid"][0].upper()
+            if f"Record \'CUSTOMRECORD_{scriptid}\' was not found" in str(e):
+                self.logger.warning(f"The current user doesn't have permissions to fetch custom segment values for {scriptid}: {e}")
+                return []
+            raise
