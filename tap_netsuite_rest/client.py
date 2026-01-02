@@ -400,6 +400,9 @@ class NetSuiteStream(RESTStream):
         if self.append_select:
             select = self.append_select + select
 
+        if not select:
+            select = "*"
+
         join = self.join if self.join else ""
         table = self.query_table or self.table
 
