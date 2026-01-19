@@ -772,7 +772,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
 
         return _filter
     
-    order_by = "ORDER BY Transaction.TranDate DESC"
+    order_by = "ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
     replication_key = "date"
 
     def get_custom_segment_fields_scriptids(self):
