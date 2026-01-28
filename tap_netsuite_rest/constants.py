@@ -126,10 +126,12 @@ STANDARD_NETSUITE_OBJECTS_SELECT_MAP = {
     "Account Type": "id, longname as name",
     "Address Book": "internalid as id, label as name",
     "Approval Status": "key as id, name",
-    "Consolidated Exchange Rate": "id, averagerate as name",
+    "Consolidated Exchange Rate": "id, currentrate as name",
     "Contact": "id, fullname as name",
+    "Country": "uniquekey as id, name",
     "Customer": "id, fullname as name",
     "Domain": "id, domain as name",
+    "Email Preference Type": "internalid as id, name",
     "Employee": "id, entityid as name",
     "Employee Type Category": "key as id, name",
     "Entity": "id, fullname as name",
@@ -158,7 +160,16 @@ STANDARD_NETSUITE_OBJECTS_SELECT_MAP = {
     "Vendor": "id, fullname as name",
 }
 
+STANDARD_NETSUITE_OBJECTS_WHERE_CONDITION_MAP = {
+    "Accounting Period": "isPosting = 'T'",
+    "Email Template": "id >= '0'",
+    "Employee Type": "isinactive = 'F'",
+    "Entity": "isinactive = 'F'",
+}
+
 BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES = [
     # Can't fetch transaction records with custom fields, there are millions of them
     "transaction",
+    "EventPriority",
+    "timeLineApprovalStatus"
 ]

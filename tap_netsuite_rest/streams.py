@@ -19,7 +19,8 @@ import requests
 from tap_netsuite_rest.constants import (
     STANDARD_NETSUITE_OBJECTS_MAP,
     STANDARD_NETSUITE_OBJECTS_SELECT_MAP,
-    BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES
+    BLACKLISTED_CUSTOM_FIELD_OPTIONS_RECORD_TYPES,
+    STANDARD_NETSUITE_OBJECTS_WHERE_CONDITION_MAP
 )
 
 
@@ -1893,9 +1894,9 @@ class CustomFieldOptionsStream(NetsuiteDynamicStream):
             self.custom_filter = "isinactive = 'F'"
             return
         
-        self.custom_filter = None # Reset custom filter to avoid filtering by inactive records
         self.select = STANDARD_NETSUITE_OBJECTS_SELECT_MAP.get(fieldvaluetyperecord_name, "id, name")
         self.table = STANDARD_NETSUITE_OBJECTS_MAP.get(fieldvaluetyperecord_name)
+        self.custom_filter = STANDARD_NETSUITE_OBJECTS_WHERE_CONDITION_MAP.get(fieldvaluetyperecord_name)
     
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         # override the request_records method to handle updated query
