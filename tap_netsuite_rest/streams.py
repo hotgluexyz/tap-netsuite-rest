@@ -1157,6 +1157,7 @@ class SubsidiariesStream(BulkParentStream):
     table = "subsidiary"
     filter_fields = True
     always_add_default_fields = True
+    _select = "*, BUILTIN.DF(subsidiary.currency) AS currencyname"
     child_context_keys = [
         "return_address_ids",
         "main_address_ids",
@@ -1169,6 +1170,7 @@ class SubsidiariesStream(BulkParentStream):
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
         th.Property("currency", th.StringType),
+        th.Property("currencyname", th.StringType),
     ]
 
     def get_child_context(self, record, context) -> dict:
