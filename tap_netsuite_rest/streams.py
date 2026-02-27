@@ -2058,8 +2058,14 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
                 file_id, row.get("file_name"), row.get("transaction")
             )
             if error:
-                self.logger.error(f"Error downloading file {row.get('file_name')}: {error}")
-                row["download_error"] = error
+                file_name = row.get("file_name")
+                if file_name:
+                    file_desc = f"file {file_name} (file_id={file_id})"
+                else:
+                    file_desc = f"file with id {file_id}"
+                raise FatalAPIError(
+                    f"Bill attachment download failed for {file_desc}: {error}"
+                )
             else:
                 row["downloaded_file"] = rel_path
         return row
