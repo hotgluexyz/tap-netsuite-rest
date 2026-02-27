@@ -20,13 +20,12 @@ from singer_sdk.helpers._state import (
     finalize_state_progress_markers,
     log_sort_error,
 )
-from singer_sdk.exceptions import InvalidStreamSortException
+from singer_sdk.exceptions import InvalidStreamSortException, FatalAPIError
 
 import os
 job_id = os.environ.get("JOB_ID")
 if job_id:
     sync_output_folder = f"/home/hotglue/{job_id}/sync-output"
-    os.makedirs(sync_output_folder, exist_ok=True)
 else:
     sync_output_folder = "."
 
@@ -2002,7 +2001,13 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
         th.Property("downloaded_file", th.StringType)
     ]
     def get_url(self, context):
-        return self.config.get("bill_attachments_restlet_url", "")
+        restlet_url = self.config.get("bill_attachments_restlet_url") or ""
+        if not restlet_url.strip():
+            raise FatalAPIError(
+                "bill_attachments stream is selected but 'bill_attachments_restlet_url' is missing or empty in config. "
+                "Add the Restlet base URL to config to sync bill attachments."
+            )
+        return restlet_url
     
     def prepare_request_payload(self, context, next_page_token):
         self._current_request_id = str(uuid.uuid4())
@@ -2020,31 +2025,46 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
     def get_next_page_token(self, response, previous_token):
         return None
 
-    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+    def _download_attachment(
+        self, file_id: str, file_name: str, transaction: str
+    ) -> tuple[Optional[str], Optional[str]]:
+        """Download a single attachment to disk. Returns (relative_path, None) on success, (None, error_message) on failure."""
         import requests
 
+        suitelet_base = (self.config.get("bill_attachments_suitelet_url") or "").strip()
+        if not suitelet_base:
+            raise FatalAPIError(
+                "bill_attachments stream is selected but 'bill_attachments_suitelet_url' is missing or empty in config. "
+                "Add the Suitelet base URL to config to download bill attachment files."
+            )
+        dir_path = os.path.join(sync_output_folder, "bill_attachments", transaction)
+        os.makedirs(dir_path, exist_ok=True)
+        request_id = getattr(self, "_current_request_id", None)
+        download_token = getattr(self, "_current_download_token", None)
+        url = f"{suitelet_base}&fileId={file_id}&requestId={request_id}&download_token={download_token}"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(os.path.join(dir_path, file_name), "wb") as f:
+                f.write(response.content)
+            return (f"bill_attachments/{transaction}/{file_name}", None)
+        except Exception as e:
+            return (None, str(e))
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         file_id = row.get("file_id")
         if file_id:
-            file_name = row.get("file_name")
-            tranid = row.get("tranid")
-            dir_path = os.path.join(sync_output_folder, "bill_attachments", tranid or "")
-            os.makedirs(dir_path, exist_ok=True)
-
-            request_id = getattr(self, "_current_request_id", None)
-            download_token = getattr(self, "_current_download_token", None)
-            suitelet_base = self.config.get("bill_attachments_suitelet_url", "")
-            url = f"{suitelet_base}&fileId={file_id}&requestId={request_id}&download_token={download_token}"
-            try:
-                response = requests.get(url)
-                response.raise_for_status()
-                filename = file_name
-                with open(os.path.join(dir_path, filename), "wb") as f:
-                    f.write(response.content)
-                row["downloaded_file"] = f"bill_attachments/{tranid}/{filename}"
-            except Exception as e:
-                self.logger.error(f"Error downloading file {file_name}: {str(e)}")
-                row["download_error"] = str(e)
+            rel_path, error = self._download_attachment(
+                file_id, row.get("file_name"), row.get("transaction")
+            )
+            if error:
+                self.logger.error(f"Error downloading file {row.get('file_name')}: {error}")
+                row["download_error"] = error
+            else:
+                row["downloaded_file"] = rel_path
         return row
+
+
 class BillTaxLinesStream(NetsuiteDynamicStream):
     name = "bill_tax_lines"
     table = "transactionline"
