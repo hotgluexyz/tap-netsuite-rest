@@ -1987,11 +1987,10 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     
 class BillAttachmentsStream(NetsuiteDynamicStream):
     name = "bill_attachments"
-    table = ""
+    table = "suitescript_bill_attachments"
     parent_stream_type = BillsStream
-    always_add_default_fields = True
     
-    default_fields = [
+    schema = th.PropertiesList(
         th.Property("tranid", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("file_id", th.StringType),
@@ -1999,7 +1998,8 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
         th.Property("file_type", th.StringType),
         th.Property("file_url", th.StringType),
         th.Property("downloaded_file", th.StringType)
-    ]
+    ).to_dict()
+    
     def get_url(self, context):
         restlet_url = self.config.get("bill_attachments_restlet_url") or ""
         if not restlet_url.strip():
