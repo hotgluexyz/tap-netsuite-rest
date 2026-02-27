@@ -50,6 +50,8 @@ class TapNetSuite(Tap):
             th.DateTimeType,
             description="The earliest record date to sync",
         ),
+        th.Property("bill_attachments_restlet_url", th.StringType, description="Base URL for bill attachments Restlet"),
+        th.Property("bill_attachments_suitelet_url", th.StringType, description="Base URL for bill attachments Suitelet (file download)"),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:

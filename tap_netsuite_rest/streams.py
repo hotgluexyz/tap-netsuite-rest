@@ -1,6 +1,7 @@
 """Stream type classes for tap-netsuite-rest."""
 
 from typing import Any, Dict, Optional, List, Iterable
+import uuid
 import requests
 
 from singer_sdk import typing as th
@@ -2001,36 +2002,45 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
         th.Property("downloaded_file", th.StringType)
     ]
     def get_url(self, context):
-        return "https://2945321.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=99&deploy=2"
+        return self.config.get("bill_attachments_restlet_url", "")
     
     def prepare_request_payload(self, context, next_page_token):
-        if "26163" in context["ids"]:
-            pass
-        return {"vendorBillIds": context["ids"]}
-    
+        self._current_request_id = str(uuid.uuid4())
+        return {
+            "requestId": self._current_request_id,
+            "vendorBillIds": context["ids"],
+        }
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        data = response.json()
+        self._current_download_token = data.get("download_token")
+        for item in data.get("items", []):
+            yield item
+
     def get_next_page_token(self, response, previous_token):
         return None
-    
+
     def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
         import requests
 
         file_id = row.get("file_id")
         if file_id:
             file_name = row.get("file_name")
-            transaction = row.get("transaction")
-            os.makedirs(f"{sync_output_folder}/{transaction}", exist_ok=True)
-            
-            url = f"https://2945321.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=100&deploy=1&compid=2945321&ns-at=AAEJ7tMQqAMOXHUDVcM4aEYjLDaFedWwOSkYWcSTIVZZQKLT1MA&fileId={file_id}"
+            tranid = row.get("tranid")
+            dir_path = os.path.join(sync_output_folder, "bill_attachments", tranid or "")
+            os.makedirs(dir_path, exist_ok=True)
+
+            request_id = getattr(self, "_current_request_id", None)
+            download_token = getattr(self, "_current_download_token", None)
+            suitelet_base = self.config.get("bill_attachments_suitelet_url", "")
+            url = f"{suitelet_base}&fileId={file_id}&requestId={request_id}&download_token={download_token}"
             try:
                 response = requests.get(url)
                 response.raise_for_status()
-                # Save file content to disk or attach to row
-                # For example, save as a file named by file_id
                 filename = file_name
-                with open(f"{sync_output_folder}/{transaction}/{filename}", "wb") as f:
+                with open(os.path.join(dir_path, filename), "wb") as f:
                     f.write(response.content)
-                # Optionally, add the filename to the row
-                row["downloaded_file"] = f"{transaction}/{filename}"
+                row["downloaded_file"] = f"bill_attachments/{tranid}/{filename}"
             except Exception as e:
                 self.logger.error(f"Error downloading file {file_name}: {str(e)}")
                 row["download_error"] = str(e)
