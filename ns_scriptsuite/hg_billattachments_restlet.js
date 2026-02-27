@@ -5,8 +5,9 @@
 define(['N/record', 'N/search', 'N/error', 'N/log', 'N/cache', 'N/crypto'],
   (record, search, error, log, cache, crypto) => {
 
-    // HARDCODED SALT: Stays on the server. Change this to a unique string for your account.
-    // SALT needs to be in both the restlet and the suitelet.
+    // Hardcoded salt is acceptable here: this script runs server-side in NetSuite only,
+    // and script source is visible only to NetSuite administrators. Not exposed to clients.
+    // Must match the salt in hg_billattachments_suitelet.js.
     const INTERNAL_SALT = 'CHANGE_ME';
 
     function getBillAttachments(requestPost) {
