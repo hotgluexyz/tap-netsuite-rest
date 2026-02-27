@@ -400,6 +400,9 @@ class NetSuiteStream(RESTStream):
         if self.append_select:
             select = self.append_select + select
 
+        if not select:
+            select = "*"
+
         join = self.join if self.join else ""
         table = self.query_table or self.table
 
@@ -420,6 +423,8 @@ class NetSuiteStream(RESTStream):
                             self.select = self.select.replace(entity['select_replace'], "")
                         if "join_replace" in entity:  
                             self.join = self.join.replace(entity['join_replace'], "")
+                        if entity['name'] == "accountingbook":
+                            self.gl_use_only_primary_accounting_book = lambda: False
                         raise RetryRequest(response.text)
                     
             if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
@@ -496,7 +501,7 @@ class NetSuiteStream(RESTStream):
             # store primary keys to avoid duplicated records if primary keys is available
             for row in self.parse_response(resp):
                 # need to use final_row otherwise the pk may be missing
-                final_row = self.post_process(row, dict())
+                final_row = self.post_process(row, context)
                 if self.primary_keys:
                     if len(self.primary_keys) == 1:
                         pk = final_row[self.primary_keys[0]]
@@ -930,8 +935,9 @@ class BulkParentStream(NetsuiteDynamicStream):
                 # Sync children, except when primary mapper filters out the record
                 if self.stream_maps[0].get_filter_result(record):
                     # add id to child_context_bulk ids
-                    for key, value in child_context.items():                        
-                        child_context_bulk[key].extend(child_context[key]) if value else None
+                    if child_context:
+                        for key, value in child_context.items():
+                            child_context_bulk[key].extend(child_context[key]) if value else None
                 
                 if any(len(v) >= self.child_context_size for v in child_context_bulk.values()):
                     self._sync_children(child_context_bulk)
