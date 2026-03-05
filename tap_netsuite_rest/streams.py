@@ -1,6 +1,6 @@
 """Stream type classes for tap-netsuite-rest."""
 
-from typing import Any, Dict, Optional, List, Iterable, Tuple
+from typing import Any, Dict, Optional, List, Iterable
 import uuid
 import requests
 
@@ -2027,7 +2027,7 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
 
     def _download_attachment(
         self, file_id: str, file_name: str, transaction: str
-    ) -> Tuple[Optional[str], Optional[str]]:
+    ) -> tuple[Optional[str], Optional[str]]:
         """Download a single attachment to disk. Returns (relative_path, None) on success, (None, error_message) on failure."""
         import requests
 
