@@ -1891,7 +1891,7 @@ class BillsStream(BulkParentStream):
     table = "transaction"
     custom_filter = "type = 'VendBill'"
     replication_key = "lastmodifieddate"
-    _select = "*, BUILTIN.DF(status) status"
+    _select = "transaction.*, BUILTIN.DF(transaction.status) status"
 
     default_fields = [
         th.Property("externalid", th.StringType)
