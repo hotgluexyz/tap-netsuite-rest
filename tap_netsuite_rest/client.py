@@ -159,7 +159,7 @@ class NetSuiteStream(RESTStream):
 
         if has_next:
             if (
-                isinstance(self, TransactionRootStream)
+                (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
                 and self.config.get("transaction_lines_monthly")
                 and totalResults > 10000
             ):
@@ -238,7 +238,7 @@ class NetSuiteStream(RESTStream):
             return 0
 
 
-        if isinstance(self, TransactionRootStream) and self.config.get("transaction_lines_monthly") and not has_next:
+        if (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) and self.config.get("transaction_lines_monthly") and not has_next:
             today = datetime.now()
             today = today.replace(tzinfo=pytz.UTC)
             if self.end_date >= today:
@@ -253,6 +253,8 @@ class NetSuiteStream(RESTStream):
                     reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
                 # we should move to the next date range now
                 self.start_date = self.start_date + self.time_jump
+                self.end_date = self.start_date + self.time_jump
+                self.query_date = None  # so base uses get_starting_time() → self.start_date for new period
                 if reset_time_jump:
                     self.logger.info("Resetting time_jump to 1 month for next iteration...")
                     self.time_jump = relativedelta(months=1)
@@ -300,6 +302,10 @@ class NetSuiteStream(RESTStream):
         start_date = parse(self.config.get("start_date"))
         rep_key = self.get_starting_timestamp(context)
         return rep_key or start_date
+
+    def get_ending_time(self, context):
+        """Return end of date window for the request, or None for no upper bound."""
+        return None
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -369,6 +375,14 @@ class NetSuiteStream(RESTStream):
             elif start_date:
                 start_date_str = start_date.strftime(time_format)
                 filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
+            end_date = self.get_ending_time(context)
+            effective_start = self.query_date if self.query_date else start_date
+            if end_date:
+                if effective_start is not None and end_date <= effective_start:
+                    raise ValueError(
+                        f"Invalid date window: end_date {end_date} must be after start {effective_start}"
+                    )
+                filters.append(f"{prefix}.{self.replication_key}<{end_date.strftime(time_format)}")
 
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by
@@ -894,10 +908,28 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
 class BulkParentStream(NetsuiteDynamicStream):
 
     child_context_keys = ["ids"]
+    start_date = None
+    end_date = None
 
     @property
     def child_context_size(self):
         return self.config.get("child_context_size", 250)
+
+    def get_starting_time(self, context):
+        if self.config.get("transaction_lines_monthly") and self.replication_key:
+            if self.start_date is None:
+                start = super().get_starting_time(context)
+                if start:
+                    self.start_date = start
+                    self.end_date = start + self.time_jump
+                return start
+            return self.start_date
+        return super().get_starting_time(context)
+
+    def get_ending_time(self, context):
+        if self.config.get("transaction_lines_monthly") and self.end_date is not None:
+            return self.end_date
+        return super().get_ending_time(context)
 
     def _sync_records(  # noqa C901  # too complex
         self, context: Optional[dict] = None
