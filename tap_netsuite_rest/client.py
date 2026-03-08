@@ -68,7 +68,7 @@ class NetSuiteStream(RESTStream):
     query_table = None
 
     def get_replication_key_conditions(self, context):
-        """Return a list of replication-key filter strings, or None to use default (get_starting_time / query_date / get_ending_time)."""
+        """Return a list of replication-key filter strings, or None to use default (get_starting_time / query_date)."""
         return None
 
     def __init__(
@@ -306,10 +306,6 @@ class NetSuiteStream(RESTStream):
         start_date = parse(self.config.get("start_date"))
         rep_key = self.get_starting_timestamp(context)
         return rep_key or start_date
-
-    def get_ending_time(self, context):
-        """Return end of date window for the request, or None for no upper bound."""
-        return None
 
     def get_replication_key_start_op(self):
         """Return '>' or '>=' for the start-date filter. Override to use '>=' when windowed so boundary records are not dropped."""
