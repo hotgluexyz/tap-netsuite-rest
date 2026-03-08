@@ -307,6 +307,10 @@ class NetSuiteStream(RESTStream):
         """Return end of date window for the request, or None for no upper bound."""
         return None
 
+    def get_replication_key_start_op(self):
+        """Return '>' or '>=' for the start-date filter. Override to use '>=' when windowed so boundary records are not dropped."""
+        return ">"
+
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -373,8 +377,9 @@ class NetSuiteStream(RESTStream):
                 start_date_str = self.query_date.strftime(time_format)
                 filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
             elif start_date:
+                start_op = self.get_replication_key_start_op()
                 start_date_str = start_date.strftime(time_format)
-                filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
+                filters.append(f"{prefix}.{self.replication_key}{start_op}{start_date_str}")
             end_date = self.get_ending_time(context)
             effective_start = self.query_date if self.query_date else start_date
             if end_date:
@@ -930,6 +935,10 @@ class BulkParentStream(NetsuiteDynamicStream):
         if self.config.get("transaction_lines_monthly") and self.end_date is not None:
             return self.end_date
         return super().get_ending_time(context)
+
+    def get_replication_key_start_op(self):
+        # Use >= when windowed so records at the boundary are included in the next window (avoids dropping them between windows).
+        return ">=" if self.config.get("transaction_lines_monthly") else ">"
 
     def _sync_records(  # noqa C901  # too complex
         self, context: Optional[dict] = None
