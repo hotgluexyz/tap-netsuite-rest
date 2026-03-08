@@ -257,7 +257,6 @@ class NetSuiteStream(RESTStream):
                     reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
                 # we should move to the next date range now
                 self.start_date = self.start_date + self.time_jump
-                self.end_date = self.start_date + self.time_jump
                 if reset_time_jump:
                     self.logger.info("Resetting time_jump to 1 month for next iteration...")
                     self.time_jump = relativedelta(months=1)
