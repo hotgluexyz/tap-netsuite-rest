@@ -258,7 +258,6 @@ class NetSuiteStream(RESTStream):
                 # we should move to the next date range now
                 self.start_date = self.start_date + self.time_jump
                 self.end_date = self.start_date + self.time_jump
-                self.query_date = None  # so base uses get_starting_time() → self.start_date for new period
                 if reset_time_jump:
                     self.logger.info("Resetting time_jump to 1 month for next iteration...")
                     self.time_jump = relativedelta(months=1)
