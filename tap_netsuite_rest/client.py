@@ -902,6 +902,7 @@ class BulkParentStream(NetsuiteDynamicStream):
 
     child_context_keys = ["ids"]
     start_date = None
+    end_date = None
 
     @property
     def child_context_size(self):
@@ -914,11 +915,11 @@ class BulkParentStream(NetsuiteDynamicStream):
         if not start:
             return None
         self.start_date = start
+        self.end_date = self.start_date + self.time_jump
         time_fmt = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
         prefix = self.replication_key_prefix or self.table
-        end = self.start_date + self.time_jump
         start_str = self.start_date.strftime(time_fmt)
-        end_str = end.strftime(time_fmt)
+        end_str = self.end_date.strftime(time_fmt)
         # Use >= so boundary records are included in the next window (avoids dropping between windows).
         return [
             f"{prefix}.{self.replication_key}>={start_str}",
