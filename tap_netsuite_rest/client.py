@@ -928,8 +928,8 @@ class BulkParentStream(NetsuiteDynamicStream):
         end_str = self.end_date.strftime(time_fmt)
         # Use >= so boundary records are included in the next window (avoids dropping between windows).
         return [
-            f"{prefix}.{self.replication_key}>={start_str}",
-            f"{prefix}.{self.replication_key}<{end_str}",
+            f"{prefix}.{self.replication_key}>{start_str}",
+            f"{prefix}.{self.replication_key}<={end_str}",
         ]
 
     def _sync_records(  # noqa C901  # too complex
