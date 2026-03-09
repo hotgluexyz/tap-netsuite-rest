@@ -165,6 +165,7 @@ class NetSuiteStream(RESTStream):
             if (
                 (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
                 and self.config.get("transaction_lines_monthly")
+                and self.replication_key
                 and totalResults > 10000
             ):
                 self.logger.info(
@@ -242,7 +243,12 @@ class NetSuiteStream(RESTStream):
             return 0
 
 
-        if (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) and self.config.get("transaction_lines_monthly") and not has_next:
+        if (
+            (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) 
+            and self.config.get("transaction_lines_monthly") 
+            and self.replication_key 
+            and not has_next
+        ):
             today = datetime.now()
             today = today.replace(tzinfo=pytz.UTC)
             if self.end_date >= today:
