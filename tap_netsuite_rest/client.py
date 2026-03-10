@@ -67,6 +67,10 @@ class NetSuiteStream(RESTStream):
     always_add_default_fields = False
     query_table = None
 
+    def get_replication_key_conditions(self, context):
+        """Return a list of replication-key filter strings, or None to use default (get_starting_time / query_date)."""
+        return None
+
     def __init__(
         self,
         tap,
@@ -159,8 +163,9 @@ class NetSuiteStream(RESTStream):
 
         if has_next:
             if (
-                isinstance(self, TransactionRootStream)
+                (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
                 and self.config.get("transaction_lines_monthly")
+                and self.replication_key
                 and totalResults > 10000
             ):
                 self.logger.info(
@@ -238,7 +243,12 @@ class NetSuiteStream(RESTStream):
             return 0
 
 
-        if isinstance(self, TransactionRootStream) and self.config.get("transaction_lines_monthly") and not has_next:
+        if (
+            (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) 
+            and self.config.get("transaction_lines_monthly") 
+            and self.replication_key 
+            and not has_next
+        ):
             today = datetime.now()
             today = today.replace(tzinfo=pytz.UTC)
             if self.end_date >= today:
@@ -361,14 +371,17 @@ class NetSuiteStream(RESTStream):
             prefix = self.replication_key_prefix or self.table
             order_by = f"ORDER BY {prefix}.{self.replication_key}"
 
-            start_date = self.get_starting_time(context)
-
-            if self.query_date:
-                start_date_str = self.query_date.strftime(time_format)
-                filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
-            elif start_date:
-                start_date_str = start_date.strftime(time_format)
-                filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
+            conditions = self.get_replication_key_conditions(context)
+            if conditions is not None:
+                filters.extend(conditions)
+            else:
+                start_date = self.get_starting_time(context)
+                if self.query_date:
+                    start_date_str = self.query_date.strftime(time_format)
+                    filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
+                elif start_date:
+                    start_date_str = start_date.strftime(time_format)
+                    filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
 
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by
@@ -894,10 +907,30 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
 class BulkParentStream(NetsuiteDynamicStream):
 
     child_context_keys = ["ids"]
+    start_date = None
+    end_date = None
 
     @property
     def child_context_size(self):
         return self.config.get("child_context_size", 250)
+
+    def get_replication_key_conditions(self, context):
+        if not self.config.get("transaction_lines_monthly") or not self.replication_key:
+            return None
+        start = self.start_date or super().get_starting_time(context)
+        if not start:
+            return None
+        self.start_date = start
+        self.end_date = self.start_date + self.time_jump
+        time_fmt = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
+        prefix = self.replication_key_prefix or self.table
+        start_str = self.start_date.strftime(time_fmt)
+        end_str = self.end_date.strftime(time_fmt)
+        # Use >= so boundary records are included in the next window (avoids dropping between windows).
+        return [
+            f"{prefix}.{self.replication_key}>{start_str}",
+            f"{prefix}.{self.replication_key}<={end_str}",
+        ]
 
     def _sync_records(  # noqa C901  # too complex
         self, context: Optional[dict] = None
