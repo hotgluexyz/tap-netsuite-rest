@@ -2492,3 +2492,98 @@ class CustomSegmentValuesStream(NetsuiteDynamicStream):
                 self.logger.warning(f"The current user doesn't have permissions to fetch custom segment values for {scriptid}: {e}")
                 return []
             raise
+
+class CreditMemosStream(BulkParentStream):
+    name = "credit_memos"
+    table = "transaction"
+    custom_filter = "type = 'CustCred'"
+    replication_key = "lastmodifieddate"
+    _select = "*, BUILTIN.DF(status) status"
+    address_ids = set()
+    child_context_keys = ["ids", "addresses"]
+
+    default_fields = [
+        th.Property("shipdate", th.DateTimeType),
+        th.Property("taxtotal", th.NumberType),
+        th.Property("externalid", th.StringType)
+    ]
+
+    def get_child_context(self, record, context) -> dict:
+        # get addresses ids
+        address_keys = ["billingaddress", "shippingaddress"]
+        # Collect valid address IDs
+        address_ids = {record.get(key) for key in address_keys if record.get(key) and record.get(key) not in self.address_ids}
+        self.address_ids.update(address_ids)
+        return {"ids": [record["id"]], "addresses": list(address_ids)}
+    
+    def _sync_children(self, child_context: dict):
+        if child_context is not None and "addresses" in child_context and len(child_context["addresses"]) > 0:
+            super()._sync_children(child_context)
+
+class CreditMemoLinesStream(NetsuiteDynamicStream):
+    name = "credit_memo_lines"
+    table = "transactionline"
+    parent_stream_type = CreditMemosStream
+    _custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
+
+    default_fields = [
+        th.Property("item", th.StringType),
+        th.Property("quantity", th.NumberType),
+        th.Property("rate", th.NumberType),
+        th.Property("externalid", th.StringType),
+        th.Property("taxamount", th.NumberType),
+    ]
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch credit memo lines filtering by transaction id
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and transaction IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+    
+class CreditMemoAddressesStream(NetsuiteDynamicStream):
+    name = "credit_memo_addresses"
+    table = "transactionaddressmappingaddress"
+    parent_stream_type = CreditMemosStream
+
+    def prepare_request_payload(self, context, next_page_token):
+        ids = ", ".join(f"'{id}'" for id in context["addresses"])
+        self.custom_filter = f"nkey IN ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
+
+class CustomerRefundsStream(NetsuiteDynamicStream):
+    name = "customer_refunds"
+    table = "transactionline"
+    parent_stream_type = CreditMemosStream
+    select = "DISTINCT NTLL.NextDoc transaction, NT.ID id, NT.transactionNumber, NT.externalId, NT.account account, NT.TranDate, NT.Type, NT.TranID, BUILTIN.DF(NT.Status) status, NT.ForeignTotal amount, currency, exchangeRate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
+    query_table = "NextTransactionLineLink AS NTLL"
+    join = "INNER JOIN Transaction AS NT ON (NT.ID = NTLL.PreviousDoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
+    _custom_filter = "previoustype = 'CustRfnd'"
+    order_by = "ORDER BY NT.id"
+
+    schema = th.PropertiesList(
+        th.Property("account", th.StringType),
+        th.Property("amount", th.StringType),
+        th.Property("currency", th.StringType),
+        th.Property("exchangerate", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("trandate", th.StringType),
+        th.Property("transaction", th.StringType),
+        th.Property("transactionnumber", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("entity", th.StringType),
+        th.Property("subsidiary", th.StringType),
+        th.Property("tranid", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("class", th.StringType),
+        th.Property("department", th.StringType),
+    ).to_dict()
+
+    def prepare_request_payload(self, context, next_page_token):
+        # fetch invoice payments filtering by transaction id from parent stream
+        ids = ", ".join(f"'{id}'" for id in context["ids"])
+        self.custom_filter = f"{self._custom_filter}"
+        self.custom_filter = f"{self.custom_filter} and NTLL.nextdoc in ({ids})"
+        return super().prepare_request_payload(context, next_page_token)
