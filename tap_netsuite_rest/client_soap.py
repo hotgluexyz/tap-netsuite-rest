@@ -107,6 +107,13 @@ class NetsuiteSOAPClient:
         return body
 
 
+    def raise_for_status(self, response):
+        if response.status_code == 429 or 500 <= response.status_code < 600:
+            raise RetriableAPIError(response.text)
+        elif response.status_code != 200:
+            raise FatalAPIError(response.text)
+
+
     @backoff.on_exception(
         backoff.expo,
         (RetriableAPIError, requests.exceptions.ReadTimeout),
@@ -121,30 +128,25 @@ class NetsuiteSOAPClient:
         response = self._request(action, xml_request_data)
 
         try:
-            self.validate_response(response, extract_json_path)
+            self.raise_for_status(response)
             parsed_response = self.parse_response(response)
+            parsed_response = next(extract_jsonpath(extract_json_path, input=parsed_response), parsed_response)
+            self.validate_response(parsed_response)
         except KeyError as e:
             self.logger.error(f"Failed to parse response: {response.text} {e.__repr__()}")
             raise FatalAPIError(f"Malformed response: {response.text} {e.__repr__()}")
 
-        result = next(extract_jsonpath(extract_json_path, input=parsed_response), {})
-        return result
+        return parsed_response
 
  
-    def validate_response(self, response, extract_json_path) -> None:
+    def validate_response(self, parsed_response) -> None:
         """Validate HTTP response."""
         try:
-            if response.status_code == 429 or 500 <= response.status_code < 600:
-                raise RetriableAPIError(response.text)
-            elif response.status_code != 200:
-                raise FatalAPIError(response.text)
-            
-            parsed_response = self.parse_response(response)
-            response_status = next(extract_jsonpath(extract_json_path, input=parsed_response), {}).get("platformCore:status", {})
+            response_status = parsed_response.get("platformCore:status", {})
             is_success = response_status.get("@isSuccess") == "true"
 
             if not is_success:
-                error_message = json.dumps(response_status) if response_status else response.text
+                error_message = json.dumps(response_status) if response_status else json.dumps(parsed_response)
                 raise FatalAPIError(error_message)
         except (KeyError, ValueError, TypeError) as e:
             raise FatalAPIError(f"Failed to parse response: {e.__repr__()}")
