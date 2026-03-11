@@ -160,18 +160,13 @@ class NetsuiteSOAPClient:
         headers = self.http_headers(action)
         url = self.url_base
 
-        try:
-            response = requests.request(
-                method=http_method,
-                url=url,
-                headers=headers,
-                data=request_data,
-            )
-            return response
-        
-        except requests.RequestException as e:
-            self.logger.error(f"Request to {url} failed: {e.__repr__()}")
-            raise FatalAPIError(f"HTTP request failed: {e.__repr__()}")
+        response = requests.request(
+            method=http_method,
+            url=url,
+            headers=headers,
+            data=request_data,
+        )
+        return response
 
 
     def get(self, type, id):
