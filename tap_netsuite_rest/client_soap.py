@@ -75,7 +75,7 @@ class NetsuiteSOAPClient:
         return body_header
     
 
-    def get_request_body(self, content = {}, page_size=100):
+    def get_request_body(self, content, page_size=100):
         request_body = {
             "soapenv:Envelope": {
                 "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
