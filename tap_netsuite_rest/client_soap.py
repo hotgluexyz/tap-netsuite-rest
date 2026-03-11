@@ -1,11 +1,9 @@
-import datetime as dt
 import json
 import random
 import base64
 import hashlib
 import hmac
 import datetime
-from collections import defaultdict
 from logging import Logger
 
 import backoff
