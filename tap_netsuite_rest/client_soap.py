@@ -145,7 +145,7 @@ class NetsuiteSOAPClient:
                 raise FatalAPIError(response.text)
             
             parsed_response = self.parse_response(response)
-            response_status = next(extract_jsonpath(extract_json_path, input=parsed_response), {}).get("platformCore:status")
+            response_status = next(extract_jsonpath(extract_json_path, input=parsed_response), {}).get("platformCore:status", {})
             is_success = response_status.get("@isSuccess") == "true"
 
             if not is_success:
