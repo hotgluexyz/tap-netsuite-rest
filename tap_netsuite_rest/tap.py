@@ -24,9 +24,17 @@ logging.info(f"IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
 # Function to filter streams to be tested
 def streams_to_sync(self, include_streams, ignore_streams):
     stream_types = []
-    
-    for name, cls in inspect.getmembers(streams,inspect.isclass):
+
+    if 'bill_attachments_restlet_url' in self.config \
+        and 'bill_attachments_suitelet_url' in self.config:
+        stream_types.append(streams.BillAttachmentsRestletStream(self))
+    else:
+        stream_types.append(streams.BillAttachmentsSOAPStream(self))
+
+    for name, cls in inspect.getmembers(streams, inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
+            if cls.name == 'bill_attachments':
+                continue
             if (include_streams and name not in include_streams) or name in ignore_streams:
                 continue
             stream_types.append(cls(self))
