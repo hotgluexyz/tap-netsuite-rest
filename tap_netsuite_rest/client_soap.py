@@ -103,7 +103,6 @@ class NetsuiteSOAPClient:
 
     def format_payload(self, payload, page_size):
         dict_body = self.get_request_body(content=payload, page_size=page_size)
-        # transform payload to xml
         body = xmltodict.unparse(dict_body, short_empty_elements=True).encode("utf-8")
         return body
 
@@ -118,20 +117,16 @@ class NetsuiteSOAPClient:
         self, action, request_data, extract_json_path, page_size=100
     ):
         """Request records from SOAP endpoint, returning response records."""
-        # wrap and format payload
         xml_request_data = self.format_payload(request_data, page_size)
-        # send request
         response = self._request(action, xml_request_data)
 
         try:
             self.validate_response(response, extract_json_path)
-            # parse response
             parsed_response = self.parse_response(response)
         except KeyError as e:
             self.logger.error(f"Failed to parse response: {response.text} {e.__repr__()}")
             raise FatalAPIError(f"Malformed response: {response.text} {e.__repr__()}")
 
-        # validate response
         result = next(extract_jsonpath(extract_json_path, input=parsed_response), {})
         return result
 
