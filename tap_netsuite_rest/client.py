@@ -16,7 +16,7 @@ from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
 from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.streams import RESTStream
+from singer_sdk.streams import RESTStream, Stream
 from singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
@@ -34,6 +34,8 @@ from singer_sdk.helpers._state import (
 from singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
+
+from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -1078,4 +1080,24 @@ class TransactionRootStream(NetsuiteDynamicStream):
         
 
         return row
-    
+
+
+class NetsuiteSOAPStream(Stream):
+    """NetSuite SOAP stream class."""
+    page_size = 100
+
+
+    def prepare_request_payload(self, context):
+        return {}
+
+
+    def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, Any]]:
+        soap_client = NetsuiteSOAPClient(self.config, self.logger)
+        payload = self.prepare_request_payload(context)
+
+        for record in soap_client.search(payload, self.extract_json_path, self.page_size):
+            transformed_record = self.post_process(record, context)
+            if transformed_record is None:
+                # Record filtered out during post_process()
+                continue
+            yield transformed_record
