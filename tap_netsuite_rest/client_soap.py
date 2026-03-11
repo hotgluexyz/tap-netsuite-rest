@@ -29,7 +29,7 @@ class NetsuiteSOAPClient:
     def http_headers(self, action) -> dict:
         """Return the http headers needed."""
         headers = {
-            "content-type": "text/html",
+            "content-type": "text/xml; charset=utf-8",
             "SOAPAction": action
         }
         return headers
