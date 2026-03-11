@@ -27,9 +27,12 @@ def streams_to_sync(self, include_streams, ignore_streams):
 
     if 'bill_attachments_restlet_url' in self.config \
         and 'bill_attachments_suitelet_url' in self.config:
-        stream_types.append(streams.BillAttachmentsRestletStream(self))
+        bill_attachments_stream = streams.BillAttachmentsRestletStream
     else:
-        stream_types.append(streams.BillAttachmentsSOAPStream(self))
+        bill_attachments_stream = streams.BillAttachmentsSOAPStream
+
+    if not ((include_streams and 'bill_attachments' not in include_streams) or 'bill_attachments' in ignore_streams):
+        stream_types.append(bill_attachments_stream(self))
 
     for name, cls in inspect.getmembers(streams, inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
