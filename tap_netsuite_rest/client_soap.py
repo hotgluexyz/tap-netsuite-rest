@@ -177,15 +177,6 @@ class NetsuiteSOAPClient:
             raise FatalAPIError(f"HTTP request failed: {e.__repr__()}")
 
 
-    def format_filter_in(self, field_name, values):
-        return {
-            "in": {
-                "field": field_name,
-                "value": values,
-            }
-        }
-
-
     def get(self, type, id):
         extract_json_path = "$['soapenv:Envelope']['soapenv:Body']['getResponse']['readResponse']"
 
