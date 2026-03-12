@@ -35,8 +35,6 @@ from singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
 
-from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
-
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
@@ -1092,10 +1090,9 @@ class NetsuiteSOAPStream(Stream):
 
 
     def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, Any]]:
-        soap_client = NetsuiteSOAPClient(self.config, self.logger)
         payload = self.prepare_request_payload(context)
 
-        for record in soap_client.search(payload, self.extract_json_path, self.page_size):
+        for record in self._tap.soap_client.search(payload, self.extract_json_path, self.page_size):
             transformed_record = self.post_process(record, context)
             if transformed_record is None:
                 # Record filtered out during post_process()

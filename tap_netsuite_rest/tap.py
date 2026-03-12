@@ -1,13 +1,15 @@
 """NetSuite tap class."""
 
 from typing import List
-
+from pathlib import PurePath
+from typing import Union, Optional
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
 
 import inspect 
 
 from tap_netsuite_rest import streams
+from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
 import os
 import logging
 
@@ -64,6 +66,18 @@ class TapNetSuite(Tap):
         th.Property("bill_attachments_restlet_url", th.StringType, description="Base URL for bill attachments Restlet"),
         th.Property("bill_attachments_suitelet_url", th.StringType, description="Base URL for bill attachments Suitelet (file download)"),
     ).to_dict()
+
+    def __init__(
+        self,
+        config: Optional[Union[dict, PurePath, str, List[Union[PurePath, str]]]] = None,
+        catalog: Union[PurePath, str, dict, None] = None,
+        state: Union[PurePath, str, dict, None] = None,
+        parse_env_config: bool = False,
+        validate_config: bool = True,
+    ) -> None:
+        super().__init__(config, catalog, state, parse_env_config, validate_config)
+        self.soap_client = NetsuiteSOAPClient(self.config, self.logger)
+    
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""

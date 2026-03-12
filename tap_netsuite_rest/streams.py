@@ -23,7 +23,6 @@ from singer_sdk.helpers._state import (
     log_sort_error,
 )
 from singer_sdk.exceptions import InvalidStreamSortException, FatalAPIError
-from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
 
 import os
 job_id = os.environ.get("JOB_ID")
@@ -2149,8 +2148,7 @@ class BillAttachmentsSOAPStream(NetsuiteSOAPStream):
 
 
     def download_attachment_file(self, transaction: str, file_id: str, file_name: str):
-        soap_client = NetsuiteSOAPClient(self.config, self.logger)
-        response = soap_client.get("file", file_id)
+        response = self._tap.soap_client.get("file", file_id)
 
         dir_path = os.path.join(sync_output_folder, "bill_attachments", transaction)
         os.makedirs(dir_path, exist_ok=True)
