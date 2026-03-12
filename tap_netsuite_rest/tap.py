@@ -23,18 +23,21 @@ logging.info(f"INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
 ignore_streams = os.environ.get('IGNORE_STREAMS', "").split(',') if os.environ.get('IGNORE_STREAMS', "") else []
 logging.info(f"IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
 
+
+def get_bill_attachments_stream(config):
+    if 'bill_attachments_restlet_url' in config \
+        and 'bill_attachments_suitelet_url' in config:
+        return streams.BillAttachmentsRestletStream
+    
+    return streams.BillAttachmentsSOAPStream
+
+
 # Function to filter streams to be tested
 def streams_to_sync(self, include_streams, ignore_streams):
     stream_types = []
 
-    if 'bill_attachments_restlet_url' in self.config \
-        and 'bill_attachments_suitelet_url' in self.config:
-        bill_attachments_stream = streams.BillAttachmentsRestletStream
-    else:
-        bill_attachments_stream = streams.BillAttachmentsSOAPStream
-
-    if not ((include_streams and 'bill_attachments' not in include_streams) or 'bill_attachments' in ignore_streams):
-        stream_types.append(bill_attachments_stream(self))
+    if not ((include_streams and 'BillAttachmentsStream' not in include_streams) or 'BillAttachmentsStream' in ignore_streams):
+        stream_types.append(get_bill_attachments_stream(self.config)(self))
 
     for name, cls in inspect.getmembers(streams, inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
