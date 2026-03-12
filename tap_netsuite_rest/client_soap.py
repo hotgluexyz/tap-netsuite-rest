@@ -182,7 +182,7 @@ class NetsuiteSOAPClient:
             }
         }
 
-        response = self.request_api("get", request_file_body, extract_json_path)
+        response = self.request_api("get", request_file_body, extract_json_path, page_size=None)
 
         return response["record"]
     
