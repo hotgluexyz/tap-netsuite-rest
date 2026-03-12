@@ -2175,7 +2175,7 @@ class BillAttachmentsSOAPStream(NetsuiteSOAPStream):
             file_type = file_type[1:]
 
         record = {
-            "tranid": row.get("tranSales:basic", {}).get("platformCommon:tranId", {}).get("platformCore:searchValue"),
+            "tranid": row.get("tranSales:basic", {}).get("platformCommon:tranId", {}).get("platformCore:searchValue", ""),
             "transaction": row["tranSales:basic"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
             "file_id": row["tranSales:fileJoin"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
             "file_name": row["tranSales:fileJoin"]["platformCommon:name"]["platformCore:searchValue"],
