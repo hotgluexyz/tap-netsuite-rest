@@ -17,6 +17,7 @@ class NetsuiteSOAPClient:
     def __init__(self, config: dict, logger: Logger):
         self.logger = logger
         self.config = config
+        self._requests_session = requests.Session()
 
 
     @property
@@ -160,7 +161,7 @@ class NetsuiteSOAPClient:
         headers = self.http_headers(action)
         url = self.url_base
 
-        response = requests.request(
+        response = self._requests_session.request(
             method=http_method,
             url=url,
             headers=headers,
