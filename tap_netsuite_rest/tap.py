@@ -4,6 +4,7 @@ from typing import List
 
 from hotglue_singer_sdk import Stream, Tap
 from hotglue_singer_sdk import typing as th  # JSON schema typing helpers
+from hotglue_singer_sdk.helpers.capabilities import AlertingLevel
 
 import inspect 
 
@@ -37,6 +38,7 @@ class TapNetSuite(Tap):
 
     name = "tap-netsuite-rest"
     custom_fields = None
+    alerting_level = AlertingLevel.WARNING
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
