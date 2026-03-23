@@ -32,7 +32,6 @@ from hotglue_singer_sdk.helpers._state import (
 from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
-from hotglue_etl_exceptions import InvalidCredentialsError
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -145,7 +144,77 @@ class NetSuiteStream(RESTStream):
 
         return request
 
-    def get_next_page_token( # noqa: C901
+    def _is_transaction_monthly_stream(self) -> bool:
+        return (
+            (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
+            and self.config.get("transaction_lines_monthly")
+            and self.replication_key
+        )
+
+    def _reduce_time_jump(self) -> bool:
+        reductions = [
+            (relativedelta(months=1), relativedelta(weeks=1), "Dropping time_jump to 1 week"),
+            (relativedelta(weeks=1), relativedelta(days=3), "Dropping time_jump to 3 days"),
+            (relativedelta(days=3), relativedelta(days=1), "Dropping time_jump to 1 day"),
+            (relativedelta(days=1), relativedelta(hours=12), "Dropping time_jump to 12 hours"),
+            (relativedelta(hours=12), relativedelta(hours=6), "Dropping time_jump to 6 hours"),
+            (relativedelta(hours=6), relativedelta(hours=1), "Dropping time_jump to 1 hours"),
+            (relativedelta(hours=1), relativedelta(minutes=30), "Dropping time_jump to 30 min"),
+            (relativedelta(minutes=30), relativedelta(minutes=5), "Dropping time_jump to 5 min"),
+            (relativedelta(minutes=5), relativedelta(minutes=1), "Dropping time_jump to 1 min"),
+        ]
+        for current_delta, next_delta, message in reductions:
+            if self.time_jump == current_delta:
+                self.logger.info(message)
+                self.time_jump = next_delta
+                return True
+
+        self.logger.error(
+            "Even with minimum delta we are getting more than 100k records! We will likely infinite loop."
+        )
+        return False
+
+    def _advance_inventory_item_location_filter(self) -> Optional[int]:
+        max_item_value = 100_000  # TODO: this probably should be more dynamic
+        interval_increment = 2500  # TODO: maybe we should lower this even further or make it dynamic
+        if self.custom_filter == f"item >= {max_item_value}":
+            return None
+
+        current_range = self.custom_filter.split("AND")
+        min_value = int(current_range[0].split(">=")[1])
+        max_value = int(current_range[1].split("<")[1])
+
+        if min_value == max_item_value:
+            self.custom_filter = f"item >= {max_item_value}"
+        else:
+            self.custom_filter = (
+                f"item >= {min_value + interval_increment} AND item < {max_value + interval_increment}"
+            )
+        return 0
+
+    def _advance_transaction_window(self) -> Optional[int]:
+        today = datetime.now().replace(tzinfo=pytz.UTC)
+        if self.end_date >= today:
+            self.logger.info("Reached the end of the line! Stopping")
+            return None
+
+        if self.time_jump in [
+            relativedelta(minutes=30),
+            relativedelta(minutes=5),
+            relativedelta(minutes=1),
+        ]:
+            reset_time_jump = self.start_date.hour != (self.start_date + self.time_jump).hour
+        else:
+            reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
+
+        self.start_date = self.start_date + self.time_jump
+        if reset_time_jump:
+            self.logger.info("Resetting time_jump to 1 month for next iteration...")
+            self.time_jump = relativedelta(months=1)
+        self.logger.info(f"Reached end of data for current period. Moving start date to {self.start_date}")
+        return 0
+
+    def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
@@ -161,112 +230,20 @@ class NetSuiteStream(RESTStream):
             raise Exception("totalResults is greater than 100,000 records. This should not happen.")
 
         if has_next:
-            if (
-                (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
-                and self.config.get("transaction_lines_monthly")
-                and self.replication_key
-                and totalResults > 10000
-            ):
+            if self._is_transaction_monthly_stream() and totalResults > 10000:
                 self.logger.info(
                     f"totalResults = {totalResults}, time_jump = {self.time_jump}"
                 )
-                if self.time_jump == relativedelta(months=1):
-                    self.logger.info("Dropping time_jump to 1 week")
-                    self.time_jump = relativedelta(weeks=1)
-                    # need to reset the offset
+                if self._reduce_time_jump():
                     return 0
-                elif self.time_jump == relativedelta(weeks=1):
-                    self.logger.info("Dropping time_jump to 3 days")
-                    self.time_jump = relativedelta(days=3)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(days=3):
-                    self.logger.info("Dropping time_jump to 1 day")
-                    self.time_jump = relativedelta(days=1)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(days=1):
-                    self.logger.info("Dropping time_jump to 12 hours")
-                    self.time_jump = relativedelta(hours=12)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(hours=12):
-                    self.logger.info("Dropping time_jump to 6 hours")
-                    self.time_jump = relativedelta(hours=6)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(hours=6):
-                    self.logger.info("Dropping time_jump to 1 hours")
-                    self.time_jump = relativedelta(hours=1)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(hours=1):
-                    self.logger.info("Dropping time_jump to 30 min")
-                    self.time_jump = relativedelta(minutes=30)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(minutes=30):
-                    self.logger.info("Dropping time_jump to 5 min")
-                    self.time_jump = relativedelta(minutes=5)
-                    # need to reset the offset
-                    return 0
-                elif self.time_jump == relativedelta(minutes=5):
-                    self.logger.info("Dropping time_jump to 1 min")
-                    self.time_jump = relativedelta(minutes=1)
-                    # need to reset the offset
-                    return 0
-                else:
-                    self.logger.error(
-                        "Even with minimum delta we are getting more than 100k records! We will likely infinite loop."
-                    )
-
             return offset
 
         if not self.stream_state.get("replication_key") and self.name == "inventory_item_locations" and not has_next:
-            max_item_value = 100_000 # TODO: this probably should be more dynamic
-            interval_increment = 2500 # TODO: maybe we should lower this even further or make it dynamic
-            # in the case we need to keep iterating, we should increment
-            if self.custom_filter == f"item >= {max_item_value}":
-                return None
-
-            # extract the current range from the custom filter
-            current_range = self.custom_filter.split("AND")
-            min_value = int(current_range[0].split(">=")[1])
-            max_value = int(current_range[1].split("<")[1])
-
-            if min_value == max_item_value:
-                self.custom_filter = f"item >= {max_item_value}"
-            else:
-                self.custom_filter = f"item >= {min_value + interval_increment} AND item < {max_value + interval_increment}"
-
-            return 0
+            return self._advance_inventory_item_location_filter()
 
 
-        if (
-            (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) 
-            and self.config.get("transaction_lines_monthly") 
-            and self.replication_key 
-            and not has_next
-        ):
-            today = datetime.now()
-            today = today.replace(tzinfo=pytz.UTC)
-            if self.end_date >= today:
-                self.logger.info("Reached the end of the line! Stopping")
-                return None
-            else:
-                if self.time_jump in [relativedelta(minutes=30), relativedelta(minutes=5), relativedelta(minutes=1)]:
-                    # reset the time_jump if we're going into a new hour
-                    reset_time_jump = self.start_date.hour != (self.start_date + self.time_jump).hour
-                else:
-                    # reset the time_jump if we're going into a new month
-                    reset_time_jump = self.start_date.month != (self.start_date + self.time_jump).month
-                # we should move to the next date range now
-                self.start_date = self.start_date + self.time_jump
-                if reset_time_jump:
-                    self.logger.info("Resetting time_jump to 1 month for next iteration...")
-                    self.time_jump = relativedelta(months=1)
-                self.logger.info(f"Reached end of data for current period. Moving start date to {self.start_date}")
-                return 0
+        if self._is_transaction_monthly_stream() and not has_next:
+            return self._advance_transaction_window()
 
         if not has_next and offset < totalResults:
             if self.replication_key:
@@ -358,14 +335,11 @@ class NetSuiteStream(RESTStream):
                 selected_properties.append(field_name)
         return selected_properties
 
-    def prepare_request_payload( # noqa: C901
-        self, context: Optional[dict], next_page_token: Optional[Any]
-    ) -> Optional[dict]:
-
-        filters = []
+    def _get_replication_filters(
+        self, context: Optional[dict], time_format: str
+    ) -> tuple[list[str], str]:
+        filters: list[str] = []
         order_by = ""
-        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
-
         if self.replication_key and "_report" not in self.name:
             prefix = self.replication_key_prefix or self.table
             order_by = f"ORDER BY {prefix}.{self.replication_key}"
@@ -374,28 +348,39 @@ class NetSuiteStream(RESTStream):
             if conditions is not None:
                 filters.extend(conditions)
             else:
-                start_date = self.get_starting_time(context)
-                if self.query_date:
-                    start_date_str = self.query_date.strftime(time_format)
-                    filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
-                elif start_date:
+                start_date = self.query_date or self.get_starting_time(context)
+                if start_date:
                     start_date_str = start_date.strftime(time_format)
                     filters.append(f"{prefix}.{self.replication_key}>{start_date_str}")
+        return filters, order_by
+
+    def _get_stream_filters(self) -> list[str]:
+        filters = []
+        if "_report" in self.name and self.custom_filter:
+            self.get_date_boundaries()
+            custom_filter = self.custom_filter.format(
+                start_date=self.start_date_f, end_date=self.end_date
+            )
+            filters.append(custom_filter)
+            return filters
+
+        if self.type_filter:
+            filters.append(f"(Type='{self.type_filter}')")
+        if self.custom_filter:
+            filters.append(self.custom_filter)
+        return filters
+
+    def prepare_request_payload(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+
+        time_format = "TO_TIMESTAMP('%Y-%m-%d %H:%M:%S', 'YYYY-MM-DD HH24:MI:SS')"
+        filters, order_by = self._get_replication_filters(context, time_format)
 
         if self.replication_key_prefix is None and self.order_by is not None:
             order_by = self.order_by
 
-        if "_report" in self.name and self.custom_filter:
-            self.get_date_boundaries()
-            custom_filter = self.custom_filter.format(
-                start_date=self.start_date_f , end_date=self.end_date
-            )
-            filters.append(custom_filter)
-        else:
-            if self.type_filter:
-                filters.append(f"(Type='{self.type_filter}')")
-            if self.custom_filter:
-                filters.append(self.custom_filter)
+        filters.extend(self._get_stream_filters())
 
         if filters:
             filters = "WHERE " + " AND ".join(filters)
@@ -424,53 +409,63 @@ class NetSuiteStream(RESTStream):
         self.logger.info(f"Making query ({payload['q']})")
         return payload
 
-    def validate_response(self, response: requests.Response) -> None: # noqa: C901
+    def _apply_entities_fallback(self, response: requests.Response) -> None:
+        if not hasattr(self, "entities_fallback") or not self.entities_fallback:
+            return
+
+        for entity in self.entities_fallback:
+            fallback_error = "Record '{}' was not found.".lower().format(entity["name"])
+            if fallback_error not in response.text.lower():
+                continue
+
+            self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
+            if "select_replace" in entity:
+                self.select = self.select.replace(entity["select_replace"], "")
+            if "join_replace" in entity:
+                self.join = self.join.replace(entity["join_replace"], "")
+            if entity["name"] == "accountingbook":
+                self.gl_use_only_primary_accounting_book = lambda: False
+            raise RetryRequest(response.text)
+
+    def _drop_unsearchable_fields(self, response: requests.Response) -> None:
+        if "Search error occurred: Field" not in response.text and "Invalid search query" not in response.text:
+            return
+
+        error_details = response.json()["o:errorDetails"][0]["detail"]
+        field_matches = re.finditer(r"(?i)field '(\w+)'", error_details)
+        for field_match in field_matches:
+            field_name = field_match.group(1)
+            if not hasattr(self, "invalid_fields"):
+                self.invalid_fields = []
+            if field_name not in self.invalid_fields:
+                self.invalid_fields.append(field_name)
+                self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
+        if self.invalid_fields:
+            self.logger.info(
+                f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query"
+            )
+            raise RetryRequest(response.text)
+
+    def _raise_status_error(self, response: requests.Response, error_type: str) -> None:
+        msg = (
+            f"{response.status_code} {error_type}: "
+            f"{response.reason} for path: {self.path}"
+            f"Response: {response.text}"
+        )
+        if error_type == "Server Error":
+            raise RetriableAPIError(msg)
+        raise FatalAPIError(msg)
+
+    def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response."""
         if response.status_code == 400:
-            if hasattr(self,"entities_fallback") and self.entities_fallback:
-                for entity in self.entities_fallback:
-                    if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
-                        self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
-                        if "select_replace" in entity:
-                            self.select = self.select.replace(entity['select_replace'], "")
-                        if "join_replace" in entity:  
-                            self.join = self.join.replace(entity['join_replace'], "")
-                        if entity['name'] == "accountingbook":
-                            self.gl_use_only_primary_accounting_book = lambda: False
-                        raise RetryRequest(response.text)
-                    
-            if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
-                error_details = response.json()["o:errorDetails"][0]["detail"]
-                # Extract all field names from error message and drop it from the select
-                field_matches = re.finditer(r"(?i)field '(\w+)'", error_details)
-                for field_match in field_matches:
-                    field_name = field_match.group(1)
-                    if not hasattr(self, "invalid_fields"):
-                        self.invalid_fields = []
-                    if field_name not in self.invalid_fields:
-                        self.invalid_fields.append(field_name)
-                        self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
-                if self.invalid_fields:
-                    self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
-                    raise RetryRequest(response.text)
-        
-        if response.status_code == 401:
-            raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
-        
-        if 500 <= response.status_code < 600 or response.status_code in [429]:
-            msg = (
-                f"{response.status_code} Server Error: "
-                f"{response.reason} for path: {self.path}"
-                f"Response: {response.text}"
-            )
-            raise RetriableAPIError(msg)
+            self._apply_entities_fallback(response)
+            self._drop_unsearchable_fields(response)
+
+        if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
+            self._raise_status_error(response, "Server Error")
         elif 400 <= response.status_code < 500:
-            msg = (
-                f"{response.status_code} Client Error: "
-                f"{response.reason} for path: {self.path}"
-                f"Response: {response.text}"
-            )
-            raise FatalAPIError(msg)
+            self._raise_status_error(response, "Client Error")
 
     def request_decorator(self, func: Callable) -> Callable:
         """Instantiate a decorator for handling request failures."""
@@ -586,26 +581,19 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    @backoff.on_exception(backoff.expo, (
-        HTTPError,
-        RetriableAPIError,
-        requests.exceptions.ReadTimeout,
-        requests.exceptions.ConnectionError,
-        RemoteDisconnected,
-    ), max_tries=5, factor=2)
-    def get_schema(self): # noqa: C901
-        s = self.get_session()
-
+    def _fetch_metadata_schema(self, session: OAuth1Session) -> None:
         try:
             if self.use_dynamic_fields:
                 # TODO: refactor this to not force the except like this lol
                 raise Exception("Switching to dynamic fields...")
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-
             account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
-            url = f"https://{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
-            prepared_req = s.prepare_request(
+            url = (
+                "https://"
+                f"{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
+            )
+            prepared_req = session.prepare_request(
                 requests.Request(
                     method="GET",
                     url=url,
@@ -613,121 +601,214 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
-            response = s.send(prepared_req)
+            response = session.send(prepared_req)
             response.raise_for_status()
             self.schema_response = response.json()
         except:
             pass
-        
-        # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
 
-        # fetch custom fields
-        add_custom_fields_streams = ["invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"]
-        if not self.schema_response  and self._tap.custom_fields is None and self.name in add_custom_fields_streams:
-            # request custom fields types
-            offset = 0
-            custom_fields = {}
+    def _should_fetch_custom_fields(self) -> bool:
+        add_custom_fields_streams = [
+            "invoices",
+            "bills",
+            "invoice_lines",
+            "bill_lines",
+            "bill_expenses",
+        ]
+        return (
+            not self.schema_response
+            and self._tap.custom_fields is None
+            and self.name in add_custom_fields_streams
+        )
 
-            self.logger.info("Fetching custom fields data")
-            while offset is not None:
-                prepared_req = s.prepare_request(
-                    requests.Request(
-                        method="POST",
-                        url=f"{self.url_base}?offset={offset}&limit=1000",
-                        headers=self.http_headers,
-                        json={
-                            "q": "SELECT * FROM customfield"
-                        }
-                    )
-                )
-                response = s.send(prepared_req)
-                if response.status_code not in [200]:
-                    self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
-                    break
-                offset = self.get_next_page_token(response, offset)
-                custom_fields.update({cf.get("scriptid").lower(): cf.get("fieldvaluetype") for cf in response.json().get("items", [])})
-            
-            self._tap.custom_fields = custom_fields
+    def _fetch_custom_fields(self, session: OAuth1Session) -> None:
+        offset = 0
+        custom_fields = {}
+        self.logger.info("Fetching custom fields data")
 
-
-        # fetch top 1000 records to infer fields and types
-        if not self.schema_response or self.filter_fields:
-            self.fields = set()
-
-            self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-            url = f"{self.url_base}?offset=0&limit=1000"
-
-            prepared_req = s.prepare_request(
+        while offset is not None:
+            prepared_req = session.prepare_request(
                 requests.Request(
                     method="POST",
-                    url=url,
+                    url=f"{self.url_base}?offset={offset}&limit=1000",
                     headers=self.http_headers,
-                    json={
-                        "q": f"SELECT TOP 1000 * FROM {self.table} ORDER BY {self.replication_key} DESC" if self.replication_key else f"SELECT TOP 1000 * FROM {self.table}"
-                    }
+                    json={"q": "SELECT * FROM customfield"},
                 )
             )
+            response = session.send(prepared_req)
+            if response.status_code not in [200]:
+                self.logger.error(
+                    f"Failed to fetch custom fields for {self.table} - stream: {self.name}, "
+                    f"Error: {response.text}, not able to add custom fields to the schema"
+                )
+                break
+            offset = self.get_next_page_token(response, offset)
+            custom_fields.update(
+                {
+                    cf.get("scriptid").lower(): cf.get("fieldvaluetype")
+                    for cf in response.json().get("items", [])
+                }
+            )
 
-            response = s.send(prepared_req)
+        self._tap.custom_fields = custom_fields
 
+    def _fetch_sample_response_items(self, session: OAuth1Session) -> Optional[list[dict]]:
+        self.fields = set()
+        self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+        url = f"{self.url_base}?offset=0&limit=1000"
+        query = (
+            f"SELECT TOP 1000 * FROM {self.table} ORDER BY {self.replication_key} DESC"
+            if self.replication_key
+            else f"SELECT TOP 1000 * FROM {self.table}"
+        )
+
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=url,
+                headers=self.http_headers,
+                json={"q": query},
+            )
+        )
+        response = session.send(prepared_req)
+        response.raise_for_status()
+        return response.json().get("items")
+
+    def _populate_fields(self, items: list[dict]) -> None:
+        for item in items:
+            self.fields.update(set(item.keys()))
+
+    def _populate_date_fields(self, items: list[dict]) -> None:
+        pot_date_fields = [
+            field
+            for field in self.fields
+            if "date" in field and "custbody" not in field and "custrecord" not in field
+        ]
+        for field in pot_date_fields:
+            match = [item for item in items if item.get(field)]
+            if not match:
+                continue
             try:
-                response.raise_for_status()
-                # NOTE: this will only get fields in the first 1k records, we could still miss things
-                for item in response.json().get("items"):
-                    self.fields.update(set(item.keys()))
-
-                # decide which ones are date fields
-                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f and 'custrecord' not in f]
-                for f in pot_date_fields:
-                    match = [i for i in response.json().get("items") if i.get(f)]
-                    if len(match) > 0:
-                        try:
-                            try:
-                                parse(match[0][f])
-                            except:
-                                pendulum.from_format(match[0][f], "MM/DD/YYYY")
-                            self.date_fields.append(f)
-                        except:
-                            pass
-
-                # decide who ones are boolean fields
-                def all_bool(f):
-                    match = [i for i in response.json().get("items") if i.get(f) in ["T", "F", None]]
-                    return len(match) == len(response.json().get("items"))
-
-                self.bool_fields = [f for f in self.fields if all_bool(f)]
-
-                # Can't query links, so we remove it
-                self.fields.remove("links")
-
-                # for bills and invoices add/update custom fields and its types
-                if self._tap.custom_fields:
-                    cf_prefix = None
-                    if self.name in ["invoices", "bills"]:
-                        cf_prefix = "custbody"
-                    elif self.name in ["invoice_lines", "bill_lines", "bill_expenses"]:
-                        cf_prefix = "custcol"
-                    
-                    # add fields and types to build schema
-                    if cf_prefix:
-                        table_cf = {k:v for k,v in self._tap.custom_fields.items() if k.startswith(cf_prefix)}
-                        self.fields.update(table_cf.keys())              
-                        for cf, cf_type in table_cf.items():
-                            if cf_type in ["Decimal Number", "Percent"]:
-                                self.float_fields.append(cf)
-                            elif cf_type in ["Integer Number"]:
-                                self.integer_fields.append(cf)
-                            elif cf_type in ["Date/Time"]:
-                                self.date_fields.append(cf)
-                            elif cf_type in ["Check Box"]:
-                                self.bool_fields .append(cf)
+                try:
+                    parse(match[0][field])
+                except:
+                    pendulum.from_format(match[0][field], "MM/DD/YYYY")
+                self.date_fields.append(field)
             except:
-                self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
+    def _field_is_boolean(self, field: str, items: list[dict]) -> bool:
+        matching = [item for item in items if item.get(field) in ["T", "F", None]]
+        return len(matching) == len(items)
+
+    def _populate_bool_fields(self, items: list[dict]) -> None:
+        self.bool_fields = [field for field in self.fields if self._field_is_boolean(field, items)]
+
+    def _custom_field_prefix(self) -> Optional[str]:
+        if self.name in ["invoices", "bills"]:
+            return "custbody"
+        if self.name in ["invoice_lines", "bill_lines", "bill_expenses"]:
+            return "custcol"
+        return None
+
+    def _apply_custom_field_types(self) -> None:
+        if not self._tap.custom_fields:
+            return
+
+        cf_prefix = self._custom_field_prefix()
+        if not cf_prefix:
+            return
+
+        table_cf = {
+            key: value
+            for key, value in self._tap.custom_fields.items()
+            if key.startswith(cf_prefix)
+        }
+        self.fields.update(table_cf.keys())
+        for cf, cf_type in table_cf.items():
+            if cf_type in ["Decimal Number", "Percent"]:
+                self.float_fields.append(cf)
+            elif cf_type in ["Integer Number"]:
+                self.integer_fields.append(cf)
+            elif cf_type in ["Date/Time"]:
+                self.date_fields.append(cf)
+            elif cf_type in ["Check Box"]:
+                self.bool_fields.append(cf)
+
+    def _populate_schema_fields_from_sample(self, session: OAuth1Session) -> None:
+        try:
+            items = self._fetch_sample_response_items(session)
+            self._populate_fields(items)
+            self._populate_date_fields(items)
+            self._populate_bool_fields(items)
+            if "links" in self.fields:
+                self.fields.remove("links")
+            self._apply_custom_field_types()
+        except:
+            self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
+            pass
+
+    @backoff.on_exception(backoff.expo, (
+        HTTPError,
+        RetriableAPIError,
+        requests.exceptions.ReadTimeout,
+        requests.exceptions.ConnectionError,
+        RemoteDisconnected,
+    ), max_tries=5, factor=2)
+    def get_schema(self):
+        session = self.get_session()
+        self._fetch_metadata_schema(session)
+
+        if self._should_fetch_custom_fields():
+            self._fetch_custom_fields(session)
+
+        if not self.schema_response or self.filter_fields:
+            self._populate_schema_fields_from_sample(session)
+
+    def _build_schema_from_fields(self) -> dict:
+        fields = self.fields
+        properties_list = deepcopy(self.default_fields)
+        fields = {f for f in fields if not any(df.name == f.lower() for df in self.default_fields)}
+        for field in fields:
+            if field == self.replication_key or field in self.date_fields:
+                properties_list.append(th.Property(field.lower(), th.DateTimeType))
+            elif field in self.bool_fields:
+                properties_list.append(th.Property(field.lower(), th.BooleanType))
+            elif field in self.float_fields:
+                properties_list.append(th.Property(field.lower(), th.NumberType))
+            elif field in self.integer_fields:
+                properties_list.append(th.Property(field.lower(), th.IntegerType))
+            else:
+                properties_list.append(th.Property(field.lower(), th.StringType))
+        return th.PropertiesList(*properties_list).to_dict()
+
+    def _schema_property_type(self, value: dict) -> Any:
+        if value.get("format") == "date-time":
+            return th.DateTimeType
+        if value.get("format") == "date":
+            return th.DateType
+        if value["type"] == "string":
+            return th.StringType
+        if value["type"] == "boolean":
+            return th.BooleanType
+        if value["type"] in ["number", "integer"]:
+            return th.NumberType
+        return th.CustomType({"type": [value["type"], "string"]})
+
+    def _build_schema_from_response(self) -> dict:
+        response = self.schema_response
+        properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
+        if response is not None and response.get("properties"):
+            for field, value in response.get("properties").items():
+                if self.fields and self.filter_fields and field.lower() not in self.fields:
+                    continue
+                properties_list.append(
+                    th.Property(field.lower(), self._schema_property_type(value))
+                )
+        return th.PropertiesList(*properties_list).to_dict()
 
     @property
-    def schema(self): # noqa: C901
+    def schema(self):
         if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
@@ -736,46 +817,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.get_schema()
 
         if self.fields is not None and not self.schema_response:
-            fields = self.fields
-            properties_list = deepcopy(self.default_fields)
-            # Remove any fields that are already in default_fields to avoid overriding the type
-            fields = {f for f in fields if not any(df.name == f.lower() for df in self.default_fields)}
-            for field in fields:
-                if field == self.replication_key or field in self.date_fields:
-                    properties_list.append(th.Property(field.lower(), th.DateTimeType))
-                elif field in self.bool_fields:
-                    properties_list.append(th.Property(field.lower(), th.BooleanType))
-                elif field in self.float_fields:
-                    properties_list.append(th.Property(field.lower(), th.NumberType))
-                elif field in self.integer_fields:
-                    properties_list.append(th.Property(field.lower(), th.IntegerType))
-                else:
-                    properties_list.append(th.Property(field.lower(), th.StringType))
-
-            return th.PropertiesList(*properties_list).to_dict()
+            return self._build_schema_from_fields()
 
         if self.schema_response:
-            response = self.schema_response 
-            properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
-            if response is not None and response.get("properties"):
-                for field, value in response.get("properties").items():
-                    if self.fields and self.filter_fields and field.lower() not in self.fields:
-                        continue
-
-                    if value.get("format") == 'date-time':
-                        properties_list.append(th.Property(field.lower(), th.DateTimeType))
-                    elif value.get("format") == "date":
-                        properties_list.append(th.Property(field.lower(), th.DateType))
-                    elif value["type"] == "string":
-                        properties_list.append(th.Property(field.lower(), th.StringType))
-                    elif value["type"] == "boolean":
-                        properties_list.append(th.Property(field.lower(), th.BooleanType))
-                    elif value["type"] in ["number", "integer"]:
-                        properties_list.append(th.Property(field.lower(), th.NumberType))
-                    else:
-                        #Object and array as custom types
-                        properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
-            return th.PropertiesList(*properties_list).to_dict()
+            return self._build_schema_from_response()
 
 class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     schema_response = None
