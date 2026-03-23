@@ -14,10 +14,10 @@ from typing import Any, Callable, Dict, Optional, cast, Iterable, List
 from memoization import cached
 from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
-from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
-from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.streams import RESTStream
-from singer_sdk import typing as th
+from hotglue_singer_sdk.exceptions import FatalAPIError, RetriableAPIError
+from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
+from hotglue_singer_sdk.streams import RESTStream
+from hotglue_singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
 import copy
@@ -27,11 +27,11 @@ from dateutil.relativedelta import relativedelta
 import pytz
 from copy import deepcopy
 import copy
-from singer_sdk.helpers._state import (
+from hotglue_singer_sdk.helpers._state import (
     finalize_state_progress_markers,
     log_sort_error,
 )
-from singer_sdk.exceptions import InvalidStreamSortException
+from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
 

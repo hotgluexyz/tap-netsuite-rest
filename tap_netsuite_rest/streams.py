@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, List, Iterable, Tuple
 import uuid
 import requests
 
-from singer_sdk import typing as th
+from hotglue_singer_sdk import typing as th
 
 from tap_netsuite_rest.client import (
     NetSuiteStream,
@@ -12,15 +12,15 @@ from tap_netsuite_rest.client import (
     TransactionRootStream,
     BulkParentStream,
 )
-from singer_sdk.helpers.jsonpath import extract_jsonpath
+from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
 import copy
-from singer_sdk.helpers._state import (
+from hotglue_singer_sdk.helpers._state import (
     finalize_state_progress_markers,
     log_sort_error,
 )
-from singer_sdk.exceptions import InvalidStreamSortException, FatalAPIError
+from hotglue_singer_sdk.exceptions import InvalidStreamSortException, FatalAPIError
 
 import os
 job_id = os.environ.get("JOB_ID")
