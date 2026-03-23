@@ -32,6 +32,7 @@ from hotglue_singer_sdk.helpers._state import (
 from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
+from hotglue_etl_exceptions import InvalidCredentialsError
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -452,8 +453,11 @@ class NetSuiteStream(RESTStream):
                 if self.invalid_fields:
                     self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
-                
-        if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
+        
+        if response.status_code == 401:
+            raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
+        
+        if 500 <= response.status_code < 600 or response.status_code in [429]:
             msg = (
                 f"{response.status_code} Server Error: "
                 f"{response.reason} for path: {self.path}"
