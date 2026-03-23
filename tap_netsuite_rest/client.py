@@ -483,6 +483,7 @@ class NetSuiteStream(RESTStream):
                 requests.exceptions.ConnectionError,
                 RemoteDisconnected,
                 RetryRequest,
+                InvalidCredentialsError,
             ),
             max_tries=10,
             factor=3,
