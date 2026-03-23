@@ -1,6 +1,6 @@
 """Stream type classes for tap-netsuite-rest."""
 
-from typing import Any, Dict, Optional, List, Iterable, Tuple
+from typing import Any, Dict, Optional, Iterable, Tuple
 import uuid
 import requests
 
@@ -15,12 +15,7 @@ from tap_netsuite_rest.client import (
 from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
 from pendulum import parse
-import copy
-from hotglue_singer_sdk.helpers._state import (
-    finalize_state_progress_markers,
-    log_sort_error,
-)
-from hotglue_singer_sdk.exceptions import InvalidStreamSortException, FatalAPIError
+from hotglue_singer_sdk.exceptions import FatalAPIError
 
 import os
 job_id = os.environ.get("JOB_ID")
@@ -427,7 +422,7 @@ class TrialBalanceReportStream(NetSuiteStream):
 
     def prepare_request_payload(self, context, next_page_token):
         return {
-            "q": f"""
+            "q": """
             SELECT
                 Account.AcctType account_type,
                 Account.displaynamewithhierarchy as account_name,
@@ -795,7 +790,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
                         url=f"{self.url_base}?limit=1000",
                         headers=self.http_headers,
                         json={
-                            "q": f"SELECT name, scriptid FROM customsegment"
+                            "q": "SELECT name, scriptid FROM customsegment"
                         }
                     )
                 )
@@ -1138,7 +1133,7 @@ class CurrenciesStream(NetsuiteDynamicStream):
         try:
             yield from super().request_records(context)
         except Exception as e:
-            if f"Record \'currency\' was not found" in str(e):
+            if "Record \'currency\' was not found" in str(e):
                 self.logger.warning("""
                 Could not fetch Currencies. This feature is disabled for the current Netsuite Instance
                 or the current user doesn't have permissions to fetch currencies.

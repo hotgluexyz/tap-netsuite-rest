@@ -20,13 +20,11 @@ from hotglue_singer_sdk.streams import RESTStream
 from hotglue_singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
-import copy
 import json
 from http.client import RemoteDisconnected
 from dateutil.relativedelta import relativedelta
 import pytz
 from copy import deepcopy
-import copy
 from hotglue_singer_sdk.helpers._state import (
     finalize_state_progress_markers,
     log_sort_error,
@@ -275,7 +273,7 @@ class NetSuiteStream(RESTStream):
                 last_dt = next(extract_jsonpath(json_path, response.json()))
                 try:
                     self.query_date = pendulum.parse(last_dt)
-                except Exception as e:
+                except Exception:
                     self.query_date = datetime.strptime(last_dt, "%d/%m/%Y")
                 return offset
         return None
@@ -626,7 +624,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             offset = 0
             custom_fields = {}
 
-            self.logger.info(f"Fetching custom fields data")
+            self.logger.info("Fetching custom fields data")
             while offset is not None:
                 prepared_req = s.prepare_request(
                     requests.Request(
@@ -634,7 +632,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                         url=f"{self.url_base}?offset={offset}&limit=1000",
                         headers=self.http_headers,
                         json={
-                            "q": f"SELECT * FROM customfield"
+                            "q": "SELECT * FROM customfield"
                         }
                     )
                 )

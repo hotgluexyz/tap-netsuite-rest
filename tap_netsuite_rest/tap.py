@@ -15,11 +15,11 @@ import logging
 # By allowing caller to include only streams we need we are able to ensure existing tests continue to pass.
 # 1. Get the environment variable INCLUDE_STREAMS and split by commas
 include_streams = os.environ.get('INCLUDE_STREAMS', "").split(',') if os.environ.get('INCLUDE_STREAMS', "") else []
-logging.info(f"INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
+logging.info("INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
 
 # 2. Get the environment variable IGNORE_STREAMS and split by commas
 ignore_streams = os.environ.get('IGNORE_STREAMS', "").split(',') if os.environ.get('IGNORE_STREAMS', "") else []
-logging.info(f"IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
+logging.info("IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
 
 # Function to filter streams to be tested
 def streams_to_sync(self, include_streams, ignore_streams):
