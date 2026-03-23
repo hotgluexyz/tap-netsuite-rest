@@ -144,7 +144,7 @@ class NetSuiteStream(RESTStream):
 
         return request
 
-    def get_next_page_token(
+    def get_next_page_token( # noqa: C901
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
@@ -357,7 +357,7 @@ class NetSuiteStream(RESTStream):
                 selected_properties.append(field_name)
         return selected_properties
 
-    def prepare_request_payload(
+    def prepare_request_payload( # noqa: C901
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
 
@@ -423,7 +423,7 @@ class NetSuiteStream(RESTStream):
         self.logger.info(f"Making query ({payload['q']})")
         return payload
 
-    def validate_response(self, response: requests.Response) -> None:
+    def validate_response(self, response: requests.Response) -> None: # noqa: C901
         """Validate HTTP response."""
         if response.status_code == 400:
             if hasattr(self,"entities_fallback") and self.entities_fallback:
@@ -589,7 +589,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
     ), max_tries=5, factor=2)
-    def get_schema(self):
+    def get_schema(self): # noqa: C901
         s = self.get_session()
 
         try:
@@ -723,7 +723,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
 
     @property
-    def schema(self):
+    def schema(self): # noqa: C901
         if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
@@ -812,7 +812,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         else:
             return None
     
-    def process_types(self, row, schema=None):
+    def process_types(self, row, schema=None): # noqa: C901
         if schema is None:
             schema = self.schema["properties"]
         for field, value in row.items():
