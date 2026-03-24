@@ -1884,8 +1884,9 @@ class ItemPriceStream(NetsuiteDynamicStream):
 class BillsStream(BulkParentStream):
     name = "bills"
     table = "transaction"
-    custom_filter = "type = 'VendBill'"
+    custom_filter = "transaction.type = 'VendBill'"
     replication_key = "lastmodifieddate"
+    join = "LEFT JOIN Entity ON (transaction.entity = Entity.id)"
     _select = "transaction.*, BUILTIN.DF(transaction.status) status"
 
     default_fields = [
@@ -1895,21 +1896,18 @@ class BillsStream(BulkParentStream):
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
 
+
     def prepare_request_payload(self, context, next_page_token):
         """Add Entity join and vendor name filter when filter_vendor_names is in config."""
         vendor_names = self.config.get("filter_vendor_names") or []
         if vendor_names:
-            # Join Entity so we can filter by vendor name (transaction.entity = vendor id, Entity.altname = vendor name)
-            saved_join = self.join
             saved_custom_filter = self.custom_filter
             try:
-                self.join = "LEFT JOIN Entity ON (transaction.entity = Entity.id)"
                 # Qualify type to avoid ambiguity with Entity
                 quoted = ", ".join(f"'{name.replace(chr(39), chr(39) + chr(39))}'" for name in vendor_names)
                 self.custom_filter = f"transaction.type = 'VendBill' AND Entity.altname IN ({quoted})"
                 return super().prepare_request_payload(context, next_page_token)
             finally:
-                self.join = saved_join
                 self.custom_filter = saved_custom_filter
         return super().prepare_request_payload(context, next_page_token)
 

@@ -572,6 +572,44 @@ class NetSuiteStream(RESTStream):
                 raise Exception(ValueError)
         return return_value
     
+    def _join_filters(self, filters):
+        return f"({' '.join(filters)})"
+
+    def _escape_quotes(self, value):
+        return value.replace("'", "''")
+
+    def _parse_filters(self, filters):
+        parsed_filters = []
+        for key, value in filters.items():
+            if key.startswith("group_"):
+                parsed_filters.append(self._join_filters(self._parse_filters(value)))
+            if key.startswith("clause_"):
+                if value['operator'] == "EQ":
+                    parsed_filters.append(f"{value['field']} = '{self._escape_quotes(value['value'])}'")
+                elif value['operator'] == "IN":
+                    if isinstance(value['value'], list):
+                        filter_value = ", ".join(f"'{self._escape_quotes(v)}'" for v in value['value'])
+                    else:
+                        filter_value = f"'{self._escape_quotes(value['value'])}'"
+                    parsed_filters.append(f"{value['field']} {value['operator']} ({filter_value})")
+                else:
+                    raise ValueError(f"Unsupported operator: {value['operator']}")
+            elif key.startswith("operator_"):
+                parsed_filters.append(value)
+
+        return parsed_filters
+
+    def setup_selected_filters(self):
+        if self._selected_filters:
+            self.logger.info(f"Parsing '{self.name}' filters: {self._selected_filters}")
+            parsed_filters = self._parse_filters(self._selected_filters)
+            if parsed_filters and len(parsed_filters) > 0:
+                parsed_filters = self._join_filters(parsed_filters)
+                if self.custom_filter:
+                    self.custom_filter = f"{self.custom_filter} AND {parsed_filters}"
+                else:
+                    self.custom_filter = parsed_filters
+
 
 class NetsuiteDynamicSchema(NetSuiteStream):
     schema_response = None
