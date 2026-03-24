@@ -577,7 +577,8 @@ class NetSuiteStream(RESTStream):
 
     def _escape_quotes(self, value):
         if isinstance(value, str):
-            return value.replace("'", "''")
+            escaped_value = value.replace("'", "''")
+            return f"'{escaped_value}'"
         return value
 
     def _parse_filters(self, filters):
@@ -591,8 +592,9 @@ class NetSuiteStream(RESTStream):
                 elif value['operator'] == "IN":
                     if isinstance(value['value'], list):
                         filter_value = ", ".join(f"'{self._escape_quotes(v)}'" for v in value['value'])
+                        filter_value = ", ".join(f"{self._escape_quotes(v)}" for v in value['value'])
                     else:
-                        filter_value = f"'{self._escape_quotes(value['value'])}'"
+                        filter_value = f"{self._escape_quotes(value['value'])}"
                     parsed_filters.append(f"{value['field']} {value['operator']} ({filter_value})")
                 else:
                     raise ValueError(f"Unsupported operator: {value['operator']}")
