@@ -576,7 +576,9 @@ class NetSuiteStream(RESTStream):
         return f"({' '.join(filters)})"
 
     def _escape_quotes(self, value):
-        return value.replace("'", "''")
+        if isinstance(value, str):
+            return value.replace("'", "''")
+        return value
 
     def _parse_filters(self, filters):
         parsed_filters = []
