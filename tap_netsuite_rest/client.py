@@ -585,13 +585,16 @@ class NetSuiteStream(RESTStream):
         parsed_filters = []
         for key, value in filters.items():
             if key.startswith("group_"):
-                parsed_filters.append(self._join_filters(self._parse_filters(value)))
+                group_filters = self._parse_filters(value)
+                if group_filters and len(group_filters) > 0:
+                    parsed_filters.append(self._join_filters(group_filters))
             elif key.startswith("clause_"):
                 if value['operator'] == "EQ":
-                    parsed_filters.append(f"{value['field']} = '{self._escape_quotes(value['value'])}'")
+                    parsed_filters.append(f"{value['field']} = {self._escape_quotes(value['value'])}")
                 elif value['operator'] == "IN":
                     if isinstance(value['value'], list):
-                        filter_value = ", ".join(f"'{self._escape_quotes(v)}'" for v in value['value'])
+                        if len(value['value']) == 0:
+                            continue
                         filter_value = ", ".join(f"{self._escape_quotes(v)}" for v in value['value'])
                     else:
                         filter_value = f"{self._escape_quotes(value['value'])}"
