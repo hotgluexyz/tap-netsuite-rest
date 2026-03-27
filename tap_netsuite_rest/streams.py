@@ -758,6 +758,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "accountingbook",
             "select_replace": ", AccountingBook.id as accountingbook",
+            "select_replace_with": ", TransactionAccountingLine.accountingBook as accountingbook",
             "join_replace": " LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook",
         },
     ]

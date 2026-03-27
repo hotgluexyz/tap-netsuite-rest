@@ -433,7 +433,8 @@ class NetSuiteStream(RESTStream):
                     if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
                         self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
                         if "select_replace" in entity:
-                            self.select = self.select.replace(entity['select_replace'], "")
+                            replacement = entity.get("select_replace_with", "")
+                            self.select = self.select.replace(entity['select_replace'], replacement)
                         if "join_replace" in entity:  
                             self.join = self.join.replace(entity['join_replace'], "")
                         if entity['name'] == "accountingbook":
