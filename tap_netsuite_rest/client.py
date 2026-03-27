@@ -338,7 +338,8 @@ class NetSuiteStream(RESTStream):
         else:
             start_date = self.get_starting_time({})
             self.start_date_f = start_date.strftime("%Y-%m-01")
-        self.end_date = (start_date + timedelta(window)).strftime("%Y-%m-%d")
+        window_start = datetime.strptime(self.start_date_f, "%Y-%m-%d").date()
+        self.end_date = (window_start + timedelta(days=window)).strftime("%Y-%m-%d")
 
     def format_date_query(self, field_name):
         prefix = self.select_prefix or self.table

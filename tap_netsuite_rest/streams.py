@@ -774,8 +774,67 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
 
         return _filter
     
-    order_by = "ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
+    order_by = "ORDER BY Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
     replication_key = "date"
+
+    def get_next_page_token(self, response, previous_token):
+        data = response.json()
+        has_next = next(extract_jsonpath("$.hasMore", data))
+
+        if has_next:
+            return self._id_cursor_from_last_item(data.get("items", []))
+
+        self.query_date = (parse(self.end_date) + timedelta(1)).replace(tzinfo=None)
+        report_end_date = (
+            parse(self.config.get("report_end_date")).replace(tzinfo=None)
+            if self.config.get("report_end_date") else None
+        )
+        end_date = report_end_date or datetime.utcnow()
+        if self.query_date < end_date:
+            return self.query_date
+        return None
+
+    def _id_cursor_from_last_item(self, items):
+        if not items:
+            self.logger.warning(f"[{self.name}] hasMore=True but response has no items; stopping pagination.")
+            return None
+        last = items[-1]
+        txn_id, line_id = last["id"].split("_", 1)
+        book_id = last.get("accountingbook")
+        return (
+            int(txn_id),
+            int(line_id),
+            int(book_id) if book_id is not None else None,
+        )
+
+    def get_url_params(self, context, next_page_token):
+        return {"offset": 0, "limit": self.page_size}
+
+    def prepare_request_payload(self, context, next_page_token):
+        payload = super().prepare_request_payload(context, next_page_token)
+        if isinstance(next_page_token, tuple):
+            payload["q"] = self._inject_id_cursor(payload["q"], next_page_token)
+        return payload
+
+    def _inject_id_cursor(self, query, cursor):
+        txn_id, line_id, book_id = cursor
+        self.logger.info(f"[{self.name}] Paginating with ID cursor: txn={txn_id} line={line_id} book={book_id}")
+        if book_id is not None:
+            filter_sql = (
+                f"(Transaction.id > {txn_id} "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id > {line_id}) "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id = {line_id} "
+                f"AND TransactionAccountingLine.accountingBook > {book_id}))"
+            )
+        else:
+            filter_sql = (
+                f"(Transaction.id > {txn_id} "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id > {line_id}))"
+            )
+        order_idx = query.upper().rfind(" ORDER BY ")
+        if order_idx >= 0:
+            return query[:order_idx] + f" AND {filter_sql}" + query[order_idx:]
+        return query + f" AND {filter_sql}"
 
     def get_custom_segment_fields_scriptids(self):
         if self.custom_segment_field_scriptids is None:
