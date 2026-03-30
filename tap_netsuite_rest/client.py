@@ -65,6 +65,7 @@ class NetSuiteStream(RESTStream):
     time_jump = relativedelta(months=1)
     always_add_default_fields = False
     query_table = None
+    timeout = 500
 
     def get_replication_key_conditions(self, context):
         """Return a list of replication-key filter strings, or None to use default (get_starting_time / query_date)."""
@@ -582,7 +583,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     filter_fields = False
     default_fields = []
 
-    timeout = 500
 
     def __init__(self, *args, **kwargs):
         self.float_fields = []
