@@ -479,7 +479,7 @@ class NetSuiteStream(RESTStream):
             (
                 HTTPError,
                 RetriableAPIError,
-                requests.exceptions.ReadTimeout,
+                requests.exceptions.Timeout,
                 requests.exceptions.ConnectionError,
                 RemoteDisconnected,
                 RetryRequest,
@@ -582,6 +582,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     filter_fields = False
     default_fields = []
 
+    timeout = 500
+
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
@@ -590,7 +592,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     @backoff.on_exception(backoff.expo, (
         HTTPError,
         RetriableAPIError,
-        requests.exceptions.ReadTimeout,
+        requests.exceptions.Timeout,
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
     ), max_tries=5, factor=2)
@@ -614,7 +616,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
-            response = s.send(prepared_req)
+            response = s.send(prepared_req, timeout=self.timeout)
             response.raise_for_status()
             self.schema_response = response.json()
         except:
@@ -641,7 +643,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                         }
                     )
                 )
-                response = s.send(prepared_req)
+                response = s.send(prepared_req, timeout=self.timeout)
                 if response.status_code not in [200]:
                     self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
                     break
@@ -669,7 +671,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
 
-            response = s.send(prepared_req)
+            response = s.send(prepared_req, timeout=self.timeout)
 
             try:
                 response.raise_for_status()

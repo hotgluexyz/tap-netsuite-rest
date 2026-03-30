@@ -38,7 +38,7 @@ class TapNetSuite(Tap):
 
     name = "tap-netsuite-rest"
     custom_fields = None
-    alerting_level = AlertingLevel.WARNING
+    alerting_level = AlertingLevel.ERROR
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
