@@ -795,7 +795,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
                     )
                 )
                 prepared_req.headers.update({"Content-Type": "application/json"})
-                response = s.send(prepared_req)
+                response = s.send(prepared_req, timeout=self.timeout)
                 response.raise_for_status()
                 custom_segment_fields = response.json().get("items", [])
                 for cs_field in custom_segment_fields:
