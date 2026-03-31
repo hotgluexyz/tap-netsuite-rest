@@ -14,26 +14,25 @@ from typing import Any, Callable, Dict, Optional, cast, Iterable, List
 from memoization import cached
 from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
-from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
-from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.streams import RESTStream, Stream
-from singer_sdk import typing as th
+from hotglue_singer_sdk.exceptions import FatalAPIError, RetriableAPIError
+from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
+from hotglue_singer_sdk.streams import RESTStream, Stream
+from hotglue_singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
-import copy
 import json
 from http.client import RemoteDisconnected
 from dateutil.relativedelta import relativedelta
 import pytz
 from copy import deepcopy
-import copy
-from singer_sdk.helpers._state import (
+from hotglue_singer_sdk.helpers._state import (
     finalize_state_progress_markers,
     log_sort_error,
 )
-from singer_sdk.exceptions import InvalidStreamSortException
+from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
+from hotglue_etl_exceptions import InvalidCredentialsError
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -66,6 +65,7 @@ class NetSuiteStream(RESTStream):
     time_jump = relativedelta(months=1)
     always_add_default_fields = False
     query_table = None
+    timeout = 500
 
     def get_replication_key_conditions(self, context):
         """Return a list of replication-key filter strings, or None to use default (get_starting_time / query_date)."""
@@ -146,7 +146,7 @@ class NetSuiteStream(RESTStream):
 
         return request
 
-    def get_next_page_token(
+    def get_next_page_token( # noqa: C901
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
@@ -275,7 +275,7 @@ class NetSuiteStream(RESTStream):
                 last_dt = next(extract_jsonpath(json_path, response.json()))
                 try:
                     self.query_date = pendulum.parse(last_dt)
-                except Exception as e:
+                except Exception:
                     self.query_date = datetime.strptime(last_dt, "%d/%m/%Y")
                 return offset
         return None
@@ -359,7 +359,7 @@ class NetSuiteStream(RESTStream):
                 selected_properties.append(field_name)
         return selected_properties
 
-    def prepare_request_payload(
+    def prepare_request_payload( # noqa: C901
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
 
@@ -425,7 +425,7 @@ class NetSuiteStream(RESTStream):
         self.logger.info(f"Making query ({payload['q']})")
         return payload
 
-    def validate_response(self, response: requests.Response) -> None:
+    def validate_response(self, response: requests.Response) -> None: # noqa: C901
         """Validate HTTP response."""
         if response.status_code == 400:
             if hasattr(self,"entities_fallback") and self.entities_fallback:
@@ -454,8 +454,11 @@ class NetSuiteStream(RESTStream):
                 if self.invalid_fields:
                     self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
-                
-        if 500 <= response.status_code < 600 or response.status_code in [401, 429]:
+        
+        if response.status_code == 401:
+            raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
+        
+        if 500 <= response.status_code < 600 or response.status_code in [429]:
             msg = (
                 f"{response.status_code} Server Error: "
                 f"{response.reason} for path: {self.path}"
@@ -477,10 +480,11 @@ class NetSuiteStream(RESTStream):
             (
                 HTTPError,
                 RetriableAPIError,
-                requests.exceptions.ReadTimeout,
+                requests.exceptions.Timeout,
                 requests.exceptions.ConnectionError,
                 RemoteDisconnected,
                 RetryRequest,
+                InvalidCredentialsError,
             ),
             max_tries=10,
             factor=3,
@@ -579,6 +583,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     filter_fields = False
     default_fields = []
 
+
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
@@ -587,11 +592,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     @backoff.on_exception(backoff.expo, (
         HTTPError,
         RetriableAPIError,
-        requests.exceptions.ReadTimeout,
+        requests.exceptions.Timeout,
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
     ), max_tries=5, factor=2)
-    def get_schema(self):
+    def get_schema(self): # noqa: C901
         s = self.get_session()
 
         try:
@@ -611,7 +616,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
-            response = s.send(prepared_req)
+            response = s.send(prepared_req, timeout=self.timeout)
             response.raise_for_status()
             self.schema_response = response.json()
         except:
@@ -626,7 +631,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             offset = 0
             custom_fields = {}
 
-            self.logger.info(f"Fetching custom fields data")
+            self.logger.info("Fetching custom fields data")
             while offset is not None:
                 prepared_req = s.prepare_request(
                     requests.Request(
@@ -634,11 +639,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                         url=f"{self.url_base}?offset={offset}&limit=1000",
                         headers=self.http_headers,
                         json={
-                            "q": f"SELECT * FROM customfield"
+                            "q": "SELECT * FROM customfield"
                         }
                     )
                 )
-                response = s.send(prepared_req)
+                response = s.send(prepared_req, timeout=self.timeout)
                 if response.status_code not in [200]:
                     self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
                     break
@@ -666,7 +671,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
 
-            response = s.send(prepared_req)
+            response = s.send(prepared_req, timeout=self.timeout)
 
             try:
                 response.raise_for_status()
@@ -725,7 +730,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
 
     @property
-    def schema(self):
+    def schema(self): # noqa: C901
         if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
@@ -814,7 +819,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
         else:
             return None
     
-    def process_types(self, row, schema=None):
+    def process_types(self, row, schema=None): # noqa: C901
         if schema is None:
             schema = self.schema["properties"]
         for field, value in row.items():
