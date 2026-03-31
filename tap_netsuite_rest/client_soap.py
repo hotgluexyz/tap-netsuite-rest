@@ -9,8 +9,8 @@ from logging import Logger
 import backoff
 import requests
 import xmltodict
-from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
+from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
+from hotglue_singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 
 
 class NetsuiteSOAPClient:
