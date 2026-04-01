@@ -16,7 +16,7 @@ from oauthlib import oauth1
 from requests_oauthlib import OAuth1Session
 from hotglue_singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
-from hotglue_singer_sdk.streams import RESTStream
+from hotglue_singer_sdk.streams import RESTStream, Stream
 from hotglue_singer_sdk import typing as th
 from pendulum import parse
 from requests.exceptions import HTTPError
@@ -1128,4 +1128,23 @@ class TransactionRootStream(NetsuiteDynamicStream):
         
 
         return row
-    
+
+
+class NetsuiteSOAPStream(Stream):
+    """NetSuite SOAP stream class."""
+    page_size = 100
+
+
+    def prepare_request_payload(self, context):
+        return {}
+
+
+    def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, Any]]:
+        payload = self.prepare_request_payload(context)
+
+        for record in self._tap.soap_client.search(payload, self.extract_json_path, self.page_size):
+            transformed_record = self.post_process(record, context)
+            if transformed_record is None:
+                # Record filtered out during post_process()
+                continue
+            yield transformed_record

@@ -1,7 +1,8 @@
 """NetSuite tap class."""
 
 from typing import List
-
+from pathlib import PurePath
+from typing import Union, Optional
 from hotglue_singer_sdk import Stream, Tap
 from hotglue_singer_sdk import typing as th  # JSON schema typing helpers
 from hotglue_singer_sdk.helpers.capabilities import AlertingLevel
@@ -9,6 +10,7 @@ from hotglue_singer_sdk.helpers.capabilities import AlertingLevel
 import inspect 
 
 from tap_netsuite_rest import streams
+from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
 import os
 import logging
 
@@ -22,12 +24,26 @@ logging.info("INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
 ignore_streams = os.environ.get('IGNORE_STREAMS', "").split(',') if os.environ.get('IGNORE_STREAMS', "") else []
 logging.info("IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
 
+
+def get_bill_attachments_stream(config):
+    if 'bill_attachments_restlet_url' in config \
+        and 'bill_attachments_suitelet_url' in config:
+        return streams.BillAttachmentsRestletStream
+    
+    return streams.BillAttachmentsSOAPStream
+
+
 # Function to filter streams to be tested
 def streams_to_sync(self, include_streams, ignore_streams):
     stream_types = []
-    
-    for name, cls in inspect.getmembers(streams,inspect.isclass):
+
+    if not ((include_streams and 'BillAttachmentsStream' not in include_streams) or 'BillAttachmentsStream' in ignore_streams):
+        stream_types.append(get_bill_attachments_stream(self.config)(self))
+
+    for name, cls in inspect.getmembers(streams, inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
+            if cls.name == 'bill_attachments':
+                continue
             if (include_streams and name not in include_streams) or name in ignore_streams:
                 continue
             stream_types.append(cls(self))
@@ -55,6 +71,18 @@ class TapNetSuite(Tap):
         th.Property("bill_attachments_restlet_url", th.StringType, description="Base URL for bill attachments Restlet"),
         th.Property("bill_attachments_suitelet_url", th.StringType, description="Base URL for bill attachments Suitelet (file download)"),
     ).to_dict()
+
+    def __init__(
+        self,
+        config: Optional[Union[dict, PurePath, str, List[Union[PurePath, str]]]] = None,
+        catalog: Union[PurePath, str, dict, None] = None,
+        state: Union[PurePath, str, dict, None] = None,
+        parse_env_config: bool = False,
+        validate_config: bool = True,
+    ) -> None:
+        super().__init__(config, catalog, state, parse_env_config, validate_config)
+        self.soap_client = NetsuiteSOAPClient(self.config, self.logger)
+    
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""

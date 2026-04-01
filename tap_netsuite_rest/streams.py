@@ -3,6 +3,7 @@
 from typing import Any, Dict, Optional, Iterable, Tuple
 import uuid
 import requests
+import base64
 
 from hotglue_singer_sdk import typing as th
 
@@ -11,6 +12,7 @@ from tap_netsuite_rest.client import (
     NetsuiteDynamicStream,
     TransactionRootStream,
     BulkParentStream,
+    NetsuiteSOAPStream,
 )
 from hotglue_singer_sdk.helpers.jsonpath import extract_jsonpath
 from datetime import datetime, timedelta
@@ -1996,12 +1998,10 @@ class BillPaymentsStream(NetsuiteDynamicStream):
         self.custom_filter = f"{self.custom_filter} and NTLL.previousdoc in ({ids})"
         return super().prepare_request_payload(context, next_page_token)
     
-class BillAttachmentsStream(NetsuiteDynamicStream):
-    name = "bill_attachments"
-    table = "suitescript_bill_attachments"
-    parent_stream_type = BillsStream
-    
-    schema = th.PropertiesList(
+
+# this schema is used for both BillAttachmentsRestletStream and BillAttachmentsSOAPStream
+# they should have the same output, they only fetch data in a different way
+BillAttachmentsSchema = th.PropertiesList(
         th.Property("tranid", th.StringType),
         th.Property("transaction", th.StringType),
         th.Property("file_id", th.StringType),
@@ -2010,6 +2010,13 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
         th.Property("file_url", th.StringType),
         th.Property("downloaded_file", th.StringType)
     ).to_dict()
+
+class BillAttachmentsRestletStream(NetsuiteDynamicStream):
+    name = "bill_attachments"
+    table = "suitescript_bill_attachments"
+    parent_stream_type = BillsStream
+    
+    schema = BillAttachmentsSchema
     
     def get_url(self, context):
         restlet_url = self.config.get("bill_attachments_restlet_url") or ""
@@ -2080,6 +2087,99 @@ class BillAttachmentsStream(NetsuiteDynamicStream):
             else:
                 row["downloaded_file"] = rel_path
         return row
+
+
+class BillAttachmentsSOAPStream(NetsuiteSOAPStream):
+    name = "bill_attachments"
+    table = "suitescript_bill_attachments"
+    extract_json_path = "$['soapenv:Envelope']['soapenv:Body']['searchResponse']['platformCore:searchResult']"
+    parent_stream_type = BillsStream
+    
+    schema = BillAttachmentsSchema
+    
+    
+    def prepare_request_payload(self, context):
+        bill_ids = context["ids"]
+        return {
+            "platformMsgs:search": {
+                "platformMsgs:searchRecord": {
+                    "@xsi:type": "tranSales:TransactionSearchAdvanced",
+                    "tranSales:criteria": {
+                        "tranSales:basic": {
+                            "platformCommon:type": {
+                                "@operator": "anyOf",
+                                "platformCore:searchValue": "_vendorBill"
+                            },
+                            "platformCommon:mainLine": {
+                                "searchValue": "true"
+                            },
+                            "platformCommon:internalId": {
+                                "@operator": "anyOf",
+                                "platformCore:searchValue": [
+                                        { "@internalId": bill_id } for bill_id in bill_ids
+                                ]
+                            }
+                        }
+                    },
+                    "tranSales:columns": {
+                        "tranSales:basic": {
+                            "platformCommon:internalId": {},
+                            "platformCommon:tranId": {},
+                            "platformCommon:tranDate": {}
+                        },
+                        "tranSales:fileJoin": {
+                            "platformCommon:internalId": {},
+                            "platformCommon:name": {},
+                            "platformCommon:fileType": {},
+                            "platformCommon:documentSize": {},
+                            "platformCommon:url": {}
+                        }
+                    }
+                }
+            }
+        }
+
+
+    def download_attachment_file(self, transaction: str, file_id: str, file_name: str):
+        response = self._tap.soap_client.get("file", file_id)
+
+        dir_path = os.path.join(sync_output_folder, "bill_attachments", transaction)
+        os.makedirs(dir_path, exist_ok=True)
+        try:
+            with open(os.path.join(dir_path, file_name), "wb") as f:
+                if response["docFileCab:content"]:
+                    file_content = base64.b64decode(response["docFileCab:content"])
+                else:
+                    file_content = b""
+                f.write(file_content)
+            return f"bill_attachments/{transaction}/{file_name}"
+        except Exception as e:
+            raise FatalAPIError(
+                f"Bill attachment download failed for file {file_name} (file_id={file_id}): {str(e)}"
+            )
+
+
+    def post_process(self, row: dict, context: Optional[dict] = None) -> Optional[dict]:
+        if not row.get("tranSales:fileJoin"):
+            return None
+        
+        file_type = row["tranSales:fileJoin"]["platformCommon:fileType"]["platformCore:searchValue"]
+        if file_type.startswith("_"):
+            file_type = file_type[1:]
+
+        record = {
+            "tranid": row.get("tranSales:basic", {}).get("platformCommon:tranId", {}).get("platformCore:searchValue", ""),
+            "transaction": row["tranSales:basic"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
+            "file_id": row["tranSales:fileJoin"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
+            "file_name": row["tranSales:fileJoin"]["platformCommon:name"]["platformCore:searchValue"],
+            "file_type": file_type,
+            "file_url": row["tranSales:fileJoin"]["platformCommon:url"]["platformCore:searchValue"],
+        }
+
+        file_path = self.download_attachment_file(record["transaction"], record["file_id"], record["file_name"])
+        record["downloaded_file"] = file_path
+
+        return record
 
 
 class BillTaxLinesStream(NetsuiteDynamicStream):
