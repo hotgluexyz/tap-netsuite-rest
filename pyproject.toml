@@ -38,3 +38,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 # CLI declaration
 tap-netsuite-rest = 'tap_netsuite_rest.tap:TapNetSuite.cli'
+tap-netsuite = 'tap_netsuite_rest.tap:TapNetSuite.cli'
