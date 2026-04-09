@@ -521,6 +521,20 @@ class LocationsStream(BulkParentStream):
             else [],
         }
 
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            err = str(e)
+            if "Record 'location' was not found" in err:
+                self.logger.warning(
+                    "Could not query locations: the location record type is not available in SuiteQL "
+                    "for this account (Locations feature disabled, permissions, or account type). "
+                    "Skipping the locations stream."
+                )
+                return []
+            raise
+
 
 class LocationReturnAddressStream(NetsuiteDynamicStream):
     name = "location_return_address"
@@ -672,6 +686,7 @@ class ProfitLossReportStream(NetSuiteStream):
     ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
     replication_key = "date"
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
@@ -732,11 +747,16 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     primary_keys = ["id"]
     custom_segment_field_scriptids = None
     name = "general_ledger_report"
-    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
+    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
     table = "Transaction"
     join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
     entities_fallback = [
+        {
+            "name": "subsidiary",
+            "select_replace": "Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary",
+            "join_replace": "LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id)",
+        },
         {
             "name": "department",
             "select_replace": "department.id as departmentid, department.fullname as department,",
@@ -858,6 +878,37 @@ TransactionAccountingLine.accountingBook) and uniquely identifies a row, since.
             return query[:order_idx] + f" AND {filter_sql}" + query[order_idx:]
         return query + f" AND {filter_sql}"
 
+    def _transaction_line_custom_segment_usable(
+        self, session: requests.Session, scriptid: str
+    ) -> bool:
+        """True if SuiteQL can read this segment on TransactionLine (same shapes as the GL SELECT).
+
+        The `customsegment` list can succeed while line-level fields still fail (role, GL impact, etc.).
+        """
+        q = (
+            f"SELECT TOP 1 TransactionLine.{scriptid}, "
+            f"BUILTIN.DF(TransactionLine.{scriptid}) "
+            f"FROM Transaction "
+            f"INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id)"
+        )
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": q},
+            )
+        )
+        prepared_req.headers.update({"Content-Type": "application/json"})
+        probe = session.send(prepared_req, timeout=self.timeout)
+        if probe.status_code == 200:
+            return True
+        self.logger.debug(
+            f"SuiteQL probe failed for TransactionLine.{scriptid} "
+            f"(status={probe.status_code}): {probe.text[:800]}"
+        )
+        return False
+
     def get_custom_segment_fields_scriptids(self):
         if self.custom_segment_field_scriptids is None:
             custom_segment_fields = []
@@ -877,13 +928,33 @@ TransactionAccountingLine.accountingBook) and uniquely identifies a row, since.
                 )
                 prepared_req.headers.update({"Content-Type": "application/json"})
                 response = s.send(prepared_req, timeout=self.timeout)
+                if response.status_code == 400:
+                    body = response.text or ""
+                    if "record 'customsegment' was not found" in body.lower():
+                        self.logger.warning(
+                            "Custom Segments are not queryable in SuiteQL for this account "
+                            "(feature disabled, role permissions, or sandbox limits). "
+                            "general_ledger_report will sync without custom segment columns."
+                        )
+                        self.custom_segment_field_scriptids = []
+                        return self.custom_segment_field_scriptids
                 response.raise_for_status()
-                custom_segment_fields = response.json().get("items", [])
-                for cs_field in custom_segment_fields:
+                raw_fields = response.json().get("items", [])
+                for cs_field in raw_fields:
                     # make it lowercase because we'll use it as db field name
                     # and the db will return it lowercase, if it's not lowercase
                     # well have problems because it won't be in the selected properties list
                     cs_field["scriptid"] = cs_field["scriptid"].lower()
+
+                for cs_field in raw_fields:
+                    scriptid = cs_field["scriptid"]
+                    if self._transaction_line_custom_segment_usable(s, scriptid):
+                        custom_segment_fields.append(cs_field)
+                    else:
+                        self.logger.warning(
+                            f"Omitting custom segment {cs_field.get('name', scriptid)!r} ({scriptid}): "
+                            "TransactionLine field / BUILTIN.DF not available in SuiteQL for this role."
+                        )
 
                 if custom_segment_fields:
                     self.select = self.select + ", " + ", ".join(f"'{cs_field['name']}' as custom_segment_{cs_field['scriptid']}, TransactionLine.{cs_field['scriptid']} as {cs_field['scriptid']}_value_id, BUILTIN.DF( TransactionLine.{cs_field['scriptid']} ) as {cs_field['scriptid']}_value_name" for cs_field in custom_segment_fields)
@@ -1266,6 +1337,26 @@ class SubsidiariesStream(BulkParentStream):
             if record.get("shippingaddress") is not None
             else [],
         }
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            err = str(e)
+            if "Record 'subsidiary' was not found" in err:
+                self.logger.warning(
+                    "Could not query subsidiaries: OneWorld is not enabled for this account, "
+                    "so the subsidiary record type is not available in SuiteQL. "
+                    "Emitting a single placeholder row (id=1) so downstream jobs can treat the account as a single entity."
+                )
+                yield {
+                    "id": "1",
+                    "returnaddress": None,
+                    "mainaddress": None,
+                    "shippingaddress": None,
+                }
+                return
+            raise
 
 
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
