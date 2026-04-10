@@ -1318,7 +1318,10 @@ class SubsidiariesStream(BulkParentStream):
     ]
 
     default_fields = [
+        th.Property("id", th.StringType),
         th.Property("externalid", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("fullname", th.StringType),
         th.Property("returnaddress", th.StringType),
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
