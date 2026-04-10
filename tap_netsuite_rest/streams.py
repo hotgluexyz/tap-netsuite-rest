@@ -754,8 +754,8 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     entities_fallback = [
         {
             "name": "subsidiary",
-            "select_replace": "Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary",
-            "join_replace": "LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id)",
+            "select_replace": "Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol,",
+            "join_replace": "LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)",
         },
         {
             "name": "department",
