@@ -1323,6 +1323,8 @@ class SubsidiariesStream(BulkParentStream):
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
         th.Property("currency", th.StringType),
+        th.Property("currencyname", th.StringType),
+        th.Property("isinactive", th.BooleanType),
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -1338,6 +1340,61 @@ class SubsidiariesStream(BulkParentStream):
             else [],
         }
 
+    def _suiteql_first_row(self, q: str) -> Optional[Dict[str, Any]]:
+        """Run SuiteQL and return the first row, or None on failure / empty."""
+        session = self.get_session()
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": q},
+            )
+        )
+        prepared_req.headers.update({"Content-Type": "application/json"})
+        response = session.send(prepared_req, timeout=self.timeout)
+        if response.status_code != 200:
+            self.logger.debug(
+                "SuiteQL probe returned %s: %s",
+                response.status_code,
+                (response.text or "")[:500],
+            )
+            return None
+        items = response.json().get("items") or []
+        if not items:
+            return None
+        return {k.lower(): v for k, v in items[0].items()}
+
+    def _non_oneworld_subsidiary_placeholder_row(self) -> Dict[str, Any]:
+        """Subsidiary list is unavailable; infer id/name from lines and currency from transactions."""
+        row: Dict[str, Any] = {
+            "returnaddress": None,
+            "mainaddress": None,
+            "shippingaddress": None,
+            "isinactive": False,
+        }
+        q = "SELECT subsidiary AS id, BUILTIN.DF(subsidiary) AS name FROM TransactionLine WHERE subsidiary IS NOT NULL"
+        line_row = self._suiteql_first_row(q)
+        if line_row:
+            row["id"] = str(line_row["id"])
+            row["name"] = line_row["name"]
+            row["fullname"] = line_row["name"]
+        else:
+            row["id"] = "1"
+            row["name"] = "Parent Subsidiary"
+            row["fullname"] = "Parent Subsidiary"
+
+        q = "SELECT currency, BUILTIN.DF(currency) AS currencyname FROM Transaction WHERE currency IS NOT NULL"
+        txn_row = self._suiteql_first_row(q)
+        if txn_row:
+            row["currency"] = str(txn_row["currency"])
+            row["currencyname"] = txn_row["currencyname"]
+        else:
+            row["currency"] = "1"
+            row["currencyname"] = "US Dollar"
+
+        return row
+
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         try:
             yield from super().request_records(context)
@@ -1347,14 +1404,9 @@ class SubsidiariesStream(BulkParentStream):
                 self.logger.warning(
                     "Could not query subsidiaries: OneWorld is not enabled for this account, "
                     "so the subsidiary record type is not available in SuiteQL. "
-                    "Emitting a single placeholder row (id=1) so downstream jobs can treat the account as a single entity."
+                    "Emitting one inferred row from TransactionLine / Transaction."
                 )
-                yield {
-                    "id": "1",
-                    "returnaddress": None,
-                    "mainaddress": None,
-                    "shippingaddress": None,
-                }
+                yield self._non_oneworld_subsidiary_placeholder_row()
                 return
             raise
 
