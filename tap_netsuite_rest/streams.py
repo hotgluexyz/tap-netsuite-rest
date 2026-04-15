@@ -2118,7 +2118,8 @@ class BillsStream(BulkParentStream):
     _select = "transaction.*, BUILTIN.DF(transaction.status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
