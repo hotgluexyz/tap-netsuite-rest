@@ -35,7 +35,8 @@ class VendorCreditStream(BulkParentStream):
 
     default_fields = [
         th.Property("taxtotal", th.NumberType),
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2117,7 +2118,8 @@ class BillsStream(BulkParentStream):
     _select = "transaction.*, BUILTIN.DF(transaction.status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2438,7 +2440,8 @@ class InvoicesStream(BulkParentStream):
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
         th.Property("taxtotal", th.NumberType),
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2549,7 +2552,8 @@ class ItemReceiptsStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2594,7 +2598,8 @@ class PurchaseOrdersStream(BulkParentStream):
     _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2633,7 +2638,8 @@ class SalesOrdersStream(BulkParentStream):
     _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
