@@ -644,6 +644,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     ), max_tries=5, factor=2)
     def get_schema(self): # noqa: C901
         s = self.get_session()
+        self.logger.debug(
+            "get_schema(%s) start table=%s use_dynamic_fields=%s",
+            self.name,
+            self.table,
+            self.use_dynamic_fields,
+        )
 
         try:
             if self.use_dynamic_fields:
@@ -662,7 +668,13 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
+            self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
             response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): metadata-catalog GET done status=%s",
+                self.name,
+                response.status_code,
+            )
             response.raise_for_status()
             self.schema_response = response.json()
         except:
@@ -679,6 +691,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
             self.logger.info("Fetching custom fields data")
             while offset is not None:
+                self.logger.debug(
+                    "get_schema(%s): customfield suiteql send offset=%s",
+                    self.name,
+                    offset,
+                )
                 prepared_req = s.prepare_request(
                     requests.Request(
                         method="POST",
@@ -690,6 +707,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     )
                 )
                 response = s.send(prepared_req, timeout=self.timeout)
+                self.logger.debug(
+                    "get_schema(%s): customfield suiteql done offset=%s status=%s",
+                    self.name,
+                    offset,
+                    response.status_code,
+                )
                 if response.status_code not in [200]:
                     self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
                     break
@@ -717,10 +740,24 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
 
-            response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): suiteql schema inference POST send url=%s",
+                self.name,
+                url,
+            )
 
+            response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): suiteql schema inference POST done status=%s",
+                self.name,
+                response.status_code,
+            )
             try:
                 response.raise_for_status()
+                self.logger.debug(
+                    "get_schema(%s): suiteql schema inference parsing response JSON",
+                    self.name,
+                )
                 # NOTE: this will only get fields in the first 1k records, we could still miss things
                 for item in response.json().get("items"):
                     self.fields.update(set(item.keys()))
@@ -770,6 +807,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                                 self.date_fields.append(cf)
                             elif cf_type in ["Check Box"]:
                                 self.bool_fields .append(cf)
+                self.logger.debug(
+                    "get_schema(%s): suiteql schema inference finished",
+                    self.name,
+                )
             except:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
@@ -782,7 +823,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
+            self.logger.debug("schema(%s): calling get_schema()", self.name)
             self.get_schema()
+            self.logger.debug("schema(%s): get_schema() returned", self.name)
 
         if self.fields is not None and not self.schema_response:
             fields = self.fields
