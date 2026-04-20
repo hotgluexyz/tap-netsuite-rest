@@ -35,7 +35,8 @@ class VendorCreditStream(BulkParentStream):
 
     default_fields = [
         th.Property("taxtotal", th.NumberType),
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -377,6 +378,26 @@ class VendorStream(BulkParentStream):
         }
         return {"ids": list(address_ids)}
 
+    def get_available_filters_metadata(self) -> Dict[str, Any]:
+        return {
+            "supported_operators": ["OR", "AND"],
+            "supports_nesting_clauses": True,
+            "filters": {
+                "id": {
+                    "label": "Vendor ID",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "v.id",
+                    "options": "reference_data.vendor.id",
+                },
+                "name": {
+                    "label": "Vendor Name",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "v.altname",
+                    "options": "reference_data.vendor.altname",
+                },
+            },
+        }
+
 
 # The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
 # Instead, shipping + billing address is joined on transaction streams
@@ -520,6 +541,20 @@ class LocationsStream(BulkParentStream):
             if record.get("mainaddress") is not None
             else [],
         }
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            err = str(e)
+            if "Record 'location' was not found" in err:
+                self.logger.warning(
+                    "Could not query locations: the location record type is not available in SuiteQL "
+                    "for this account (Locations feature disabled, permissions, or account type). "
+                    "Skipping the locations stream."
+                )
+                return []
+            raise
 
 
 class LocationReturnAddressStream(NetsuiteDynamicStream):
@@ -672,6 +707,7 @@ class ProfitLossReportStream(NetSuiteStream):
     ORDER BY CASE WHEN Account.AcctType = 'Income' THEN 1 WHEN Account.AcctType = 'OthIncome' THEN 2 WHEN Account.AcctType = 'COGS' THEN 3  WHEN Account.AcctType = 'Expense' THEN 4 ELSE 9 END ASC, AccountingPeriod.StartDate ASC
     """
     replication_key = "date"
+
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("accttype", th.StringType),
@@ -732,11 +768,16 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     primary_keys = ["id"]
     custom_segment_field_scriptids = None
     name = "general_ledger_report"
-    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
+    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
     table = "Transaction"
     join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
 
     entities_fallback = [
+        {
+            "name": "subsidiary",
+            "select_replace": "Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol,",
+            "join_replace": "LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)",
+        },
         {
             "name": "department",
             "select_replace": "department.id as departmentid, department.fullname as department,",
@@ -760,6 +801,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "accountingbook",
             "select_replace": ", AccountingBook.id as accountingbook",
+            "select_replace_with": ", TransactionAccountingLine.accountingBook as accountingbook",
             "join_replace": " LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook",
         },
     ]
@@ -776,8 +818,117 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
 
         return _filter
     
-    order_by = "ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
+    order_by = "ORDER BY Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
     replication_key = "date"
+
+    def get_next_page_token(self, response, previous_token):
+        """Return the next page token.
+
+        While the current date window has more pages, returns an ID cursor tuple (txn_id, line_id, book_id) to fetch the next page. 
+        We use this instead of offset pagination to be able to fetch more than 100,000 records per window. 
+        When the window is exhausted, advances query_date by one day and returns it as the token to trigger a new window.
+        Returns None when all windows are done.
+        """
+        data = response.json()
+        has_next = next(extract_jsonpath("$.hasMore", data))
+
+        if has_next:
+            return self._id_cursor_from_last_item(data.get("items", []))
+
+        self.query_date = (parse(self.end_date) + timedelta(1)).replace(tzinfo=None)
+        report_end_date = (
+            parse(self.config.get("report_end_date")).replace(tzinfo=None)
+            if self.config.get("report_end_date") else None
+        )
+        end_date = report_end_date or datetime.utcnow()
+        if self.query_date < end_date:
+            return self.query_date
+        return None
+
+    def _id_cursor_from_last_item(self, items):
+        """Build an ID cursor tuple (txn_id, line_id, book_id) from the last item in a page.
+
+        The three-part cursor matches the ORDER BY (Transaction.id, TransactionLine.id,
+TransactionAccountingLine.accountingBook) and uniquely identifies a row, since.
+        """
+        if not items:
+            self.logger.warning(f"[{self.name}] hasMore=True but response has no items; stopping pagination.")
+            return None
+        last = items[-1]
+        txn_id, line_id = last["id"].split("_", 1)
+        book_id = last.get("accountingbook")
+        return (
+            int(txn_id),
+            int(line_id),
+            int(book_id) if book_id is not None else None,
+        )
+
+    def get_url_params(self, context, next_page_token):
+        """Always fetch from offset 0; pagination position is encoded in the WHERE clause."""
+        return {"offset": 0, "limit": self.page_size}
+
+    def prepare_request_payload(self, context, next_page_token):
+        """Inject the ID cursor into the query WHERE clause when paginating within a window."""
+        payload = super().prepare_request_payload(context, next_page_token)
+        if isinstance(next_page_token, tuple):
+            payload["q"] = self._inject_id_cursor(payload["q"], next_page_token)
+        return payload
+
+    def _inject_id_cursor(self, query, cursor):
+        """Add a keyset pagination filter to the query using the given cursor.
+
+            Appends a WHERE condition that skips all rows up to and including the (cursor) tuple (txn_id, line_id, book_id),
+            so the next page continues exactly where the previous one ended. Matches the ORDER BY clause.
+        """
+        txn_id, line_id, book_id = cursor
+        self.logger.info(f"[{self.name}] Paginating with ID cursor: txn={txn_id} line={line_id} book={book_id}")
+        if book_id is not None:
+            filter_sql = (
+                f"(Transaction.id > {txn_id} "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id > {line_id}) "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id = {line_id} "
+                f"AND TransactionAccountingLine.accountingBook > {book_id}))"
+            )
+        else:
+            filter_sql = (
+                f"(Transaction.id > {txn_id} "
+                f"OR (Transaction.id = {txn_id} AND TransactionLine.id > {line_id}))"
+            )
+        order_idx = query.upper().rfind(" ORDER BY ")
+        if order_idx >= 0:
+            return query[:order_idx] + f" AND {filter_sql}" + query[order_idx:]
+        return query + f" AND {filter_sql}"
+
+    def _transaction_line_custom_segment_usable(
+        self, session: requests.Session, scriptid: str
+    ) -> bool:
+        """True if SuiteQL can read this segment on TransactionLine (same shapes as the GL SELECT).
+
+        The `customsegment` list can succeed while line-level fields still fail (role, GL impact, etc.).
+        """
+        q = (
+            f"SELECT TOP 1 TransactionLine.{scriptid}, "
+            f"BUILTIN.DF(TransactionLine.{scriptid}) "
+            f"FROM Transaction "
+            f"INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id)"
+        )
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": q},
+            )
+        )
+        prepared_req.headers.update({"Content-Type": "application/json"})
+        probe = session.send(prepared_req, timeout=self.timeout)
+        if probe.status_code == 200:
+            return True
+        self.logger.debug(
+            f"SuiteQL probe failed for TransactionLine.{scriptid} "
+            f"(status={probe.status_code}): {probe.text[:800]}"
+        )
+        return False
 
     def get_custom_segment_fields_scriptids(self):
         if self.custom_segment_field_scriptids is None:
@@ -798,13 +949,33 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
                 )
                 prepared_req.headers.update({"Content-Type": "application/json"})
                 response = s.send(prepared_req, timeout=self.timeout)
+                if response.status_code == 400:
+                    body = response.text or ""
+                    if "record 'customsegment' was not found" in body.lower():
+                        self.logger.warning(
+                            "Custom Segments are not queryable in SuiteQL for this account "
+                            "(feature disabled, role permissions, or sandbox limits). "
+                            "general_ledger_report will sync without custom segment columns."
+                        )
+                        self.custom_segment_field_scriptids = []
+                        return self.custom_segment_field_scriptids
                 response.raise_for_status()
-                custom_segment_fields = response.json().get("items", [])
-                for cs_field in custom_segment_fields:
+                raw_fields = response.json().get("items", [])
+                for cs_field in raw_fields:
                     # make it lowercase because we'll use it as db field name
                     # and the db will return it lowercase, if it's not lowercase
                     # well have problems because it won't be in the selected properties list
                     cs_field["scriptid"] = cs_field["scriptid"].lower()
+
+                for cs_field in raw_fields:
+                    scriptid = cs_field["scriptid"]
+                    if self._transaction_line_custom_segment_usable(s, scriptid):
+                        custom_segment_fields.append(cs_field)
+                    else:
+                        self.logger.warning(
+                            f"Omitting custom segment {cs_field.get('name', scriptid)!r} ({scriptid}): "
+                            "TransactionLine field / BUILTIN.DF not available in SuiteQL for this role."
+                        )
 
                 if custom_segment_fields:
                     self.select = self.select + ", " + ", ".join(f"'{cs_field['name']}' as custom_segment_{cs_field['scriptid']}, TransactionLine.{cs_field['scriptid']} as {cs_field['scriptid']}_value_id, BUILTIN.DF( TransactionLine.{cs_field['scriptid']} ) as {cs_field['scriptid']}_value_name" for cs_field in custom_segment_fields)
@@ -1168,11 +1339,16 @@ class SubsidiariesStream(BulkParentStream):
     ]
 
     default_fields = [
+        th.Property("id", th.StringType),
         th.Property("externalid", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("fullname", th.StringType),
         th.Property("returnaddress", th.StringType),
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
         th.Property("currency", th.StringType),
+        th.Property("currencyname", th.StringType),
+        th.Property("isinactive", th.BooleanType),
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -1187,6 +1363,76 @@ class SubsidiariesStream(BulkParentStream):
             if record.get("shippingaddress") is not None
             else [],
         }
+
+    def _suiteql_first_row(self, q: str) -> Optional[Dict[str, Any]]:
+        """Run SuiteQL and return the first row, or None on failure / empty."""
+        session = self.get_session()
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": q},
+            )
+        )
+        prepared_req.headers.update({"Content-Type": "application/json"})
+        response = session.send(prepared_req, timeout=self.timeout)
+        if response.status_code != 200:
+            self.logger.debug(
+                "SuiteQL probe returned %s: %s",
+                response.status_code,
+                (response.text or "")[:500],
+            )
+            return None
+        items = response.json().get("items") or []
+        if not items:
+            return None
+        return {k.lower(): v for k, v in items[0].items()}
+
+    def _non_oneworld_subsidiary_placeholder_row(self) -> Dict[str, Any]:
+        """Subsidiary list is unavailable; infer id/name from lines and currency from transactions."""
+        row: Dict[str, Any] = {
+            "returnaddress": None,
+            "mainaddress": None,
+            "shippingaddress": None,
+            "isinactive": False,
+        }
+        q = "SELECT subsidiary AS id, BUILTIN.DF(subsidiary) AS name FROM TransactionLine WHERE subsidiary IS NOT NULL"
+        line_row = self._suiteql_first_row(q)
+        if line_row:
+            row["id"] = str(line_row["id"])
+            row["name"] = line_row["name"]
+            row["fullname"] = line_row["name"]
+        else:
+            row["id"] = "1"
+            row["name"] = "Parent Subsidiary"
+            row["fullname"] = "Parent Subsidiary"
+
+        q = "SELECT currency, BUILTIN.DF(currency) AS currencyname FROM Transaction WHERE currency IS NOT NULL"
+        txn_row = self._suiteql_first_row(q)
+        if txn_row:
+            row["currency"] = str(txn_row["currency"])
+            row["currencyname"] = txn_row["currencyname"]
+        else:
+            row["currency"] = "1"
+            row["currencyname"] = "US Dollar"
+
+        return row
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            err = str(e)
+            if "Record 'subsidiary' was not found" in err:
+                self.logger.warning(
+                    "Could not query subsidiaries: OneWorld is not enabled for this account, "
+                    "so the subsidiary record type is not available in SuiteQL. "
+                    "Emitting one inferred row from TransactionLine / Transaction."
+                )
+                yield self._non_oneworld_subsidiary_placeholder_row()
+                return
+            raise
 
 
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
@@ -1886,34 +2132,70 @@ class ItemPriceStream(NetsuiteDynamicStream):
 class BillsStream(BulkParentStream):
     name = "bills"
     table = "transaction"
-    custom_filter = "type = 'VendBill'"
+    custom_filter = "transaction.type = 'VendBill'"
     replication_key = "lastmodifieddate"
+    join = "LEFT JOIN Entity ON (transaction.entity = Entity.id)"
     _select = "transaction.*, BUILTIN.DF(transaction.status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
         return {"ids": [record["id"]]}
 
+
     def prepare_request_payload(self, context, next_page_token):
         """Add Entity join and vendor name filter when filter_vendor_names is in config."""
         vendor_names = self.config.get("filter_vendor_names") or []
         if vendor_names:
-            # Join Entity so we can filter by vendor name (transaction.entity = vendor id, Entity.altname = vendor name)
-            saved_join = self.join
             saved_custom_filter = self.custom_filter
             try:
-                self.join = "LEFT JOIN Entity ON (transaction.entity = Entity.id)"
                 # Qualify type to avoid ambiguity with Entity
                 quoted = ", ".join(f"'{name.replace(chr(39), chr(39) + chr(39))}'" for name in vendor_names)
                 self.custom_filter = f"transaction.type = 'VendBill' AND Entity.altname IN ({quoted})"
                 return super().prepare_request_payload(context, next_page_token)
             finally:
-                self.join = saved_join
                 self.custom_filter = saved_custom_filter
         return super().prepare_request_payload(context, next_page_token)
+
+    def get_available_filters_metadata(self) -> Dict[str, Any]:
+        return {
+            "supported_operators": ["AND", "OR"],
+            "supports_nesting_clauses": True,
+            "filters": {
+                "vendor_id": {
+                    "label": "Bill Vendor ID",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "transaction.entity",
+                    "options": "reference_data.vendor.id",
+                },
+                "vendor_name": {
+                    "label": "Bill Vendor Name",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "Entity.altname",
+                    "options": "reference_data.vendor.altname",
+                },
+                "status": {
+                    "label": "Bill Status",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "BUILTIN.DF(transaction.status)",
+                    "options": [
+                        "Bill : Open",
+                        "Bill : Pending Approval",
+                        "Bill : Approved",
+                        "Bill : Rejected",
+                        "Bill : Paid In Full",
+                    ],
+                },
+                "memo": {
+                    "label": "Bill Memo",
+                    "supported_operators": ["EQ"],
+                    "target_field": "transaction.memo",
+                },
+            },
+        }
 
 
 class BillLinesStream(NetsuiteDynamicStream):
@@ -2215,7 +2497,8 @@ class InvoicesStream(BulkParentStream):
     default_fields = [
         th.Property("shipdate", th.DateTimeType),
         th.Property("taxtotal", th.NumberType),
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2326,7 +2609,8 @@ class ItemReceiptsStream(BulkParentStream):
     replication_key = "lastmodifieddate"
     
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2371,7 +2655,8 @@ class PurchaseOrdersStream(BulkParentStream):
     _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:
@@ -2410,7 +2695,8 @@ class SalesOrdersStream(BulkParentStream):
     _select = "*, BUILTIN.DF(status) status"
 
     default_fields = [
-        th.Property("externalid", th.StringType)
+        th.Property("externalid", th.StringType),
+        th.Property("lastmodifieddate", th.DateTimeType)
     ]
 
     def get_child_context(self, record, context) -> dict:

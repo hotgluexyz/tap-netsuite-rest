@@ -1,8 +1,8 @@
 """NetSuite tap class."""
 
-from typing import List
+from typing import List, Optional, Union
 from pathlib import PurePath
-from typing import Union, Optional
+
 from hotglue_singer_sdk import Stream, Tap
 from hotglue_singer_sdk import typing as th  # JSON schema typing helpers
 from hotglue_singer_sdk.helpers.capabilities import AlertingLevel

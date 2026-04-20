@@ -433,7 +433,8 @@ class NetSuiteStream(RESTStream):
                     if "Record \'{}\' was not found.".lower().format(entity['name']) in response.text.lower():
                         self.logger.info(f"Missing {entity['name']} permission. Retrying with updated query...")
                         if "select_replace" in entity:
-                            self.select = self.select.replace(entity['select_replace'], "")
+                            replacement = entity.get("select_replace_with", "")
+                            self.select = self.select.replace(entity['select_replace'], replacement)
                         if "join_replace" in entity:  
                             self.join = self.join.replace(entity['join_replace'], "")
                         if entity['name'] == "accountingbook":
@@ -573,6 +574,51 @@ class NetSuiteStream(RESTStream):
                 raise Exception(ValueError)
         return return_value
     
+    def _join_filters(self, filters):
+        return f"({' '.join(filters)})"
+
+    def _escape_quotes(self, value):
+        if isinstance(value, str):
+            escaped_value = value.replace("'", "''")
+            return f"'{escaped_value}'"
+        return value
+
+    def _parse_filters(self, filters):
+        parsed_filters = []
+        for key, value in filters.items():
+            if key.startswith("group_"):
+                group_filters = self._parse_filters(value)
+                if group_filters and len(group_filters) > 0:
+                    parsed_filters.append(self._join_filters(group_filters))
+            elif key.startswith("clause_"):
+                if value['operator'] == "EQ":
+                    parsed_filters.append(f"{value['field']} = {self._escape_quotes(value['value'])}")
+                elif value['operator'] == "IN":
+                    if isinstance(value['value'], list):
+                        if len(value['value']) == 0:
+                            continue
+                        filter_value = ", ".join(f"{self._escape_quotes(v)}" for v in value['value'])
+                    else:
+                        filter_value = f"{self._escape_quotes(value['value'])}"
+                    parsed_filters.append(f"{value['field']} {value['operator']} ({filter_value})")
+                else:
+                    raise ValueError(f"Unsupported operator: {value['operator']}")
+            elif key.startswith("operator_"):
+                parsed_filters.append(value)
+
+        return parsed_filters
+
+    def setup_selected_filters(self):
+        if self._selected_filters:
+            self.logger.info(f"Parsing '{self.name}' filters: {self._selected_filters}")
+            parsed_filters = self._parse_filters(self._selected_filters)
+            if parsed_filters and len(parsed_filters) > 0:
+                parsed_filters = self._join_filters(parsed_filters)
+                if self.custom_filter:
+                    self.custom_filter = f"{self.custom_filter} AND {parsed_filters}"
+                else:
+                    self.custom_filter = parsed_filters
+
 
 class NetsuiteDynamicSchema(NetSuiteStream):
     schema_response = None
@@ -598,6 +644,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     ), max_tries=5, factor=2)
     def get_schema(self): # noqa: C901
         s = self.get_session()
+        self.logger.debug(
+            "get_schema(%s) start table=%s use_dynamic_fields=%s",
+            self.name,
+            self.table,
+            self.use_dynamic_fields,
+        )
 
         try:
             if self.use_dynamic_fields:
@@ -616,7 +668,13 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
+            self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
             response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): metadata-catalog GET done status=%s",
+                self.name,
+                response.status_code,
+            )
             response.raise_for_status()
             self.schema_response = response.json()
         except:
@@ -633,6 +691,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
             self.logger.info("Fetching custom fields data")
             while offset is not None:
+                self.logger.debug(
+                    "get_schema(%s): customfield suiteql send offset=%s",
+                    self.name,
+                    offset,
+                )
                 prepared_req = s.prepare_request(
                     requests.Request(
                         method="POST",
@@ -644,6 +707,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     )
                 )
                 response = s.send(prepared_req, timeout=self.timeout)
+                self.logger.debug(
+                    "get_schema(%s): customfield suiteql done offset=%s status=%s",
+                    self.name,
+                    offset,
+                    response.status_code,
+                )
                 if response.status_code not in [200]:
                     self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
                     break
@@ -671,10 +740,24 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 )
             )
 
-            response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): suiteql schema inference POST send url=%s",
+                self.name,
+                url,
+            )
 
+            response = s.send(prepared_req, timeout=self.timeout)
+            self.logger.debug(
+                "get_schema(%s): suiteql schema inference POST done status=%s",
+                self.name,
+                response.status_code,
+            )
             try:
                 response.raise_for_status()
+                self.logger.debug(
+                    "get_schema(%s): suiteql schema inference parsing response JSON",
+                    self.name,
+                )
                 # NOTE: this will only get fields in the first 1k records, we could still miss things
                 for item in response.json().get("items"):
                     self.fields.update(set(item.keys()))
@@ -724,6 +807,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                                 self.date_fields.append(cf)
                             elif cf_type in ["Check Box"]:
                                 self.bool_fields .append(cf)
+                self.logger.debug(
+                    "get_schema(%s): suiteql schema inference finished",
+                    self.name,
+                )
             except:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
@@ -736,7 +823,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
+            self.logger.debug("schema(%s): calling get_schema()", self.name)
             self.get_schema()
+            self.logger.debug("schema(%s): get_schema() returned", self.name)
 
         if self.fields is not None and not self.schema_response:
             fields = self.fields
