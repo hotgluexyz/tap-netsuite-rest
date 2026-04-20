@@ -2455,10 +2455,12 @@ class BillAttachmentsSOAPStream(NetsuiteSOAPStream):
             "tranid": row.get("tranSales:basic", {}).get("platformCommon:tranId", {}).get("platformCore:searchValue", ""),
             "transaction": row["tranSales:basic"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
             "file_id": row["tranSales:fileJoin"]["platformCommon:internalId"]["platformCore:searchValue"]["@internalId"],
-            "file_name": row["tranSales:fileJoin"]["platformCommon:name"]["platformCore:searchValue"],
+            "file_name": row["tranSales:fileJoin"]["platformCommon:name"]["platformCore:searchValue"].replace("/", "_"),
             "file_type": file_type,
             "file_url": row["tranSales:fileJoin"]["platformCommon:url"]["platformCore:searchValue"],
         }
+
+        
 
         file_path = self.download_attachment_file(record["transaction"], record["file_id"], record["file_name"])
         record["downloaded_file"] = file_path
