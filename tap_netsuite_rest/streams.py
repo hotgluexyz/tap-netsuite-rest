@@ -378,6 +378,26 @@ class VendorStream(BulkParentStream):
         }
         return {"ids": list(address_ids)}
 
+    def get_available_filters_metadata(self) -> Dict[str, Any]:
+        return {
+            "supported_operators": ["OR", "AND"],
+            "supports_nesting_clauses": True,
+            "filters": {
+                "id": {
+                    "label": "Vendor ID",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "v.id",
+                    "options": "reference_data.vendor.id",
+                },
+                "name": {
+                    "label": "Vendor Name",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "v.altname",
+                    "options": "reference_data.vendor.altname",
+                },
+            },
+        }
+
 
 # The following streams were removed because they are not documented by Netsuite nor well behaved with keys:
 # Instead, shipping + billing address is joined on transaction streams
@@ -2139,6 +2159,43 @@ class BillsStream(BulkParentStream):
             finally:
                 self.custom_filter = saved_custom_filter
         return super().prepare_request_payload(context, next_page_token)
+
+    def get_available_filters_metadata(self) -> Dict[str, Any]:
+        return {
+            "supported_operators": ["AND", "OR"],
+            "supports_nesting_clauses": True,
+            "filters": {
+                "vendor_id": {
+                    "label": "Bill Vendor ID",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "transaction.entity",
+                    "options": "reference_data.vendor.id",
+                },
+                "vendor_name": {
+                    "label": "Bill Vendor Name",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "Entity.altname",
+                    "options": "reference_data.vendor.altname",
+                },
+                "status": {
+                    "label": "Bill Status",
+                    "supported_operators": ["IN", "EQ"],
+                    "target_field": "BUILTIN.DF(transaction.status)",
+                    "options": [
+                        "Bill : Open",
+                        "Bill : Pending Approval",
+                        "Bill : Approved",
+                        "Bill : Rejected",
+                        "Bill : Paid In Full",
+                    ],
+                },
+                "memo": {
+                    "label": "Bill Memo",
+                    "supported_operators": ["EQ"],
+                    "target_field": "transaction.memo",
+                },
+            },
+        }
 
 
 class BillLinesStream(NetsuiteDynamicStream):
