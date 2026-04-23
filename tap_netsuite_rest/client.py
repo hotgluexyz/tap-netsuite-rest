@@ -189,7 +189,7 @@ class NetSuiteStream(RESTStream):
                 (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
                 and self.config.get("transaction_lines_monthly")
                 and self.replication_key
-                and totalResults > self.cap_total_results
+                and totalResults > 10000
             ):
                 self.logger.info(
                     f"totalResults = {totalResults}, time_jump = {self.time_jump}"
