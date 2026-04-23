@@ -165,7 +165,7 @@ class NetSuiteStream(RESTStream):
             if (
                 not self.config.get("transaction_lines_monthly")
                 and self.name == "transaction_lines"
-                and offset == self.cap_total_results
+                and offset >= self.cap_total_results
             ):
                 if self.replication_key:
                     json_path = f"$.items[-1].{self.replication_key}"
