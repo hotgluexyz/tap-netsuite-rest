@@ -52,6 +52,7 @@ class NetSuiteStream(RESTStream):
     records_jsonpath = "$.items[*]"
     type_filter = None
     page_size = 1000
+    cap_total_results = 100_000
     path = None
     rest_method = "POST"
     query_date = None
@@ -156,11 +157,34 @@ class NetSuiteStream(RESTStream):
         totalResults = next(extract_jsonpath("$.totalResults", response.json()))
         self.logger.info(f"[{self.name}] Total results = {totalResults}. Offset = {offset}")
 
-        if not self.stream_state.get("replication_key") and self.name == "inventory_item_locations" and totalResults > 100_000:
+        if not self.stream_state.get("replication_key") and self.name == "inventory_item_locations" and totalResults > self.cap_total_results:
             # NOTE: this is to avoid a case where we miss data, better to report an error than to miss data
-            raise Exception("totalResults is greater than 100,000 records. This should not happen.")
+            raise Exception(f"totalResults is greater than {self.cap_total_results} records. This should not happen.")
 
         if has_next:
+            if (
+                not self.config.get("transaction_lines_monthly")
+                and self.name == "transaction_lines"
+                and offset >= self.cap_total_results
+            ):
+                if self.replication_key:
+                    json_path = f"$.items[-1].{self.replication_key}"
+                    last_dt = next(extract_jsonpath(json_path, response.json()))
+                    try:
+                        self.query_date = pendulum.parse(last_dt).subtract(seconds=1)
+                    except Exception:
+                        self.query_date = datetime.strptime(last_dt, "%d/%m/%Y") - timedelta(seconds=1)
+                    self.logger.warning(
+                        f"[{self.name}] Offset regressed ({offset} -> 0); "
+                        f"advancing replication boundary to {self.query_date} and resetting offset."
+                    )
+                    return 0
+
+                raise RuntimeError(
+                    f"[{self.name}] Offset regressed ({offset} -> 0) "
+                    "without replication key; aborting to avoid infinite loop."
+                )
+
             if (
                 (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream))
                 and self.config.get("transaction_lines_monthly")
@@ -217,13 +241,13 @@ class NetSuiteStream(RESTStream):
                     return 0
                 else:
                     self.logger.error(
-                        "Even with minimum delta we are getting more than 100k records! We will likely infinite loop."
+                        f"Even with minimum delta we are getting more than {self.cap_total_results} records! We will likely infinite loop."
                     )
 
             return offset
 
         if not self.stream_state.get("replication_key") and self.name == "inventory_item_locations" and not has_next:
-            max_item_value = 100_000 # TODO: this probably should be more dynamic
+            max_item_value = self.cap_total_results # TODO: this probably should be more dynamic
             interval_increment = 2500 # TODO: maybe we should lower this even further or make it dynamic
             # in the case we need to keep iterating, we should increment
             if self.custom_filter == f"item >= {max_item_value}":
@@ -315,7 +339,7 @@ class NetSuiteStream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        params["offset"] = (next_page_token or 0) % 100000
+        params["offset"] = (next_page_token or 0) % self.cap_total_results
         params["limit"] = self.page_size
         return params
 
