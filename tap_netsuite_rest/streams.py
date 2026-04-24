@@ -650,6 +650,19 @@ class ClassificationStream(NetSuiteStream):
         th.Property("externalid", th.StringType),
     ).to_dict()
 
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if "Record 'classification' was not found" in str(e):
+                self.logger.warning(
+                    "Could not query classification: the classification record type is not available "
+                    "in SuiteQL for this account (Classes feature disabled or permissions). "
+                    "Skipping the classification stream."
+                )
+                return
+            raise
+
 
 class InventoryItemLocationsStream(NetSuiteStream):
     name = "inventory_item_locations"
@@ -789,7 +802,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         {
             "name": "classification",
             "select_replace": "Classification.id as classid, Classification.name as class,",
-            "join_replace": "LEFT JOIN Classification On (Transactionline.class = Classification.id)",
+            "join_replace": "LEFT JOIN Classification ON (Transactionline.class = Classification.id)",
         },
         {
             "name": "location",
@@ -1332,6 +1345,19 @@ class DepartmentsStream(NetsuiteDynamicStream):
     name = "departments"
     primary_keys = ["id"]
     table = "department"
+
+    def request_records(self, context: Optional[dict]) -> Iterable[dict]:
+        try:
+            yield from super().request_records(context)
+        except Exception as e:
+            if "Record 'department' was not found" in str(e):
+                self.logger.warning(
+                    "Could not query departments: the department record type is not available "
+                    "in SuiteQL for this account (Departments feature disabled or permissions). "
+                    "Skipping the departments stream."
+                )
+                return
+            raise
 
 
 class SubsidiariesStream(BulkParentStream):
