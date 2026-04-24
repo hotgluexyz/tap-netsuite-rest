@@ -39,7 +39,8 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
 class RetryRequest(Exception):
-    pass  
+    pass
+
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
 
