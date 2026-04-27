@@ -162,10 +162,9 @@ class NetSuiteStream(RESTStream):
             raise Exception(f"totalResults is greater than {self.cap_total_results} records. This should not happen.")
 
         if has_next:
-            if (
-                not self.config.get("transaction_lines_monthly")
-                and self.name == "transaction_lines"
-                and offset >= self.cap_total_results
+            if offset >= self.cap_total_results and (
+                (self.name == "transaction_lines" or self.name == "transactions") 
+                and not self.config.get("transaction_lines_monthly")
             ):
                 if self.replication_key:
                     json_path = f"$.items[-1].{self.replication_key}"
