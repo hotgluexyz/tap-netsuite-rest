@@ -678,6 +678,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             response.raise_for_status()
             self.schema_response = response.json()
+        except requests.exceptions.ConnectionError as e:
+            if "NameResolutionError" in str(e) or "Failed to resolve" in str(e) or "nodename nor servname" in str(e):
+                raise InvalidCredentialsError(
+                    f"Please verify your account ID is correct. "
+                    f"Error: {str(e)}"
+                ) from e
+            pass
+
         except:
             pass
         
