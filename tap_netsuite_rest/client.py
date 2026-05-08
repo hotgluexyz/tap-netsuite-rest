@@ -637,14 +637,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    def get_schema(self):
-        try:
-            self._get_schema()
-        except requests.exceptions.ConnectionError as e:
-            if not self._tap.dns_checked:
-                check_netsuite_dns_failure(e)
-            raise
-
     @backoff.on_exception(backoff.expo, (
         HTTPError,
         RetriableAPIError,
@@ -652,7 +644,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
     ), max_tries=5, factor=2)
-    def _get_schema(self): 
+    def get_schema(self): # noqa: C901
         s = self.get_session()
         self.logger.debug(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
@@ -688,7 +680,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             response.raise_for_status()
             self.schema_response = response.json()
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as e:
+            if not self._tap.dns_checked:
+                check_netsuite_dns_failure(e)
             raise
 
         except:
