@@ -33,6 +33,7 @@ from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
 from hotglue_etl_exceptions import InvalidCredentialsError
+from tap_netsuite_rest.utils import check_netsuite_dns_failure
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -636,34 +637,13 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def _check_netsuite_dns_failure(e):
-        """Walk the exception chain to detect if a ConnectionError is caused by
-        a NameResolutionError targeting the NetSuite suitetalk domain, which
-        indicates an invalid account ID rather than a transient network issue.
-        Raises InvalidCredentialsError if so."""
-        # requests raises `ConnectionError(e, request=request)` without `from e`,
-        # so __cause__ is None — the wrapped exception is only in __context__.
-        # We walk both __cause__ and __context__ to find NameResolutionError.
-        seen = set()
-        queue = [e]
-        while queue:
-            current = queue.pop(0)
-            if id(current) in seen:
-                continue
-            seen.add(id(current))
-            if type(current).__name__ == "NameResolutionError":
-                failed_host = getattr(current, "_host", "") or ""
-                if "suitetalk.api.netsuite.com" in failed_host:
-                    raise InvalidCredentialsError(
-                        f"Please verify your account ID is correct. "
-                        f"Error: {str(e)}"
-                    ) from e
-                return
-            if getattr(current, "__cause__", None) is not None:
-                queue.append(current.__cause__)
-            if getattr(current, "__context__", None) is not None:
-                queue.append(current.__context__)
+    def get_schema(self):
+        try:
+            self._get_schema()
+        except requests.exceptions.ConnectionError as e:
+            if not self._tap.dns_checked:
+                check_netsuite_dns_failure(e)
+            raise
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -672,7 +652,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
     ), max_tries=5, factor=2)
-    def get_schema(self): # noqa: C901
+    def _get_schema(self): 
         s = self.get_session()
         self.logger.debug(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
@@ -700,6 +680,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             prepared_req.headers.update({"Accept": "application/schema+json"})
             self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
             response = s.send(prepared_req, timeout=self.timeout)
+            self._tap.dns_checked = True
             self.logger.debug(
                 "get_schema(%s): metadata-catalog GET done status=%s",
                 self.name,
@@ -707,9 +688,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             response.raise_for_status()
             self.schema_response = response.json()
-        except requests.exceptions.ConnectionError as e:
-            self._check_netsuite_dns_failure(e)
-            pass
+        except requests.exceptions.ConnectionError:
+            raise
 
         except:
             pass
@@ -740,11 +720,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                         }
                     )
                 )
-                try:
-                    response = s.send(prepared_req, timeout=self.timeout)
-                except requests.exceptions.ConnectionError as e:
-                    self._check_netsuite_dns_failure(e)
-                    raise
+                response = s.send(prepared_req, timeout=self.timeout)
                 self.logger.debug(
                     "get_schema(%s): customfield suiteql done offset=%s status=%s",
                     self.name,
@@ -784,11 +760,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 url,
             )
 
-            try:
-                response = s.send(prepared_req, timeout=self.timeout)
-            except requests.exceptions.ConnectionError as e:
-                self._check_netsuite_dns_failure(e)
-                raise
+            response = s.send(prepared_req, timeout=self.timeout)
             self.logger.debug(
                 "get_schema(%s): suiteql schema inference POST done status=%s",
                 self.name,
