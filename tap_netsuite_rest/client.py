@@ -683,7 +683,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         except requests.exceptions.ConnectionError as e:
             if not self._tap.dns_checked:
                 check_netsuite_dns_failure(e)
-            raise
+            pass
 
         except:
             pass
