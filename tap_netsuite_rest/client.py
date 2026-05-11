@@ -33,6 +33,7 @@ from hotglue_singer_sdk.exceptions import InvalidStreamSortException
 import singer
 from singer import StateMessage
 from hotglue_etl_exceptions import InvalidCredentialsError
+from tap_netsuite_rest.utils import check_netsuite_dns_failure
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -671,6 +672,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             prepared_req.headers.update({"Accept": "application/schema+json"})
             self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
             response = s.send(prepared_req, timeout=self.timeout)
+            self._tap.dns_checked = True
             self.logger.debug(
                 "get_schema(%s): metadata-catalog GET done status=%s",
                 self.name,
@@ -678,6 +680,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             response.raise_for_status()
             self.schema_response = response.json()
+        except requests.exceptions.ConnectionError as e:
+            if not self._tap.dns_checked:
+                check_netsuite_dns_failure(e)
+            pass
+
         except:
             pass
         

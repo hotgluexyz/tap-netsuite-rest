@@ -54,6 +54,7 @@ class TapNetSuite(Tap):
 
     name = "tap-netsuite-rest"
     custom_fields = None
+    dns_checked = False
     alerting_level = AlertingLevel.ERROR
 
     config_jsonschema = th.PropertiesList(
