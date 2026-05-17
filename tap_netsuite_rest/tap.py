@@ -8,6 +8,7 @@ from hotglue_singer_sdk import typing as th  # JSON schema typing helpers
 from hotglue_singer_sdk.helpers.capabilities import AlertingLevel
 
 import inspect 
+import requests
 
 from tap_netsuite_rest import streams
 from tap_netsuite_rest.client_soap import NetsuiteSOAPClient
@@ -54,8 +55,10 @@ class TapNetSuite(Tap):
 
     name = "tap-netsuite-rest"
     custom_fields = None
-    dns_checked = False
     alerting_level = AlertingLevel.ERROR
+    exception_alerting_level_map = {
+        requests.exceptions.ConnectionError: AlertingLevel.NONE,
+    }
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
