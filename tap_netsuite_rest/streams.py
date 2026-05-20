@@ -822,7 +822,7 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
         },
         {
             "name": "employee",
-            "select_replace": ", Employee.name as employee",
+            "select_replace": ", Employee.entityid as employee",
             "join_replace": "LEFT JOIN Employee ON (Transaction.employee = Employee.id)",
         }
     ]
