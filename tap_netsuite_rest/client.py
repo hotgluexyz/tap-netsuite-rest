@@ -119,6 +119,28 @@ class NetSuiteStream(RESTStream):
             signature_method=oauth1.SIGNATURE_HMAC_SHA256,
         )
 
+    def _probe_table_name(self) -> Optional[str]:
+        """Return base SuiteQL table name to probe, or None if probing should be skipped."""
+        if getattr(self, "name", None) == "bill_attachments":
+            return None
+
+        table = getattr(self, "table", None)
+        return table
+
+    def probe_table_access(self, table: str) -> bool:
+        """Return True if a minimal SuiteQL query against table succeeds."""
+        session = self.get_session()
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": f"SELECT * FROM {table}"},
+            )
+        )
+        response = session.send(prepared_req, timeout=self.timeout)
+        return response.status_code == 200
+
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> requests.PreparedRequest:
