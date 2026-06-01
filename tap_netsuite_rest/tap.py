@@ -99,7 +99,7 @@ class TapNetSuite(Tap):
         """Return a list of discovered streams."""
         streams = streams_to_sync(self, include_streams, ignore_streams)
         # flag add for test back compatibility also not run probe table during get, only during discover
-        if not self.config.get("remove_unauthorized_streams") or not self.input_catalog:
+        if not self.config.get("remove_unauthorized_streams") or self.input_catalog:
             return streams
 
         accessible = []
