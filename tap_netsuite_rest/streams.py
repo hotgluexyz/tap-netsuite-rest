@@ -781,9 +781,9 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
     primary_keys = ["id"]
     custom_segment_field_scriptids = None
     name = "general_ledger_report"
-    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate"
+    select = "Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid, COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname, LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname) as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type, LineEntity.Type) as entitytype, (Transaction.id || '_' || TransactionLine.id) AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as transactiontype, TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') as date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN 'Credit' ELSE 'Debit' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit creditamount, TransactionAccountingLine.debit debitamount, department.id as departmentid, department.fullname as department, TransactionLine.location as locationid, Location.name as locationname, Subsidiary.currency currencyid, Subsidiary.fullname as subsidiary, Currency.name as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid, TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary as subsidiaryid, Classification.id as classid, Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, 'YYYY-MM-DD HH24:MI:SS') ELSE TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname, TO_CHAR(AccountingPeriod.StartDate, 'YYYY-MM-DD HH24:MI:SS') as startdate, TO_CHAR(AccountingPeriod.EndDate, 'YYYY-MM-DD HH24:MI:SS') as enddate, Transaction.employee as employeeid, Employee.entityid as employee"
     table = "Transaction"
-    join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id)"
+    join = "INNER JOIN TransactionLine ON (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency) LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT JOIN Location ON (Transactionline.location = Location.id) LEFT JOIN Employee ON (Transaction.employee = Employee.id)"
     order_by = "ORDER BY Transaction.id ASC, TransactionLine.id ASC, TransactionAccountingLine.accountingBook ASC"
     replication_key = "postingdate"
 
@@ -820,6 +820,11 @@ class GeneralLedgerReportStream(ProfitLossReportStream):
             "select_replace_with": ", TransactionAccountingLine.accountingBook as accountingbook",
             "join_replace": " LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook",
         },
+        {
+            "name": "employee",
+            "select_replace": ", Employee.entityid as employee",
+            "join_replace": "LEFT JOIN Employee ON (Transaction.employee = Employee.id)",
+        }
     ]
 
     def gl_use_only_primary_accounting_book(self):
@@ -1053,6 +1058,8 @@ TransactionAccountingLine.accountingBook) and uniquely identifies a row, since.
             th.Property("exchangerate", th.StringType),
             th.Property("transactioncurrencyid", th.StringType),
             th.Property("accountingbook", th.StringType),
+            th.Property("employee", th.StringType),
+            th.Property("employeeid", th.StringType),
         )
 
         custom_segment_fields_scriptids = self.get_custom_segment_fields_scriptids()
@@ -2927,3 +2934,40 @@ class CustomSegmentValuesStream(NetsuiteDynamicStream):
                 self.logger.warning(f"The current user doesn't have permissions to fetch custom segment values for {scriptid}: {e}")
                 return []
             raise
+
+
+class EntityStatusStream(NetsuiteDynamicStream):
+    name = "entity_statuses"
+    primary_keys = ["key"]
+    table = "entitystatus"
+
+
+class ContactsStream(NetsuiteDynamicStream):
+    name = "contacts"
+    primary_keys = ["id"]
+    table = "contact"
+    replication_key = "lastmodifieddate"
+
+
+class EntityGroupsStream(NetsuiteDynamicStream):
+    name = "entity_groups"
+    primary_keys = ["id"]
+    table = "entitygroup"
+    replication_key = "lastmodifieddate"
+
+    default_fields = [
+        th.Property("lastmodifieddate", th.DateTimeType)
+    ]
+
+
+class PartnersStream(NetsuiteDynamicStream):
+    name = "partners"
+    primary_keys = ["id"]
+    table = "partner"
+    replication_key = "lastmodifieddate"
+
+
+class JobTypesStream(NetsuiteDynamicStream):
+    name = "job_types"
+    primary_keys = ["id"]
+    table = "jobtype"

@@ -120,6 +120,46 @@ class NetSuiteStream(RESTStream):
             signature_method=oauth1.SIGNATURE_HMAC_SHA256,
         )
 
+    def _probe_table_name(self) -> Optional[str]:
+        """Return base SuiteQL table name to probe, or None if probing should be skipped."""
+        if getattr(self, "name", None) == "bill_attachments":
+            return None
+
+        table = getattr(self, "table", None)
+        return table
+
+    @backoff.on_exception(
+        backoff.expo,
+        (
+            (
+                requests.exceptions.Timeout,
+                requests.exceptions.ConnectionError,
+                RemoteDisconnected,
+                RetriableAPIError,
+            )
+        ),
+        max_tries=5,
+        factor=2,
+    )
+    def probe_table_access(self, table: str) -> bool:
+        """Return True if a minimal SuiteQL query against table succeeds."""
+        session = self.get_session()
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": f"SELECT * FROM {table}"},
+            )
+        )
+        try:
+            response = session.send(prepared_req, timeout=self.timeout)
+            self.validate_response(response)
+            return response.status_code == 200
+        except Exception as e:
+            self.logger.error(f"Error probing table {table}: {e}")
+            return False
+
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> requests.PreparedRequest:
@@ -265,7 +305,6 @@ class NetSuiteStream(RESTStream):
                 self.custom_filter = f"item >= {min_value + interval_increment} AND item < {max_value + interval_increment}"
 
             return 0
-
 
         if (
             (isinstance(self, TransactionRootStream) or isinstance(self, BulkParentStream)) 
@@ -464,7 +503,7 @@ class NetSuiteStream(RESTStream):
                         if entity['name'] == "accountingbook":
                             self.gl_use_only_primary_accounting_book = lambda: False
                         raise RetryRequest(response.text)
-                    
+
             if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
                 error_details = response.json()["o:errorDetails"][0]["detail"]
                 # Extract all field names from error message and drop it from the select
@@ -479,10 +518,10 @@ class NetSuiteStream(RESTStream):
                 if self.invalid_fields:
                     self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
                     raise RetryRequest(response.text)
-        
+
         if response.status_code == 401:
             raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
-        
+
         if 500 <= response.status_code < 600 or response.status_code in [429]:
             msg = (
                 f"{response.status_code} Server Error: "
@@ -539,7 +578,7 @@ class NetSuiteStream(RESTStream):
 
         while not finished:
             resp = decorated_request(context, next_page_token)
-            
+
             # store primary keys to avoid duplicated records if primary keys is available
             for row in self.parse_response(resp):
                 # need to use final_row otherwise the pk may be missing
@@ -565,7 +604,7 @@ class NetSuiteStream(RESTStream):
                 )
             # Cycle until get_next_page_token() no longer returns a value
             finished = next_page_token is None
-    
+
     def _write_state_message(self) -> None:
         """Write out a STATE message with the latest state."""
         tap_state = self.tap_state
@@ -576,7 +615,7 @@ class NetSuiteStream(RESTStream):
                     tap_state["bookmarks"][stream_name]["partitions"] = []
 
         singer.write_message(StateMessage(value=tap_state))
-    
+
     def process_number(self, field, value):
         return_value = value
         # Attempt to cast to float only if the value is a string with decimals
@@ -597,7 +636,7 @@ class NetSuiteStream(RESTStream):
                 self.logger.error(f"Could not cast {field} : `{value}` to integer")
                 raise Exception(ValueError)
         return return_value
-    
+
     def _join_filters(self, filters):
         return f"({' '.join(filters)})"
 
