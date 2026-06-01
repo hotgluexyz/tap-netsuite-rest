@@ -59,7 +59,6 @@ class TapNetSuite(Tap):
     exception_alerting_level_map = {
         requests.exceptions.ConnectionError: AlertingLevel.NONE,
     }
-    is_discover = False
 
     config_jsonschema = th.PropertiesList(
         th.Property("ns_account", th.StringType, required=True),
