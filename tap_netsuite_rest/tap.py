@@ -99,7 +99,7 @@ class TapNetSuite(Tap):
         """Return a list of discovered streams."""
         streams = streams_to_sync(self, include_streams, ignore_streams)
         # flag add for test back compatibility also not run probe table during get, only during discover
-        if not self.config.get("remove_unauthorized_streams") or not self.is_discover:
+        if not self.config.get("remove_unauthorized_streams") or not self.input_catalog:
             return streams
 
         accessible = []
@@ -130,15 +130,6 @@ class TapNetSuite(Tap):
                 )
 
         return accessible
-    
-    def run_discovery(self) -> str:
-        """Write the catalog json to STDOUT and return as a string.
-
-        Returns:
-            The catalog as a string of JSON.
-        """
-        self.is_discover = True
-        super().run_discovery()
 
 if __name__ == "__main__":
     TapNetSuite.cli()
