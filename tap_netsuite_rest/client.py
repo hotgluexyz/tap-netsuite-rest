@@ -421,12 +421,12 @@ class NetSuiteStream(RESTStream):
         prefix = self.select_prefix or self.table
         return f"{prefix}.{field_name} AS {field_name}"
 
-    def _probe_suiteql_select(
+    def _suiteql_probe_response(
         self, select_exprs: List[str], where: Optional[str] = None
-    ) -> bool:
-        """Return True when a minimal SuiteQL query with the given SELECT succeeds."""
+    ) -> Optional[requests.Response]:
+        """Run a minimal SuiteQL probe query and return the response, if any."""
         if not select_exprs:
-            return False
+            return None
         session = self.get_session()
         table = self.query_table or self.table
         query = f"SELECT {', '.join(select_exprs)} FROM {table}"
@@ -441,17 +441,7 @@ class NetSuiteStream(RESTStream):
             )
         )
         try:
-            response = session.send(prepared_req, timeout=self.timeout)
-            if response.status_code == 200:
-                return True
-            self.logger.debug(
-                "SuiteQL field probe returned %s for stream %s: %s; response: %s",
-                response.status_code,
-                self.name,
-                query,
-                (response.text or "")[:500],
-            )
-            return False
+            return session.send(prepared_req, timeout=self.timeout)
         except Exception as exc:
             self.logger.debug(
                 "SuiteQL field probe failed for stream %s: %s; error: %s",
@@ -459,7 +449,50 @@ class NetSuiteStream(RESTStream):
                 query,
                 exc,
             )
+            return None
+
+    def _probe_suiteql_select(
+        self, select_exprs: List[str], where: Optional[str] = None
+    ) -> bool:
+        """Return True when a minimal SuiteQL query with the given SELECT succeeds."""
+        response = self._suiteql_probe_response(select_exprs, where)
+        if response is not None and response.status_code == 200:
+            return True
+        if response is not None:
+            self.logger.debug(
+                "SuiteQL field probe returned %s for stream %s; response: %s",
+                response.status_code,
+                self.name,
+                (response.text or "")[:500],
+            )
+        return False
+
+    def _probe_suiteql_field_is_invalid(
+        self, field_name: str, where: Optional[str] = None
+    ) -> Optional[bool]:
+        """Return True if the field is invalid, False if valid, None if inconclusive."""
+        response = self._suiteql_probe_response(
+            [self._field_name_to_select_expr(field_name)],
+            where=where,
+        )
+        if response is None:
+            return None
+        if response.status_code == 200:
             return False
+        if response.status_code == 400 and self._extract_invalid_suiteql_fields_from_400(
+            response
+        ):
+            return True
+        if response.status_code == 500 and "UNEXPECTED_ERROR" in response.text:
+            return True
+        self.logger.debug(
+            "SuiteQL field probe inconclusive for %s on stream %s: status=%s; response: %s",
+            field_name,
+            self.name,
+            response.status_code,
+            (response.text or "")[:500],
+        )
+        return None
 
     def _selected_field_names(self, select_all_by_default: bool = False) -> List[str]:
         """Return catalog field names that would be included in a dynamic SuiteQL SELECT."""
@@ -491,10 +524,13 @@ class NetSuiteStream(RESTStream):
             return False
 
         for field_name in field_names:
-            if not self._probe_suiteql_select(
-                [self._field_name_to_select_expr(field_name)],
+            field_invalid = self._probe_suiteql_field_is_invalid(
+                field_name,
                 where=sanity_where,
-            ):
+            )
+            if field_invalid is None:
+                return False
+            if field_invalid:
                 self.invalid_fields.append(field_name)
                 self.logger.info(
                     "Field %s causes SuiteQL errors on stream %s, skipping it from the query",
