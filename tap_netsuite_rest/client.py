@@ -429,7 +429,8 @@ class NetSuiteStream(RESTStream):
             return None
         session = self.get_session()
         table = self.query_table or self.table
-        query = f"SELECT {', '.join(select_exprs)} FROM {table}"
+        join = self.join if self.join else ""
+        query = f"SELECT {', '.join(select_exprs)} FROM {table} {join}"
         if where:
             query += f" WHERE {where}"
         prepared_req = session.prepare_request(
@@ -479,10 +480,10 @@ class NetSuiteStream(RESTStream):
             return None
         if response.status_code == 200:
             return False
-        if response.status_code == 400 and self._extract_invalid_suiteql_fields_from_400(
-            response
-        ):
-            return True
+        if response.status_code == 400:
+            invalid_names = self._extract_invalid_suiteql_fields_from_400(response)
+            if field_name.lower() in invalid_names:
+                return True
         if response.status_code == 500 and "UNEXPECTED_ERROR" in response.text:
             return True
         self.logger.debug(
@@ -513,10 +514,13 @@ class NetSuiteStream(RESTStream):
         # sanity check to make sure the stream is accessible
         sanity_select = [f"{prefix}.id AS id"]
         sanity_where = self.custom_filter or None
+        probe_where = sanity_where
         if not self._probe_suiteql_select(sanity_select, where=sanity_where):
-            if sanity_where and not self._probe_suiteql_select(sanity_select):
-                return False
-            if not sanity_where:
+            if sanity_where:
+                if not self._probe_suiteql_select(sanity_select):
+                    return False
+                probe_where = None
+            else:
                 return False
 
         field_names = self._selected_field_names()
@@ -526,7 +530,7 @@ class NetSuiteStream(RESTStream):
         for field_name in field_names:
             field_invalid = self._probe_suiteql_field_is_invalid(
                 field_name,
-                where=sanity_where,
+                where=probe_where,
             )
             if field_invalid is None:
                 return False
