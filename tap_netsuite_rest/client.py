@@ -43,7 +43,9 @@ class RetryRequest(Exception):
 
 
 # REST metadata fields that are not safe to include in SuiteQL SELECT clauses.
-SUITEQL_EXCLUDED_FIELDS = frozenset({"links", "refname", "classtranslation"})
+SUITEQL_EXCLUDED_FIELDS = frozenset(
+    {"links", "refname", "classtranslation", "currencyname"}
+)
 
 
 class NetSuiteStream(RESTStream):
