@@ -1388,7 +1388,6 @@ class SubsidiariesStream(BulkParentStream):
         th.Property("email", th.StringType),
         th.Property("url", th.StringType),
         th.Property("currency", th.StringType),
-        th.Property("currencyname", th.StringType),
         th.Property("isinactive", th.BooleanType),
     ]
 
