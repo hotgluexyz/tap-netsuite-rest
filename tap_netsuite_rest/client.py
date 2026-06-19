@@ -533,7 +533,7 @@ class NetSuiteStream(RESTStream):
                 where=probe_where,
             )
             if field_invalid is None:
-                return False
+                continue
             if field_invalid:
                 self.invalid_fields.append(field_name)
                 self.logger.info(
