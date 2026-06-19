@@ -553,10 +553,18 @@ class NetSuiteStream(RESTStream):
             or "Invalid search query" in response.text
         ):
             error_details = response.json()["o:errorDetails"][0]["detail"]
-            return [
+            field_names = [
                 match.group(1).lower()
                 for match in re.finditer(r"(?i)field '(\w+)'", error_details)
             ]
+            if field_names:
+                return field_names
+            unknown_in_detail = re.search(
+                r"Unknown identifier '([^']+)'",
+                error_details,
+            )
+            if unknown_in_detail:
+                return [unknown_in_detail.group(1).lower()]
 
         unknown_identifier = re.search(
             r"Unknown identifier '([^']+)'",
