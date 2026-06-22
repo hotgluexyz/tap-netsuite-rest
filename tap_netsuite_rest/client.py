@@ -41,6 +41,13 @@ logging.getLogger("backoff").setLevel(logging.CRITICAL)
 class RetryRequest(Exception):
     pass
 
+
+# REST metadata fields that are not safe to include in SuiteQL SELECT clauses.
+SUITEQL_EXCLUDED_FIELDS = frozenset(
+    {"links", "refname", "classtranslation", "currencyname"}
+)
+
+
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
 
@@ -408,10 +415,196 @@ class NetSuiteStream(RESTStream):
         prefix = self.select_prefix or self.table
         return f"TO_CHAR ({prefix}.{field_name}, 'YYYY-MM-DD HH24:MI:SS') AS {field_name}"
 
+    def _field_name_to_select_expr(self, field_name: str) -> str:
+        """Build a single-field SuiteQL SELECT expression for the given schema field."""
+        field_type = self.schema["properties"].get(field_name) or {}
+        if field_type.get("format") == "date-time":
+            return self.format_date_query(field_name)
+        prefix = self.select_prefix or self.table
+        return f"{prefix}.{field_name} AS {field_name}"
+
+    def _suiteql_probe_response(
+        self, select_exprs: List[str], where: Optional[str] = None
+    ) -> Optional[requests.Response]:
+        """Run a minimal SuiteQL probe query and return the response, if any."""
+        if not select_exprs:
+            return None
+        session = self.get_session()
+        table = self.query_table or self.table
+        join = self.join if self.join else ""
+        query = f"SELECT {', '.join(select_exprs)} FROM {table} {join}"
+        if where:
+            query += f" WHERE {where}"
+        prepared_req = session.prepare_request(
+            requests.Request(
+                method="POST",
+                url=f"{self.url_base}?limit=1",
+                headers=self.http_headers,
+                json={"q": query},
+            )
+        )
+        try:
+            return session.send(prepared_req, timeout=self.timeout)
+        except Exception as exc:
+            self.logger.debug(
+                "SuiteQL field probe failed for stream %s: %s; error: %s",
+                self.name,
+                query,
+                exc,
+            )
+            return None
+
+    def _probe_suiteql_select(
+        self, select_exprs: List[str], where: Optional[str] = None
+    ) -> bool:
+        """Return True when a minimal SuiteQL query with the given SELECT succeeds."""
+        response = self._suiteql_probe_response(select_exprs, where)
+        if response is not None and response.status_code == 200:
+            return True
+        if response is not None:
+            self.logger.debug(
+                "SuiteQL field probe returned %s for stream %s; response: %s",
+                response.status_code,
+                self.name,
+                (response.text or "")[:500],
+            )
+        return False
+
+    def _probe_suiteql_field_is_invalid(
+        self, field_name: str, where: Optional[str] = None
+    ) -> Optional[bool]:
+        """Return True if the field is invalid, False if valid, None if inconclusive."""
+        response = self._suiteql_probe_response(
+            [self._field_name_to_select_expr(field_name)],
+            where=where,
+        )
+        if response is None:
+            return None
+        if response.status_code == 200:
+            return False
+        if response.status_code == 400:
+            invalid_names = self._extract_invalid_suiteql_fields_from_400(response)
+            if field_name.lower() in invalid_names:
+                return True
+        if response.status_code == 500 and "UNEXPECTED_ERROR" in response.text:
+            return True
+        self.logger.debug(
+            "SuiteQL field probe inconclusive for %s on stream %s: status=%s; response: %s",
+            field_name,
+            self.name,
+            response.status_code,
+            (response.text or "")[:500],
+        )
+        return None
+
+    def _selected_field_names(self, select_all_by_default: bool = False) -> List[str]:
+        """Return catalog field names that would be included in a dynamic SuiteQL SELECT."""
+        return [
+            key[1]
+            for key, value in self.metadata.items()
+            if isinstance(key, tuple)
+            and len(key) == 2
+            and (value.selected if not select_all_by_default else True)
+            and key[1] not in self.invalid_fields
+            and key[1] not in SUITEQL_EXCLUDED_FIELDS
+        ]
+
+    def _identify_and_skip_invalid_suiteql_field(self) -> bool:
+        """Probe selected fields individually and skip the first one that breaks SuiteQL."""
+        prefix = self.select_prefix or self.table
+
+        # sanity check to make sure the stream is accessible
+        sanity_select = [f"{prefix}.id AS id"]
+        sanity_where = self.custom_filter or None
+        probe_where = sanity_where
+        if not self._probe_suiteql_select(sanity_select, where=sanity_where):
+            if sanity_where:
+                if not self._probe_suiteql_select(sanity_select):
+                    return False
+                probe_where = None
+            else:
+                return False
+
+        field_names = self._selected_field_names()
+        if not field_names:
+            return False
+
+        for field_name in field_names:
+            field_invalid = self._probe_suiteql_field_is_invalid(
+                field_name,
+                where=probe_where,
+            )
+            if field_invalid is None:
+                continue
+            if field_invalid:
+                self.invalid_fields.append(field_name)
+                self.logger.info(
+                    "Field %s causes SuiteQL errors on stream %s, skipping it from the query",
+                    field_name,
+                    self.name,
+                )
+                return True
+        return False
+
+    def _extract_invalid_suiteql_fields_from_400(
+        self, response: requests.Response
+    ) -> List[str]:
+        """Return field names NetSuite flagged as invalid in a 400 SuiteQL error."""
+        if (
+            "Search error occurred: Field" in response.text
+            or "Invalid search query" in response.text
+        ):
+            error_details = response.json()["o:errorDetails"][0]["detail"]
+            field_names = [
+                match.group(1).lower()
+                for match in re.finditer(r"(?i)field '(\w+)'", error_details)
+            ]
+            if field_names:
+                return field_names
+            unknown_in_detail = re.search(
+                r"Unknown identifier '([^']+)'",
+                error_details,
+            )
+            if unknown_in_detail:
+                return [unknown_in_detail.group(1).lower()]
+
+        unknown_identifier = re.search(
+            r"Unknown identifier '([^']+)'",
+            response.text,
+        )
+        if unknown_identifier:
+            return [unknown_identifier.group(1).lower()]
+        return []
+
+    def _skip_suiteql_fields_and_retry(
+        self,
+        field_names: List[str],
+        response_text: str,
+    ) -> None:
+        """Drop fields from the next SuiteQL SELECT and retry the request."""
+        newly_skipped = []
+        for field_name in field_names:
+            if field_name not in self.invalid_fields:
+                self.invalid_fields.append(field_name)
+                newly_skipped.append(field_name)
+                self.logger.info(
+                    "Field %s is not valid for SuiteQL on stream %s, skipping it from the query",
+                    field_name,
+                    self.name,
+                )
+
+        if newly_skipped:
+            self.logger.info(
+                "Skipping invalid SuiteQL fields on stream %s: %s",
+                self.name,
+                self.invalid_fields,
+            )
+            raise RetryRequest(response_text)
+
     def get_selected_properties(self, select_all_by_default=False):
         selected_properties = []
         for key, value in self.metadata.items():
-            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True) and key[1] not in self.invalid_fields:
+            if isinstance(key, tuple) and len(key) == 2 and (value.selected if not select_all_by_default else True) and key[1] not in self.invalid_fields and key[1] not in SUITEQL_EXCLUDED_FIELDS:
                 field_name = key[-1]
                 prefix = self.select_prefix or self.table
                 field_type = self.schema["properties"].get(field_name) or dict()
@@ -504,25 +697,28 @@ class NetSuiteStream(RESTStream):
                             self.gl_use_only_primary_accounting_book = lambda: False
                         raise RetryRequest(response.text)
 
-            if "Search error occurred: Field" in response.text or "Invalid search query" in response.text:
-                error_details = response.json()["o:errorDetails"][0]["detail"]
-                # Extract all field names from error message and drop it from the select
-                field_matches = re.finditer(r"(?i)field '(\w+)'", error_details)
-                for field_match in field_matches:
-                    field_name = field_match.group(1)
-                    if not hasattr(self, "invalid_fields"):
-                        self.invalid_fields = []
-                    if field_name not in self.invalid_fields:
-                        self.invalid_fields.append(field_name)
-                        self.logger.info(f"Field {field_name} is not searchable. Retrying with updated query...")
-                if self.invalid_fields:
-                    self.logger.info(f"Following fields are not searchable: {self.invalid_fields}, skipping them from stream {self.name} query")
-                    raise RetryRequest(response.text)
+            # looks for invalid fields in the response to skip them and retry the request
+            invalid_field_names = self._extract_invalid_suiteql_fields_from_400(
+                response
+            )
+            if invalid_field_names:
+                self._skip_suiteql_fields_and_retry(
+                    invalid_field_names,
+                    response.text,
+                )
 
         if response.status_code == 401:
             raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
 
         if 500 <= response.status_code < 600 or response.status_code in [429]:
+            # 500 UNEXPECTED_ERROR sometimes happens when a field is invalid
+            if (
+                response.status_code == 500
+                and "UNEXPECTED_ERROR" in response.text
+                and self._identify_and_skip_invalid_suiteql_field()
+            ):
+                raise RetryRequest(response.text)
+
             msg = (
                 f"{response.status_code} Server Error: "
                 f"{response.reason} for path: {self.path}"
@@ -846,8 +1042,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
                 self.bool_fields = [f for f in self.fields if all_bool(f)]
 
-                # Can't query links, so we remove it
-                self.fields.remove("links")
+                self.fields -= SUITEQL_EXCLUDED_FIELDS
 
                 # for bills and invoices add/update custom fields and its types
                 if self._tap.custom_fields:
@@ -896,6 +1091,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             # Remove any fields that are already in default_fields to avoid overriding the type
             fields = {f for f in fields if not any(df.name == f.lower() for df in self.default_fields)}
             for field in fields:
+                if field in SUITEQL_EXCLUDED_FIELDS:
+                    continue
                 if field == self.replication_key or field in self.date_fields:
                     properties_list.append(th.Property(field.lower(), th.DateTimeType))
                 elif field in self.bool_fields:
@@ -914,7 +1111,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
             if response is not None and response.get("properties"):
                 for field, value in response.get("properties").items():
-                    if self.fields and self.filter_fields and field.lower() not in self.fields:
+                    field_lower = field.lower()
+                    if field_lower in SUITEQL_EXCLUDED_FIELDS:
+                        continue
+                    if self.fields and self.filter_fields and field_lower not in self.fields:
                         continue
 
                     if value.get("format") == 'date-time':
