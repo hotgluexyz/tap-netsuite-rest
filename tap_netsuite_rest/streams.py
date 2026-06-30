@@ -2954,6 +2954,7 @@ class EntityGroupsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "entitygroup"
     replication_key = "lastmodifieddate"
+    always_add_default_fields = True
 
     default_fields = [
         th.Property("lastmodifieddate", th.DateTimeType)
