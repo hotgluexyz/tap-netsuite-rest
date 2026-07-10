@@ -2913,6 +2913,11 @@ class CustomSegmentValuesStream(NetsuiteDynamicStream):
 
     ).to_dict()
 
+    def _probe_table_name(self):
+        # Table name is a template (CUSTOMRECORD_{scriptid}) resolved at runtime
+        # from the parent stream's context, so it cannot be probed during discover.
+        return None
+
     def prepare_request_payload(self, context, next_page_token):
         scriptid = context["scriptid"][0]
         self.table = f"CUSTOMRECORD_{scriptid}"
