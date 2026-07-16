@@ -155,7 +155,7 @@ class TapNetSuite(Tap):
         orphan_streams = []
 
         # Initialize child streams list for parents
-        for stream_type, streams in streams_by_type.items():
+        for stream_type, _streams in streams_by_type.items():
             if stream_type.parent_stream_type:
                 # if parent stream not found, add all child streams to orphan streams
                 parents = streams_by_type.get(stream_type.parent_stream_type, [])
@@ -166,10 +166,10 @@ class TapNetSuite(Tap):
                     self.logger.warning(
                         f"Removing stream '{stream_type.name}' from catalog"
                     )
-                    orphan_streams.extend(streams)
+                    orphan_streams.extend(_streams)
                     continue
                 for parent in parents:
-                    for stream in streams:
+                    for stream in _streams:
                         parent.child_streams.append(stream)
                         self.logger.info(
                             f"Added '{stream.name}' as child stream to '{parent.name}'"
