@@ -1,11 +1,12 @@
 """NetSuite tap class."""
 
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Type
 from pathlib import PurePath
 
 from hotglue_singer_sdk import Stream, Tap
 from hotglue_singer_sdk import typing as th  # JSON schema typing helpers
 from hotglue_singer_sdk.helpers.capabilities import AlertingLevel
+from hotglue_singer_sdk.helpers._compat import final
 
 import inspect 
 import requests
@@ -129,6 +130,60 @@ class TapNetSuite(Tap):
                 )
 
         return accessible
+
+    @final
+    def load_streams(self) -> List[Stream]:
+        """Load streams from discovery and initialize DAG.
+
+        Return the output of `self.discover_streams()` to enumerate
+        discovered streams.
+
+        Returns:
+            A list of discovered streams, ordered by name.
+        """
+        # Build the parent-child dependency DAG
+
+        # Index streams by type
+        streams_by_type: Dict[Type[Stream], List[Stream]] = {}
+        for stream in self.discover_streams():
+            stream_type = type(stream)
+            if stream_type not in streams_by_type:
+                streams_by_type[stream_type] = []
+            streams_by_type[stream_type].append(stream)
+        
+        # streams to remove from catalog, because parent stream not found
+        orphan_streams = []
+
+        # Initialize child streams list for parents
+        for stream_type, streams in streams_by_type.items():
+            if stream_type.parent_stream_type:
+                # if parent stream not found, add all child streams to orphan streams
+                parents = streams_by_type.get(stream_type.parent_stream_type, [])
+                if not parents:
+                    self.logger.warning(
+                        f"Parent stream '{stream_type.parent_stream_type}' for stream '{stream_type.name}' not found"
+                    )
+                    self.logger.warning(
+                        f"Removing stream '{stream_type.name}' from catalog"
+                    )
+                    orphan_streams.extend(streams)
+                    continue
+                for parent in parents:
+                    for stream in streams:
+                        parent.child_streams.append(stream)
+                        self.logger.info(
+                            f"Added '{stream.name}' as child stream to '{parent.name}'"
+                        )
+
+        streams = [stream for streams in streams_by_type.values() for stream in streams]
+        # remove orphan streams from catalog
+        streams = [stream for stream in streams if stream not in orphan_streams]
+        return sorted(
+            streams,
+            key=lambda x: x.name,
+            reverse=False,
+        )
+
 
 if __name__ == "__main__":
     TapNetSuite.cli()
