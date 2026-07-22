@@ -751,6 +751,13 @@ class NetSuiteStream(RESTStream):
         )(func)
         return decorator
 
+    def send_prepared_request(
+        self, prepared_request: requests.PreparedRequest
+    ) -> requests.Response:
+        response = self.get_session().send(prepared_request, timeout=self.timeout)
+        self.validate_response(response)
+        return response
+
     def last_day_of_month(self, any_day):
         # The day 28 exists in every month. 4 days later, it's always next month
         next_month = any_day.replace(day=28) + timedelta(days=4)
@@ -894,16 +901,16 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    RETRIABLE_ERRORS = (
+    @backoff.on_exception(backoff.expo, (
         HTTPError,
         RetriableAPIError,
         requests.exceptions.Timeout,
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
-    )
-    @backoff.on_exception(backoff.expo, RETRIABLE_ERRORS, max_tries=5, factor=2)
+    ), max_tries=5, factor=2)
     def get_schema(self): # noqa: C901
         s = self.get_session()
+        send_request = self.request_decorator(self.send_prepared_request)
         self.logger.debug(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
             self.name,
@@ -929,20 +936,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             prepared_req.headers.update({"Accept": "application/schema+json"})
             self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
-            response = s.send(prepared_req, timeout=self.timeout)
+            response = send_request(prepared_req)
             self.logger.debug(
                 "get_schema(%s): metadata-catalog GET done status=%s",
                 self.name,
                 response.status_code,
             )
-            response.raise_for_status()
             self.schema_response = response.json()
-        except self.RETRIABLE_ERRORS as e:
-            if isinstance(e, HTTPError) and e.response.status_code < 500:
-                pass
-            else:
-                raise e from e
-        except Exception:
+        except Exception as e:
             pass
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
@@ -1011,14 +1012,13 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 url,
             )
 
-            response = s.send(prepared_req, timeout=self.timeout)
+            response = send_request(prepared_req)
             self.logger.debug(
                 "get_schema(%s): suiteql schema inference POST done status=%s",
                 self.name,
                 response.status_code,
             )
             try:
-                response.raise_for_status()
                 self.logger.debug(
                     "get_schema(%s): suiteql schema inference parsing response JSON",
                     self.name,
@@ -1075,12 +1075,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     "get_schema(%s): suiteql schema inference finished",
                     self.name,
                 )
-            except self.RETRIABLE_ERRORS as e:
-                if isinstance(e, HTTPError) and e.response.status_code < 500:
-                    pass
-                else:
-                    raise e from e
-            except Exception:
+            except Exception as e:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
