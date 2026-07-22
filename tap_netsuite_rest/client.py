@@ -943,7 +943,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 response.status_code,
             )
             self.schema_response = response.json()
-        except Exception as e:
+        except Exception:
             pass
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
@@ -1075,7 +1075,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     "get_schema(%s): suiteql schema inference finished",
                     self.name,
                 )
-            except Exception as e:
+            except Exception:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
