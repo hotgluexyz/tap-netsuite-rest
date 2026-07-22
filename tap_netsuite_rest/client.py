@@ -942,7 +942,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 pass
             else:
                 raise e from e
-        except Exception as e:
+        except Exception:
             pass
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
