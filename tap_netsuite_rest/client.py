@@ -894,13 +894,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    @backoff.on_exception(backoff.expo, (
+    RETRIABLE_ERRORS = (
         HTTPError,
         RetriableAPIError,
         requests.exceptions.Timeout,
         requests.exceptions.ConnectionError,
         RemoteDisconnected,
-    ), max_tries=5, factor=2)
+    )
+    @backoff.on_exception(backoff.expo, RETRIABLE_ERRORS, max_tries=5, factor=2)
     def get_schema(self): # noqa: C901
         s = self.get_session()
         self.logger.debug(
@@ -936,7 +937,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             )
             response.raise_for_status()
             self.schema_response = response.json()
-        except:
+        except self.RETRIABLE_ERRORS as e:
+            if isinstance(e, HTTPError) and e.response.status_code < 500:
+                pass
+            else:
+                raise e from e
+        except Exception as e:
             pass
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
@@ -1069,7 +1075,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     "get_schema(%s): suiteql schema inference finished",
                     self.name,
                 )
-            except:
+            except self.RETRIABLE_ERRORS as e:
+                if isinstance(e, HTTPError) and e.response.status_code < 500:
+                    pass
+                else:
+                    raise e from e
+            except Exception:
                 self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
                 pass
 
