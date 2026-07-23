@@ -937,7 +937,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.validate_response(response)
             self.schema_response = response.json()
         except Exception as e:
-            self.logger.error(f"Failed to get schema for {self.table} - stream: {self.name}, Error: {e}")
+            if not self.use_dynamic_fields:
+                self.logger.error(f"Failed to get schema for {self.table} - stream: {self.name}, Error: {e}")
             pass
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
