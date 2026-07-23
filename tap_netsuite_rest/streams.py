@@ -1378,6 +1378,7 @@ class SubsidiariesStream(BulkParentStream):
         "main_address_ids",
         "shipping_address_ids",
     ]
+    append_select = "BUILTIN.DF(currency) AS currencyname, "
 
     default_fields = [
         th.Property("id", th.StringType),
