@@ -13,6 +13,9 @@ exclude = [
 ]
 
 [lint]
+# Pin the pre-0.16 default rule set. Ruff 0.16 expanded the defaults from
+# 59 to 413 rules, which would otherwise flag hundreds of pre-existing issues.
+select = ["E4", "E7", "E9", "F"]
 extend-select = ["C901"]
 ignore = ["E722", "E712"]
 [lint.mccabe]
