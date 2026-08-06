@@ -1012,13 +1012,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 url,
             )
 
-            response = send_request(prepared_req)
-            self.logger.debug(
-                "get_schema(%s): suiteql schema inference POST done status=%s",
-                self.name,
-                response.status_code,
-            )
+
             try:
+                response = send_request(prepared_req)
+                self.logger.debug(
+                    "get_schema(%s): suiteql schema inference POST done status=%s",
+                    self.name,
+                    response.status_code,
+                )
                 self.logger.debug(
                     "get_schema(%s): suiteql schema inference parsing response JSON",
                     self.name,
