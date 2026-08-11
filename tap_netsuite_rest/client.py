@@ -510,7 +510,7 @@ class NetSuiteStream(RESTStream):
         ]
 
     def _identify_and_skip_invalid_suiteql_field(self) -> bool:
-        """Probe selected fields individually and skip the first one that breaks SuiteQL."""
+        """Probe selected fields individually and skip every one that breaks SuiteQL."""
         prefix = self.select_prefix or self.table
 
         # sanity check to make sure the stream is accessible
@@ -529,6 +529,7 @@ class NetSuiteStream(RESTStream):
         if not field_names:
             return False
 
+        any_skipped = False
         for field_name in field_names:
             field_invalid = self._probe_suiteql_field_is_invalid(
                 field_name,
@@ -543,8 +544,8 @@ class NetSuiteStream(RESTStream):
                     field_name,
                     self.name,
                 )
-                return True
-        return False
+                any_skipped = True
+        return any_skipped
 
     def _extract_invalid_suiteql_fields_from_400(
         self, response: requests.Response
