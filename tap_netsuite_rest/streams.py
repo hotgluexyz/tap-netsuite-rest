@@ -1353,6 +1353,10 @@ class DepartmentsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "department"
 
+    default_fields = [
+        th.Property("parent", th.StringType)
+    ]
+
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         try:
             yield from super().request_records(context)
