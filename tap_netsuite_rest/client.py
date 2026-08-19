@@ -734,7 +734,9 @@ class NetSuiteStream(RESTStream):
             )
             raise FatalAPIError(msg)
 
-    def request_decorator(self, func: Callable) -> Callable:
+    def request_decorator(
+        self, func: Callable, max_tries: int = 10, factor: int = 3
+    ) -> Callable:
         """Instantiate a decorator for handling request failures."""
         decorator: Callable = backoff.on_exception(
             backoff.expo,
@@ -747,8 +749,8 @@ class NetSuiteStream(RESTStream):
                 RetryRequest,
                 InvalidCredentialsError,
             ),
-            max_tries=10,
-            factor=3,
+            max_tries=max_tries,
+            factor=factor,
         )(func)
         return decorator
 
@@ -895,12 +897,23 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
-
+    # Schema discovery can fall back to SuiteQL; don't inherit the 10-try / 500s data-path budget.
+    schema_discovery_timeout = 60
+    schema_discovery_max_tries = 2
 
     def __init__(self, *args, **kwargs):
         self.float_fields = []
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
+
+    def send_schema_prepared_request(
+        self, prepared_request: requests.PreparedRequest
+    ) -> requests.Response:
+        response = self.get_session().send(
+            prepared_request, timeout=self.schema_discovery_timeout
+        )
+        self.validate_response(response)
+        return response
 
     @backoff.on_exception(backoff.expo, (
         HTTPError,
@@ -911,7 +924,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     ), max_tries=5, factor=2)
     def get_schema(self): # noqa: C901
         s = self.get_session()
-        send_request = self.request_decorator(self.send_prepared_request)
+        send_request = self.request_decorator(
+            self.send_schema_prepared_request,
+            max_tries=self.schema_discovery_max_tries,
+            factor=2,
+        )
         self.logger.debug(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
             self.name,

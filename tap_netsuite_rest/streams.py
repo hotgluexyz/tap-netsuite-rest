@@ -1352,6 +1352,11 @@ class DepartmentsStream(NetsuiteDynamicStream):
     name = "departments"
     primary_keys = ["id"]
     table = "department"
+    always_add_default_fields = True
+
+    default_fields = [
+        th.Property("parent", th.StringType)
+    ]
 
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         try:
