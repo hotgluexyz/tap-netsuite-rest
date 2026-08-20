@@ -1355,7 +1355,16 @@ class DepartmentsStream(NetsuiteDynamicStream):
     always_add_default_fields = True
 
     default_fields = [
-        th.Property("parent", th.StringType)
+        th.Property("parent", th.StringType),
+        th.Property("isinactive", th.BooleanType),
+        th.Property("internalid", th.NumberType),
+        th.Property("lastmodifieddate", th.DateTimeType),
+        th.Property("name", th.StringType),
+        th.Property("externalid", th.StringType),
+        th.Property("fullname", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("includechildren", th.BooleanType),
+        th.Property("subsidiary", th.StringType),
     ]
 
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
