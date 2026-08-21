@@ -751,6 +751,7 @@ class NetSuiteStream(RESTStream):
             ),
             max_tries=max_tries,
             factor=factor,
+            on_backoff=self.backoff_handler
         )(func)
         return decorator
 
@@ -961,8 +962,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 response.status_code,
             )
             self.schema_response = response.json()
-        except Exception:
-            pass
+        except Exception as e:
+            self.logger.warning(f"Failed to get schema using metadata-catalog for {self.table} - stream: {self.name}, Error: {e}")
         
         # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
 
@@ -1019,7 +1020,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     url=url,
                     headers=self.http_headers,
                     json={
-                        "q": f"SELECT TOP 1000 * FROM {self.table} ORDER BY {self.replication_key} DESC" if self.replication_key else f"SELECT TOP 1000 * FROM {self.table}"
+                        "q": f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC" if self.replication_key else f"SELECT * FROM {self.table}"
                     }
                 )
             )
@@ -1094,8 +1095,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     "get_schema(%s): suiteql schema inference finished",
                     self.name,
                 )
-            except Exception:
-                self.logger.warning(f"Failed to get schema for {self.table} - stream: {self.name}")
+            except Exception as e:
+                self.logger.warning(f"Failed to get schema by fetching first 1k records for {self.table} - stream: {self.name}, Error: {e}")
                 pass
 
 
