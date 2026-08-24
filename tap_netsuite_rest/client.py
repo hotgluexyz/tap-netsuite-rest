@@ -1,6 +1,7 @@
 """REST client handling, including NetSuiteStream base class."""
 
 import logging
+import secrets
 import backoff
 import requests
 import pendulum
@@ -40,6 +41,24 @@ logging.getLogger("backoff").setLevel(logging.CRITICAL)
 
 class RetryRequest(Exception):
     pass
+
+
+def _generate_oauth_nonce() -> str:
+    """Return a unique OAuth1 nonce that does not depend on the request timestamp."""
+    return secrets.token_hex(16)
+
+
+class NetsuiteOAuth1Client(oauth1.Client):
+    """Mint a fresh oauth_nonce on every sign so retries and concurrent requests never reuse one."""
+
+    def get_oauth_params(self, request):
+        pinned_nonce = self.nonce
+        if pinned_nonce is None:
+            self.nonce = _generate_oauth_nonce()
+        try:
+            return super().get_oauth_params(request)
+        finally:
+            self.nonce = pinned_nonce
 
 
 # REST metadata fields that are not safe to include in SuiteQL SELECT clauses.
@@ -125,6 +144,7 @@ class NetSuiteStream(RESTStream):
             resource_owner_secret=self.config["ns_token_secret"],
             realm=ns_account,
             signature_method=oauth1.SIGNATURE_HMAC_SHA256,
+            client_class=NetsuiteOAuth1Client,
         )
 
     def _probe_table_name(self) -> Optional[str]:
@@ -907,10 +927,28 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.integer_fields = []
         return super().__init__(*args, **kwargs)
 
-    def send_schema_prepared_request(
-        self, prepared_request: requests.PreparedRequest
+    def send_schema_request(
+        self,
+        method: str,
+        url: str,
+        headers: Optional[dict] = None,
+        json: Optional[dict] = None,
     ) -> requests.Response:
-        response = self.get_session().send(
+        """Sign and send a schema-discovery request.
+
+        OAuth1 timestamp/nonce are generated at prepare time, so this must
+        re-prepare on every retry instead of resending a PreparedRequest.
+        """
+        session = self.get_session()
+        prepared_request = session.prepare_request(
+            requests.Request(
+                method=method,
+                url=url,
+                headers=headers,
+                json=json,
+            )
+        )
+        response = session.send(
             prepared_request, timeout=self.schema_discovery_timeout
         )
         self.validate_response(response)
@@ -926,7 +964,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def get_schema(self): # noqa: C901
         s = self.get_session()
         send_request = self.request_decorator(
-            self.send_schema_prepared_request,
+            self.send_schema_request,
             max_tries=self.schema_discovery_max_tries,
             factor=2,
         )
@@ -946,16 +984,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
             account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
             url = f"https://{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
-            prepared_req = s.prepare_request(
-                requests.Request(
-                    method="GET",
-                    url=url,
-                    headers=self.http_headers,
-                )
-            )
-            prepared_req.headers.update({"Accept": "application/schema+json"})
+            catalog_headers = dict(self.http_headers)
+            catalog_headers["Accept"] = "application/schema+json"
             self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
-            response = send_request(prepared_req)
+            response = send_request(
+                method="GET",
+                url=url,
+                headers=catalog_headers,
+            )
             self.logger.debug(
                 "get_schema(%s): metadata-catalog GET done status=%s",
                 self.name,
@@ -1013,16 +1049,10 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
             url = f"{self.url_base}?offset=0&limit=1000"
-
-            prepared_req = s.prepare_request(
-                requests.Request(
-                    method="POST",
-                    url=url,
-                    headers=self.http_headers,
-                    json={
-                        "q": f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC" if self.replication_key else f"SELECT * FROM {self.table}"
-                    }
-                )
+            schema_query = (
+                f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
+                if self.replication_key
+                else f"SELECT * FROM {self.table}"
             )
 
             self.logger.debug(
@@ -1033,7 +1063,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
 
             try:
-                response = send_request(prepared_req)
+                response = send_request(
+                    method="POST",
+                    url=url,
+                    headers=self.http_headers,
+                    json={"q": schema_query},
+                )
                 self.logger.debug(
                     "get_schema(%s): suiteql schema inference POST done status=%s",
                     self.name,
