@@ -933,7 +933,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         response = session.send(
             prepared_request, timeout=self.schema_discovery_timeout
         )
-        raise RetriableAPIError("holiiii")
         self.validate_response(response)
         return response
 
