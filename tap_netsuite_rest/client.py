@@ -752,6 +752,7 @@ class NetSuiteStream(RESTStream):
             ),
             max_tries=max_tries,
             factor=factor,
+            jitter=lambda wait: max(1.5, backoff.full_jitter(wait)),
             on_backoff=self.backoff_handler
         )(func)
         return decorator
