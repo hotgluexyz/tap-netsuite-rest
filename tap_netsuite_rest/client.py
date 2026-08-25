@@ -752,6 +752,7 @@ class NetSuiteStream(RESTStream):
             ),
             max_tries=max_tries,
             factor=factor,
+            jitter=lambda wait: max(1.5, backoff.full_jitter(wait)),
             on_backoff=self.backoff_handler
         )(func)
         return decorator
@@ -932,6 +933,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         response = session.send(
             prepared_request, timeout=self.schema_discovery_timeout
         )
+        raise RetriableAPIError("holiiii")
         self.validate_response(response)
         return response
 
