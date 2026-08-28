@@ -752,7 +752,7 @@ class NetSuiteStream(RESTStream):
             ),
             max_tries=max_tries,
             factor=factor,
-            jitter=lambda wait: max(1.5, backoff.full_jitter(wait)),
+            jitter=None,
             on_backoff=self.backoff_handler
         )(func)
         return decorator
@@ -902,7 +902,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     default_fields = []
     # Schema discovery can fall back to SuiteQL; don't inherit the 10-try / 500s data-path budget.
     schema_discovery_timeout = 60
-    schema_discovery_max_tries = 2
+    schema_discovery_max_tries = 8
 
     def __init__(self, *args, **kwargs):
         self.float_fields = []
