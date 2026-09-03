@@ -36,11 +36,9 @@ def get_bill_attachments_stream(config):
 
 
 # Function to filter streams to be tested
-def streams_to_sync(self, include_streams, ignore_streams):
-    stream_types = []
-
+def _iter_stream_classes(config, include_streams, ignore_streams):
     if not ((include_streams and 'BillAttachmentsStream' not in include_streams) or 'BillAttachmentsStream' in ignore_streams):
-        stream_types.append(get_bill_attachments_stream(self.config)(self))
+        yield get_bill_attachments_stream(config)
 
     for name, cls in inspect.getmembers(streams, inspect.isclass):
         if cls.__module__ == 'tap_netsuite_rest.streams':
@@ -48,7 +46,13 @@ def streams_to_sync(self, include_streams, ignore_streams):
                 continue
             if (include_streams and name not in include_streams) or name in ignore_streams:
                 continue
-            stream_types.append(cls(self))
+            yield cls
+
+
+def streams_to_sync(self, include_streams, ignore_streams):
+    stream_types = []
+    for stream_cls in _iter_stream_classes(self.config, include_streams, ignore_streams):
+        stream_types.append(stream_cls(self))
     return stream_types
 
 class TapNetSuite(Tap):
@@ -130,6 +134,10 @@ class TapNetSuite(Tap):
                 )
 
         return accessible
+
+    def discover_stream_types(self) -> List[Type[Stream]]:
+        """Return stream classes for tool listing without schema API calls."""
+        return list(_iter_stream_classes(self.config, include_streams, ignore_streams))
 
     @final
     def load_streams(self) -> List[Stream]:
