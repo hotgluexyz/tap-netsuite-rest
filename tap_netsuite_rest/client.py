@@ -905,11 +905,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     filter_fields = False
     default_fields = []
     # Schema discovery can fall back to SuiteQL; don't inherit the 10-try / 500s data-path budget.
-    schema_discovery_timeout = 120
+    schema_discovery_timeout = 180
     schema_discovery_max_tries = 8
     schema_discovery_rate_limit_max_tries = 12
     schema_discovery_rate_limit_factor = 4
-    schema_discovery_rate_limit_max_value = 120
+    schema_discovery_rate_limit_max_value = 180
 
     def __init__(self, *args, **kwargs):
         self.float_fields = []
@@ -1040,7 +1040,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 prepared_req = s.prepare_request(
                     requests.Request(
                         method="POST",
-                        url=f"{self.url_base}?offset={offset}&limit=1000",
+                        url=f"{self.url_base}?offset={offset}&limit=500",
                         headers=self.http_headers,
                         json={
                             "q": "SELECT * FROM customfield"
@@ -1063,12 +1063,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self._tap.custom_fields = custom_fields
 
 
-        # fetch top 1000 records to infer fields and types
+        # fetch top 500 records to infer fields and types
         if not self.schema_response or self.filter_fields:
             self.fields = set()
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-            url = f"{self.url_base}?offset=0&limit=1000"
+            url = f"{self.url_base}?offset=0&limit=500"
             schema_query = (
                 f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
                 if self.replication_key
