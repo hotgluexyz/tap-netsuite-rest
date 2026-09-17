@@ -1021,8 +1021,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         except Exception as e:
             self.logger.warning(f"Failed to get schema using metadata-catalog for {self.table} - stream: {self.name}, Error: {e}")
         
-        # if any stream doesn't have access to metadata endpoint, fetch first 1k records and custom fields to build the schema
-
+        # If metadata-catalog is unavailable, fetch sample 500 records and custom fields to build the schema.
+        discover_api_page_size = self.config.get("_discover_api_page_size", 500)
         # fetch custom fields
         add_custom_fields_streams = ["invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"]
         if not self.schema_response  and self._tap.custom_fields is None and self.name in add_custom_fields_streams:
@@ -1040,7 +1040,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 prepared_req = s.prepare_request(
                     requests.Request(
                         method="POST",
-                        url=f"{self.url_base}?offset={offset}&limit=500",
+                        url=f"{self.url_base}?offset={offset}&limit={discover_api_page_size}",
                         headers=self.http_headers,
                         json={
                             "q": "SELECT * FROM customfield"
@@ -1063,12 +1063,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self._tap.custom_fields = custom_fields
 
 
-        # fetch top 500 records to infer fields and types
+        # Fetch sample 500 records to infer fields and types.
         if not self.schema_response or self.filter_fields:
             self.fields = set()
 
             self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-            url = f"{self.url_base}?offset=0&limit=500"
+            url = f"{self.url_base}?offset=0&limit={discover_api_page_size}"
             schema_query = (
                 f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
                 if self.replication_key
