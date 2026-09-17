@@ -9,7 +9,6 @@ on:
 
 jobs:
   smoke-test:
-    if: false  # Disabled - remove this line to re-enable
     runs-on: ubuntu-latest
     
     steps:
