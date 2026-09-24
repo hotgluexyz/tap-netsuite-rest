@@ -26,6 +26,32 @@ logging.info("INCLUDE_STREAMS: "+ os.environ.get('INCLUDE_STREAMS', ''))
 ignore_streams = os.environ.get('IGNORE_STREAMS', "").split(',') if os.environ.get('IGNORE_STREAMS', "") else []
 logging.info("IGNORE_STREAMS: "+ os.environ.get('IGNORE_STREAMS', ''))
 
+# DISPLAY list for the connector landing page, not a support contract.
+# Sourced from stream class `name` attributes in tap_netsuite_rest/streams.py.
+# Runtime discovery remains authoritative; this list is not validated against it.
+COMMON_NETSUITE_OBJECTS = [
+    "accounts",
+    "bills",
+    "contacts",
+    "currencies",
+    "customers",
+    "departments",
+    "employees",
+    "invoices",
+    "item",
+    "item_receipts",
+    "locations",
+    "partners",
+    "projects",
+    "purchase_orders",
+    "sales_orders",
+    "subsidiaries",
+    "term",
+    "transactions",
+    "vendor",
+    "vendor_credits",
+]
+
 
 def get_bill_attachments_stream(config):
     if 'bill_attachments_restlet_url' in config \
@@ -55,6 +81,8 @@ class TapNetSuite(Tap):
     """NetSuite tap class."""
 
     name = "tap-netsuite-rest"
+    dynamic_catalog = True
+    static_stream_names = COMMON_NETSUITE_OBJECTS
     custom_fields = None
     alerting_level = AlertingLevel.ERROR
     exception_alerting_level_map = {
