@@ -897,6 +897,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
+    filter_fields = False
     default_fields = []
     _CUSTOM_FIELD_STREAMS = frozenset(
         {"invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"}
@@ -1207,7 +1208,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
         self._fetch_custom_fields_catalog(session)
 
-        if not self.schema_response or self.use_dynamic_fields:
+        # self.filter_fields has almost the same effect as self.use_dynamic_fields, except it doesn't skip metadata-catalog fields
+        # to avoid differences in schemas, we're keeping it as a separate flag
+        if not self.schema_response or self.use_dynamic_fields or self.filter_fields:
             self.infer_schema_from_query(send_request)
 
     def _property_for_inferred_field(self, field: str) -> th.Property:
@@ -1257,7 +1260,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             field_lower = field.lower()
             if field_lower in SUITEQL_EXCLUDED_FIELDS:
                 continue
-            if self.fields and self.use_dynamic_fields and field_lower not in self.fields:
+            if self.fields and self.filter_fields and field_lower not in self.fields:
                 continue
             properties_list.append(self._property_for_catalog_field(field, value))
         return th.PropertiesList(*properties_list).to_dict()
@@ -1287,6 +1290,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
+    filter_fields = False
     default_fields = []
 
     @property
