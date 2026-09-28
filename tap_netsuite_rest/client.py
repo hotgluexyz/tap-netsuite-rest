@@ -902,7 +902,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
-    filter_fields = False
     default_fields = []
     # Schema discovery can fall back to SuiteQL; don't inherit the 10-try / 500s data-path budget.
     schema_discovery_timeout = 180
@@ -1219,7 +1218,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
 
         # Fetch sample 500 records to infer fields and types.
-        if not self.schema_response or self.filter_fields:
+        if not self.schema_response or self.use_dynamic_fields:
             self.infer_schema_from_query(send_request)
 
 
@@ -1264,7 +1263,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     field_lower = field.lower()
                     if field_lower in SUITEQL_EXCLUDED_FIELDS:
                         continue
-                    if self.fields and self.filter_fields and field_lower not in self.fields:
+                    if self.fields and self.use_dynamic_fields and field_lower not in self.fields:
                         continue
 
                     if value.get("format") == 'date-time':
