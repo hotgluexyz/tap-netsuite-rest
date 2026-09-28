@@ -917,9 +917,23 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     schema_discovery_rate_limit_max_value = 180
 
     def __init__(self, *args, **kwargs):
-        self.float_fields = []
-        self.integer_fields = []
+        self.float_fields = set()
+        self.integer_fields = set()
+        self.date_fields = set()
+        self.bool_fields = set()
         return super().__init__(*args, **kwargs)
+
+    def _schema_cache_key(self) -> str:
+        """Cache schema inference per stream so shared tables (e.g. transaction) do not cross-pollinate."""
+        return f"{self.table}:{self.name}"
+
+    def _field_allows_custom_field_type(self, field: str) -> bool:
+        """Custom field catalog types apply only on invoice/bill streams (matches pre-cache main behavior)."""
+        if field.startswith("custbody"):
+            return self.name in ("invoices", "bills")
+        if field.startswith("custcol"):
+            return self.name in ("invoice_lines", "bill_lines", "bill_expenses")
+        return True
 
     def send_schema_request(
         self,
@@ -997,20 +1011,23 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self._tap.accesible_tables = {}
 
     def _cache_schema_fields(self):
-        """Cache inferred fields on the tap so other streams sharing this table can reuse them."""
-        self._tap.schema_fields[self.table] = self.fields
-        self._tap.schema_bool_fields[self.table] = self.bool_fields
-        self._tap.schema_date_fields[self.table] = self.date_fields
-        self._tap.schema_float_fields[self.table] = self.float_fields
-        self._tap.schema_integer_fields[self.table] = self.integer_fields
+        """Cache inferred fields on the tap for this stream only."""
+        cache_key = self._schema_cache_key()
+        self._tap.schema_fields[cache_key] = set(self.fields)
+        self._tap.schema_bool_fields[cache_key] = set(self.bool_fields)
+        self._tap.schema_date_fields[cache_key] = set(self.date_fields)
+        self._tap.schema_float_fields[cache_key] = set(self.float_fields)
+        self._tap.schema_integer_fields[cache_key] = set(self.integer_fields)
         self._tap.accesible_tables[self.table] = True
-    
+
     def load_tap_schema_cache_for_table(self):
-        self.fields = self._tap.schema_fields.get(self.table, set[Any]())
-        self.bool_fields = self._tap.schema_bool_fields.get(self.table, set[Any]())
-        self.date_fields = self._tap.schema_date_fields.get(self.table, set[Any]())
-        self.float_fields = self._tap.schema_float_fields.get(self.table, set[Any]())
-        self.integer_fields = self._tap.schema_integer_fields.get(self.table, set[Any]())
+        cache_key = self._schema_cache_key()
+        empty: set[Any] = set()
+        self.fields = set(self._tap.schema_fields.get(cache_key, empty))
+        self.bool_fields = set(self._tap.schema_bool_fields.get(cache_key, empty))
+        self.date_fields = set(self._tap.schema_date_fields.get(cache_key, empty))
+        self.float_fields = set(self._tap.schema_float_fields.get(cache_key, empty))
+        self.integer_fields = set(self._tap.schema_integer_fields.get(cache_key, empty))
         if self._tap.accesible_tables.get(self.table):
             self.is_table_accessible = True
 
@@ -1068,6 +1085,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         }
         self.fields.update(table_cf.keys())
         for cf, cf_type in table_cf.items():
+            if not self._field_allows_custom_field_type(cf):
+                continue
             if cf_type in ("Decimal Number", "Percent"):
                 self.float_fields.add(cf)
             elif cf_type == "Integer Number":
@@ -1113,11 +1132,17 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.load_tap_schema_cache_for_table()
         if self.fields:
             self.logger.info(
-                "Fields already cached for %s. Using cached fields to build schema for stream: %s",
+                "Fields already cached for %s (stream %s). Using cached fields to build schema",
                 self.table,
                 self.name,
             )
             return
+
+        self.fields = set()
+        self.date_fields = set()
+        self.bool_fields = set()
+        self.float_fields = set()
+        self.integer_fields = set()
 
         schema_query = (
             f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
@@ -1219,9 +1244,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             return th.Property(name, th.DateTimeType)
         if field in self.bool_fields:
             return th.Property(name, th.BooleanType)
-        if field in self.float_fields:
+        if field in self.float_fields and self._field_allows_custom_field_type(field):
             return th.Property(name, th.NumberType)
-        if field in self.integer_fields:
+        if field in self.integer_fields and self._field_allows_custom_field_type(field):
             return th.Property(name, th.IntegerType)
         return th.Property(name, th.StringType)
 
