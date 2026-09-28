@@ -29,6 +29,7 @@ else:
 class VendorCreditStream(BulkParentStream):
     name = "vendor_credits"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "type = 'VendCred'"
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
@@ -45,6 +46,7 @@ class VendorCreditStream(BulkParentStream):
 class VendorCreditLinesStream(NetsuiteDynamicStream):
     name = "vendor_credit_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = VendorCreditStream
     _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
 
@@ -65,6 +67,7 @@ class VendorCreditLinesStream(NetsuiteDynamicStream):
 class VendorCreditExpensesStream(NetsuiteDynamicStream):
     name = "vendor_credit_expenses"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = VendorCreditStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -86,6 +89,7 @@ class VendorCreditExpensesStream(NetsuiteDynamicStream):
 class VendorCreditTaxLinesStream(NetsuiteDynamicStream):
     name = "vendor_credit_tax_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = VendorCreditStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -104,6 +108,7 @@ class SalesTransactionsStream(TransactionRootStream):
     name = "sales_transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
+    use_dynamic_fields = True
     replication_key = "lastmodifieddate"
     custom_filter = "transaction.recordtype = 'salesorder'"
 
@@ -174,6 +179,7 @@ class VendorBillsStream(TransactionRootStream):
     name = "vendor_bill_transactions"
     primary_keys = ["id"]
     table = "transaction"
+    use_dynamic_fields = True
     replication_key = "lastmodifieddate"
     custom_filter = "recordtype = 'vendorbill'"
 
@@ -560,6 +566,7 @@ class LocationsStream(BulkParentStream):
 class LocationReturnAddressStream(NetsuiteDynamicStream):
     name = "location_return_address"
     table = "locationreturnaddress"
+    use_dynamic_fields = True
     parent_stream_type = LocationsStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -572,6 +579,7 @@ class LocationReturnAddressStream(NetsuiteDynamicStream):
 class LocationMainAddressStream(NetsuiteDynamicStream):
     name = "location_main_address"
     table = "locationmainaddress"
+    use_dynamic_fields = True
     parent_stream_type = LocationsStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -585,6 +593,7 @@ class CostStream(NetSuiteStream):
     name = "cost"
     primary_keys = ["id", "lastmodifieddate"]
     table = "item"
+    use_dynamic_fields = True
     custom_filter = "itemtype='InvtPart'"
     replication_key = "lastmodifieddate"
 
@@ -599,6 +608,7 @@ class ItemStream(BulkParentStream):
     name = "item"
     primary_keys = ["id", "lastmodifieddate"]
     table = "item"
+    use_dynamic_fields = True
     type_filter = False
     replication_key = "lastmodifieddate"
 
@@ -1088,8 +1098,8 @@ class TransactionsStream(TransactionRootStream):
     name = "transactions"
     primary_keys = ["id", "lastmodifieddate"]
     table = "transaction"
+    use_dynamic_fields = True
     replication_key = "lastmodifieddate"
-
 
     join = """
         LEFT JOIN TransactionShippingAddress tsa ON transaction.shippingaddress = tsa.nkey
@@ -1152,6 +1162,7 @@ class TransactionLinesStream(TransactionRootStream):
     primary_keys = ["id", "transaction"]
     replication_key = "linelastmodifieddate"
     table = "transactionline"
+    use_dynamic_fields = True
     start_date = None
     end_date = None
 
@@ -1494,6 +1505,7 @@ class SubsidiariesStream(BulkParentStream):
 class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_return_address"
     table = "subsidiaryreturnaddress"
+    use_dynamic_fields = True
     parent_stream_type = SubsidiariesStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1506,6 +1518,7 @@ class SubsidiaryReturnAddressStream(NetsuiteDynamicStream):
 class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_main_address"
     table = "subsidiarymainaddress"
+    use_dynamic_fields = True
     parent_stream_type = SubsidiariesStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1518,6 +1531,7 @@ class SubsidiaryMainAddressStream(NetsuiteDynamicStream):
 class SubsidiaryShippingAddressStream(NetsuiteDynamicStream):
     name = "subsidiary_shipping_address"
     table = "subsidiaryshippingaddress"
+    use_dynamic_fields = True
     parent_stream_type = SubsidiariesStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -1622,6 +1636,7 @@ class RevenueElementStream(NetsuiteDynamicStream):
     name = "revenueelement"
     primary_keys = ["id"]
     table = "revenueelement"
+    use_dynamic_fields = True
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1680,6 +1695,7 @@ class SubscriptionsStream(NetsuiteDynamicStream):
     name = "subscriptions"
     primary_keys = ["id"]
     table = "subscription"
+    use_dynamic_fields = True
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1697,12 +1713,14 @@ class SubscriptionLinesStream(NetsuiteDynamicStream):
     name = "subscription_lines"
     primary_keys = ["id"]
     table = "subscriptionline"
+    use_dynamic_fields = True
 
 
 class SubscriptionPlansStream(NetsuiteDynamicStream):
     name = "subscription_plans"
     primary_keys = ["id"]
     table = "subscriptionplan"
+    use_dynamic_fields = True
 
 
 class SubscriptionTermsStream(NetsuiteDynamicStream):
@@ -1846,6 +1864,7 @@ class PriceBookStream(NetsuiteDynamicStream):
     name = "pricebooks"
     primary_keys = ["id"]
     table = "pricebook"
+    use_dynamic_fields = True
 
 
 class PriceBookLineIntervalStream(NetSuiteStream):
@@ -1891,6 +1910,7 @@ class PricePlanStream(NetsuiteDynamicStream):
     name = "price_plan"
     primary_keys = ["id"]
     table = "priceplan"
+    use_dynamic_fields = True
 
 
 class PriceTiersStream(NetSuiteStream):
@@ -1915,6 +1935,7 @@ class SubscriptionChangeOrderStream(NetsuiteDynamicStream):
     name = "subscription_change_order"
     primary_keys = ["id"]
     table = "subscriptionchangeorder"
+    use_dynamic_fields = True
 
 
 class ChangeOrderLineStream(NetsuiteDynamicStream):
@@ -2124,6 +2145,7 @@ class VendorEntityAddressesStream(NetsuiteDynamicStream):
     name = "vendor_addresses"
     primary_keys = ["nkey"]
     table = "vendoraddressbookentityaddress"
+    use_dynamic_fields = True
     parent_stream_type = VendorStream
     custom_filter = ""
 
@@ -2144,6 +2166,7 @@ class CustomerEntityAddressesStream(NetsuiteDynamicStream):
     name = "customer_addresses"
     primary_keys = ["nkey"]
     table = "customeraddressbookentityaddress"
+    use_dynamic_fields = True
     parent_stream_type = CustomersStream
     custom_filter = ""
 
@@ -2164,6 +2187,7 @@ class SalesRepStream(NetsuiteDynamicStream):
 class ItemVendorStream(NetsuiteDynamicStream):
     name = "item_vendors"
     table = "itemvendor"
+    use_dynamic_fields = True
     parent_stream_type = ItemStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -2176,6 +2200,7 @@ class ItemVendorStream(NetsuiteDynamicStream):
 class ItemPriceStream(NetsuiteDynamicStream):
     name = "item_prices"
     table = "itemprice"
+    use_dynamic_fields = True
     parent_stream_type = ItemStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -2188,6 +2213,7 @@ class ItemPriceStream(NetsuiteDynamicStream):
 class BillsStream(BulkParentStream):
     name = "bills"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "transaction.type = 'VendBill'"
     replication_key = "lastmodifieddate"
     join = "LEFT JOIN Entity ON (transaction.entity = Entity.id)"
@@ -2263,6 +2289,7 @@ class BillLinesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     _custom_filter = "mainline = 'F' AND (hascostline = 'T' OR accountinglinetype = 'EXPENSE')"
+    use_dynamic_fields = True
 
     default_fields = [
         th.Property("item", th.StringType),
@@ -2288,6 +2315,7 @@ class BillExpensesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     _custom_filter = "mainline = 'F' and accountinglinetype is null"
+    use_dynamic_fields = True
 
     default_fields = [
         th.Property("taxamount", th.NumberType),
@@ -2310,7 +2338,8 @@ class BillPaymentsStream(NetsuiteDynamicStream):
     join = "INNER JOIN Transaction AS NT ON (NT.id = NTLL.nextdoc) INNER JOIN TransactionLine AS NTL ON (NTL.transaction = NT.ID)"
     _custom_filter = "NT.recordtype = 'vendorpayment'"
     order_by = "ORDER BY NT.id"
-
+    use_dynamic_fields = True
+    
     schema = th.PropertiesList(
         th.Property("account", th.StringType),
         th.Property("amount", th.StringType),
@@ -2533,7 +2562,8 @@ class BillTaxLinesStream(NetsuiteDynamicStream):
     query_table = "transaction t"
     join = "INNER JOIN transactionline tl on tl.transaction = t.id"
     _custom_filter = "mainline = 'F' and taxline = 'T'"
-
+    use_dynamic_fields = True
+    
     def prepare_request_payload(self, context, next_page_token):
         # fetch bill expenses filtering by transaction id from bills parent stream
         ids = ", ".join(f"'{id}'" for id in context["ids"])
@@ -2546,6 +2576,7 @@ class BillTaxLinesStream(NetsuiteDynamicStream):
 class InvoicesStream(BulkParentStream):
     name = "invoices"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "type = 'CustInvc'"
     child_context_keys = ["ids", "addresses"]
     replication_key = "lastmodifieddate"
@@ -2574,6 +2605,7 @@ class InvoicesStream(BulkParentStream):
 class InvoiceLinesStream(NetsuiteDynamicStream):
     name = "invoice_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = InvoicesStream
     _custom_filter = "mainline = 'F' and accountinglinetype = 'INCOME'"
 
@@ -2596,6 +2628,7 @@ class InvoiceLinesStream(NetsuiteDynamicStream):
 class InvoicePaymentsStream(NetsuiteDynamicStream):
     name = "invoice_payments"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = InvoicesStream
     select = "DISTINCT NTLL.PreviousDoc transaction, NT.ID id, NT.transactionNumber, NT.externalId, NT.account account, NT.TranDate, NT.Type, NT.TranID, BUILTIN.DF(NT.Status) status, NT.ForeignTotal amount, currency, exchangeRate, NT.entity, NTL.subsidiary, NTL.location, NTL.class, NTL.department"
     query_table = "NextTransactionLineLink AS NTLL"
@@ -2633,6 +2666,7 @@ class InvoicePaymentsStream(NetsuiteDynamicStream):
 class InvoiceTaxLinesStream(NetsuiteDynamicStream):
     name = "invoice_tax_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = InvoicesStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -2651,6 +2685,7 @@ class InvoiceTaxLinesStream(NetsuiteDynamicStream):
 class InvoiceAddressesStream(NetsuiteDynamicStream):
     name = "invoice_addresses"
     table = "transactionaddressmappingaddress"
+    use_dynamic_fields = True
     parent_stream_type = InvoicesStream
 
     def prepare_request_payload(self, context, next_page_token):
@@ -2663,6 +2698,7 @@ class InvoiceAddressesStream(NetsuiteDynamicStream):
 class ItemReceiptsStream(BulkParentStream):
     name = "item_receipts"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "type = 'ItemRcpt'"
     replication_key = "lastmodifieddate"
     
@@ -2678,6 +2714,7 @@ class ItemReceiptsStream(BulkParentStream):
 class ItemReceiptLinesStream(NetsuiteDynamicStream):
     name = "item_receipt_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = ItemReceiptsStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -2708,6 +2745,7 @@ class SourceDetailsStream(NetSuiteStream):
 class PurchaseOrdersStream(BulkParentStream):
     name = "purchase_orders"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "type = 'PurchOrd'"
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
@@ -2724,6 +2762,7 @@ class PurchaseOrdersStream(BulkParentStream):
 class PurchaseOrderLinesStream(NetsuiteDynamicStream):
     name = "purchase_order_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = PurchaseOrdersStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -2748,6 +2787,7 @@ class PurchaseOrderLinesStream(NetsuiteDynamicStream):
 class SalesOrdersStream(BulkParentStream):
     name = "sales_orders"
     table = "transaction"
+    use_dynamic_fields = True
     custom_filter = "type = 'SalesOrd'"
     replication_key = "lastmodifieddate"
     _select = "*, BUILTIN.DF(status) status"
@@ -2764,6 +2804,7 @@ class SalesOrdersStream(BulkParentStream):
 class SalesOrderLinesStream(NetsuiteDynamicStream):
     name = "sales_order_lines"
     table = "transactionline"
+    use_dynamic_fields = True
     parent_stream_type = SalesOrdersStream
     _select = "t.recordtype, tl.*"
     select_prefix = "tl"
@@ -2787,6 +2828,7 @@ class SalesOrderLinesStream(NetsuiteDynamicStream):
 class kitItemMemberStream(NetsuiteDynamicStream):
     name = "kit_item_members"
     table = "kititemmember"
+    use_dynamic_fields = True
     parent_stream_type = ItemStream
     select = "kititemmember.*, parentitem.id as parentitemid, parentitem.itemid as parentitemname, memberitem.id as memberitemid, memberitem.itemid as itemname"
     select_prefix = "kititemmember"
@@ -2839,6 +2881,7 @@ class CustomFieldsStream(NetsuiteDynamicStream):
     name = "custom_fields"
     primary_keys = ["id"]
     table = "customfield"
+    use_dynamic_fields = True
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -2960,6 +3003,7 @@ class EntityStatusStream(NetsuiteDynamicStream):
     name = "entity_statuses"
     primary_keys = ["key"]
     table = "entitystatus"
+    use_dynamic_fields = True
 
 
 class ContactsStream(NetsuiteDynamicStream):
