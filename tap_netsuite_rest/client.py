@@ -1038,17 +1038,13 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             if key in shared:
                 self.date_fields.add(key)
 
-    def _suiteql_schema_cache_key(self) -> str:
-        """Key for SuiteQL sample inference shared by streams with the same probe query."""
-        return self._suiteql_schema_query()
-
     def _suiteql_schema_query(self) -> str:
         if self.replication_key:
             return f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
         return f"SELECT * FROM {self.table}"
 
     def _load_suiteql_schema_cache(self) -> bool:
-        cache_key = self._suiteql_schema_cache_key()
+        cache_key = self._suiteql_schema_query()
         if cache_key not in self._tap.suiteql_schema_probed:
             return False
         self.fields = set(self._tap.suiteql_schema_fields.get(cache_key, set()))
@@ -1065,7 +1061,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         return True
 
     def _cache_suiteql_schema(self) -> None:
-        cache_key = self._suiteql_schema_cache_key()
+        cache_key = self._suiteql_schema_query()
         self._tap.suiteql_schema_fields[cache_key] = (
             self._tap.suiteql_schema_fields.get(cache_key, set()) | self.fields
         )
