@@ -477,7 +477,7 @@ class NetSuiteStream(RESTStream):
                 self.name,
                 (response.text or "")[:500],
             )        
-            return False
+        return False
 
     def _probe_suiteql_field_is_invalid(
         self, field_name: str, where: Optional[str] = None
