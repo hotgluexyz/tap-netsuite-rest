@@ -1003,12 +1003,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                 setattr(self._tap, attr, {})
         if not hasattr(self._tap, "accesible_tables"):
             self._tap.accesible_tables = {}
+        if not hasattr(self._tap, "suiteql_schema_probed"):
+            self._tap.suiteql_schema_probed = set()
 
     def _suiteql_schema_cache_key(self) -> str:
         """Key for SuiteQL sample inference shared by streams with the same probe query."""
-        if self.replication_key:
-            return f"{self.table}:rk={self.replication_key}"
-        return self.table
+        return self._suiteql_schema_query()
 
     def _suiteql_schema_query(self) -> str:
         if self.replication_key:
@@ -1017,20 +1017,33 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     def _load_suiteql_schema_cache(self) -> bool:
         cache_key = self._suiteql_schema_cache_key()
-        if cache_key not in self._tap.suiteql_schema_fields:
+        if cache_key not in self._tap.suiteql_schema_probed:
             return False
-        self.fields = set(self._tap.suiteql_schema_fields[cache_key])
-        self.date_fields = set(self._tap.suiteql_schema_date_fields.get(cache_key, set()))
-        self.bool_fields = set(self._tap.suiteql_schema_bool_fields.get(cache_key, set()))
+        self.fields = set(self._tap.suiteql_schema_fields.get(cache_key, set()))
+        self.date_fields = set(
+            self._tap.suiteql_schema_date_fields.get(cache_key, set())
+        )
+        self.bool_fields = set(
+            self._tap.suiteql_schema_bool_fields.get(cache_key, set())
+        )
         if self._tap.accesible_tables.get(self.table):
             self.is_table_accessible = True
         return True
 
     def _cache_suiteql_schema(self) -> None:
         cache_key = self._suiteql_schema_cache_key()
-        self._tap.suiteql_schema_fields[cache_key] = set(self.fields)
-        self._tap.suiteql_schema_date_fields[cache_key] = set(self.date_fields)
-        self._tap.suiteql_schema_bool_fields[cache_key] = set(self.bool_fields)
+        self._tap.suiteql_schema_fields[cache_key] = (
+            self._tap.suiteql_schema_fields.get(cache_key, set()) | self.fields
+        )
+        self._tap.suiteql_schema_date_fields[cache_key] = (
+            self._tap.suiteql_schema_date_fields.get(cache_key, set())
+            | self.date_fields
+        )
+        self._tap.suiteql_schema_bool_fields[cache_key] = (
+            self._tap.suiteql_schema_bool_fields.get(cache_key, set())
+            | self.bool_fields
+        )
+        self._tap.suiteql_schema_probed.add(cache_key)
         self._tap.accesible_tables[self.table] = True
 
     def _apply_suiteql_sample_to_fields(self, items: list) -> None:
@@ -1065,15 +1078,39 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def _custom_field_prefix(self) -> Optional[str]:
         return self._STREAM_CUSTOM_FIELD_PREFIX.get(self.name)
 
+    def _needs_custom_field_catalog(self) -> bool:
+        """Load customfield types once for SuiteQL-inferred schemas (typing + bill/invoice field merge)."""
+        if self._tap.custom_fields is not None:
+            return False
+        if self.schema_response and not self.use_dynamic_fields and not self.filter_fields:
+            return False
+        return True
+
+    def _apply_custom_field_type_to_sets(self, field: str, cf_type: str) -> None:
+        if cf_type in ("Decimal Number", "Percent"):
+            self.float_fields.add(field)
+        elif cf_type == "Integer Number":
+            self.integer_fields.add(field)
+        elif cf_type == "Date/Time":
+            self.date_fields.add(field)
+        elif cf_type == "Check Box":
+            self.bool_fields.add(field)
+
+    def _apply_custom_field_type_hints(self) -> None:
+        """Apply NetSuite custom-field types to columns already present in the SuiteQL sample."""
+        if not self._tap.custom_fields:
+            return
+        catalog = self._tap.custom_fields
+        for field in self.fields:
+            cf_type = catalog.get(field) or catalog.get(field.lower())
+            if cf_type:
+                self._apply_custom_field_type_to_sets(field, cf_type)
+
     def _fetch_custom_fields_catalog(self, session: requests.Session) -> None:
-        if (
-            self.schema_response
-            or self._tap.custom_fields is not None
-            or self.name not in self._CUSTOM_FIELD_STREAMS
-        ):
+        if not self._needs_custom_field_catalog():
             return
 
-        page_size = self.config.get("_discover_api_page_size", 500)
+        page_size = self.config.get("_discover_api_page_size", 1000)
         offset = 0
         custom_fields: dict[str, Any] = {}
         self.logger.info("Fetching custom fields data")
@@ -1118,28 +1155,22 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         for cf, cf_type in table_cf.items():
             if not self._field_allows_custom_field_type(cf):
                 continue
-            if cf_type in ("Decimal Number", "Percent"):
-                self.float_fields.add(cf)
-            elif cf_type == "Integer Number":
-                self.integer_fields.add(cf)
-            elif cf_type == "Date/Time":
-                self.date_fields.add(cf)
-            elif cf_type == "Check Box":
-                self.bool_fields.add(cf)
+            self._apply_custom_field_type_to_sets(cf, cf_type)
 
     def infer_schema_from_query(self, send_request: Callable) -> None:
-        discover_api_page_size = self.config.get("_discover_api_page_size", 500)
+        discover_api_page_size = self.config.get("_discover_api_page_size", 1000)
         self._init_tap_schema_fields()
         self.float_fields = set()
         self.integer_fields = set()
 
         if self._load_suiteql_schema_cache():
             self._merge_inferred_custom_fields()
+            self._apply_custom_field_type_hints()
             self.logger.info(
-                "Using cached SuiteQL schema for %s (stream %s, key %s)",
+                "Using cached SuiteQL schema for %s (stream %s, %s fields)",
                 self.table,
                 self.name,
-                self._suiteql_schema_cache_key(),
+                len(self.fields),
             )
             return
 
@@ -1167,6 +1198,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self._apply_suiteql_sample_to_fields(items)
             self._cache_suiteql_schema()
             self._merge_inferred_custom_fields()
+            self._apply_custom_field_type_hints()
         except Exception as e:
             self.logger.warning(
                 "Failed to get schema by fetching first 1k records for %s - stream: %s, Error: %s",
@@ -1242,9 +1274,9 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             return th.Property(name, th.DateTimeType)
         if field in self.bool_fields:
             return th.Property(name, th.BooleanType)
-        if field in self.float_fields and self._field_allows_custom_field_type(field):
+        if field in self.float_fields:
             return th.Property(name, th.NumberType)
-        if field in self.integer_fields and self._field_allows_custom_field_type(field):
+        if field in self.integer_fields:
             return th.Property(name, th.IntegerType)
         return th.Property(name, th.StringType)
 
