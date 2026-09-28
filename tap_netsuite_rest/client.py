@@ -1622,6 +1622,9 @@ class TransactionRootStream(NetsuiteDynamicStream):
     default_fields = []
     date_fields = []
 
+    def _apply_shared_custbody_datetime_types(self) -> None:
+        """Main isolated this subtree via a separate class-level date_fields list."""
+
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
