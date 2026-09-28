@@ -1339,7 +1339,7 @@ class CurrenciesStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "currency"
     select = None
-    filter_fields = True
+    use_dynamic_fields = True
 
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         try:
@@ -1396,7 +1396,7 @@ class SubsidiariesStream(BulkParentStream):
     name = "subsidiaries"
     primary_keys = ["id"]
     table = "subsidiary"
-    filter_fields = True
+    use_dynamic_fields = True
     always_add_default_fields = True
     child_context_keys = [
         "return_address_ids",
@@ -1583,7 +1583,7 @@ class AccountingPeriodsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "accountingperiod"
     select = None
-    filter_fields = True
+    use_dynamic_fields = True
 
 
 class CustomersStream(BulkParentStream):
