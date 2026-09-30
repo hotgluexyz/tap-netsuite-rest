@@ -1135,7 +1135,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         ):
             return
 
-        page_size = self.config.get("_discover_api_page_size", 1000)
+        page_size = self.config.get("_discover_api_page_size", 500)
         offset = 0
         custom_fields: dict[str, Any] = {}
         self.logger.info("Fetching custom fields data")
@@ -1185,7 +1185,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self._apply_custom_field_type_to_sets(cf, cf_type)
 
     def infer_schema_from_query(self, send_request: Callable) -> None:
-        discover_api_page_size = self.config.get("_discover_api_page_size", 1000)
+        discover_api_page_size = self.config.get("_discover_api_page_size", 500)
+        discover_api_total_records = self.config.get("_discover_api_total_records", 1000)
         self._init_tap_schema_fields()
         self.float_fields = set()
         self.integer_fields = set()
@@ -1204,31 +1205,38 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         self.fields = set()
         self.date_fields = set()
         self.bool_fields = set()
-        url = f"{self.url_base}?offset=0&limit={discover_api_page_size}"
         schema_query = self._suiteql_schema_query()
         self.logger.info("Getting suiteql schema for %s - stream: %s", self.table, self.name)
-
+        items = []
+        page_offset = 0
         try:
-            response = send_request(
-                method="POST",
-                url=url,
-                headers=self.http_headers,
-                json={"q": schema_query},
-            )
-            self.logger.info(
-                "get_schema(%s): suiteql schema inference POST done status=%s",
-                self.name,
-                response.status_code,
-            )
-            items = response.json().get("items") or []
+            while True:
+                response = send_request(
+                    method="POST",
+                    url=f"{self.url_base}?offset={page_offset}&limit={discover_api_page_size}",
+                    headers=self.http_headers,
+                    json={"q": schema_query},
+                )
+                self.logger.info(
+                    "get_schema(%s): suiteql schema inference POST done status=%s",
+                    self.name,
+                    response.status_code,
+                )
+                items.extend(response.json().get("items") or [])                    
+                page_offset = self.get_next_page_token(response, page_offset)
+                if page_offset is None or len(items) >= discover_api_total_records:
+                    break
+        
             self.is_table_accessible = True
             self._apply_suiteql_sample_to_fields(items)
             self._cache_suiteql_schema()
             self._merge_inferred_custom_fields()
             self._apply_shared_custbody_datetime_types()
+
         except Exception as e:
-            self.logger.warning(
-                "Failed to get schema by fetching first 1k records for %s - stream: %s, Error: %s",
+            self.logger.info(
+                "Failed to get schema by fetching first %s records for %s - stream: %s, Error: %s",
+                discover_api_total_records,
                 self.table,
                 self.name,
                 e,
@@ -1354,11 +1362,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
 
     @property
     def schema(self) -> dict:
-        if (
-            self.config.get("use_input_catalog", True)
-            and self._tap.input_catalog
-            and self._tap.input_catalog.get(self.name)
-        ):
+        if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
         if self.fields is None and self.schema_response is None:
