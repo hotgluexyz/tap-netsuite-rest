@@ -116,6 +116,19 @@ class TapNetSuite(Tap):
                 accessible.append(stream)
                 continue
 
+            # if table has been probed during suiteqlschema discovery, skip probing again
+            if hasattr(stream, "is_table_accessible"):
+                if stream.is_table_accessible:
+                    accessible.append(stream)
+                else:
+                    self.logger.info(
+                        "Excluding stream '%s' from catalog: no access to table '%s'",
+                        stream.name,
+                        table,
+                    )
+                continue
+            
+            # if stream schema has been discover through metadata-catalog, probe if we have suiteql access to the table
             if table not in table_access_cache:
                 self.logger.info("Probing access for table '%s'", table)
                 table_access_cache[table] = stream.probe_table_access(table)

@@ -51,15 +51,19 @@ SUITEQL_EXCLUDED_FIELDS = frozenset(
     {"links", "refname", "classtranslation", "currencyname"}
 )
 
-
 class NetSuiteStream(RESTStream):
     """NetSuite stream class."""
 
     @property
+    def url_account(self) -> str:
+        """Return the API URL account, configurable via tap settings."""
+        return self.config["ns_account"].replace("_", "-").replace("SB", "sb")
+
+    @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
-        url_account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
-        return f"https://{url_account}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql"
+        return f"https://{self.url_account}.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql"
+
 
     records_jsonpath = "$.items[*]"
     type_filter = None
@@ -451,7 +455,7 @@ class NetSuiteStream(RESTStream):
         try:
             return session.send(prepared_req, timeout=self.timeout)
         except Exception as exc:
-            self.logger.debug(
+            self.logger.info(
                 "SuiteQL field probe failed for stream %s: %s; error: %s",
                 self.name,
                 query,
@@ -467,12 +471,12 @@ class NetSuiteStream(RESTStream):
         if response is not None and response.status_code == 200:
             return True
         if response is not None:
-            self.logger.debug(
+            self.logger.info(
                 "SuiteQL field probe returned %s for stream %s; response: %s",
                 response.status_code,
                 self.name,
                 (response.text or "")[:500],
-            )
+            )        
         return False
 
     def _probe_suiteql_field_is_invalid(
@@ -493,7 +497,7 @@ class NetSuiteStream(RESTStream):
                 return True
         if response.status_code == 500 and "UNEXPECTED_ERROR" in response.text:
             return True
-        self.logger.debug(
+        self.logger.info(
             "SuiteQL field probe inconclusive for %s on stream %s: status=%s; response: %s",
             field_name,
             self.name,
@@ -904,6 +908,16 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
+    _CUSTOM_FIELD_STREAMS = frozenset(
+        {"invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"}
+    )
+    _STREAM_CUSTOM_FIELD_PREFIX = {
+        "invoices": "custbody",
+        "bills": "custbody",
+        "invoice_lines": "custcol",
+        "bill_lines": "custcol",
+        "bill_expenses": "custcol",
+    }
     # Schema discovery can fall back to SuiteQL; don't inherit the 10-try / 500s data-path budget.
     schema_discovery_timeout = 180
     schema_discovery_max_tries = 8
@@ -912,9 +926,19 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     schema_discovery_rate_limit_max_value = 180
 
     def __init__(self, *args, **kwargs):
-        self.float_fields = []
-        self.integer_fields = []
+        self.float_fields = set()
+        self.integer_fields = set()
+        self.date_fields = set()
+        self.bool_fields = set()
         return super().__init__(*args, **kwargs)
+
+    def _field_allows_custom_field_type(self, field: str) -> bool:
+        """Custom field catalog types apply only on invoice/bill streams (matches pre-cache main behavior)."""
+        if field.startswith("custbody"):
+            return self.name in ("invoices", "bills")
+        if field.startswith("custcol"):
+            return self.name in ("invoice_lines", "bill_lines", "bill_expenses")
+        return True
 
     def send_schema_request(
         self,
@@ -978,240 +1002,378 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         )
         return standard_retry(rate_limit_retry(func))
 
-    @backoff.on_exception(backoff.expo, (
-        HTTPError,
-        RetriableAPIError,
-        requests.exceptions.Timeout,
-        requests.exceptions.ConnectionError,
-        RemoteDisconnected,
-    ), max_tries=5, factor=2)
-    def get_schema(self): # noqa: C901
-        s = self.get_session()
+    def _init_tap_schema_fields(self):
+        for attr in (
+            "suiteql_schema_fields",
+            "suiteql_schema_bool_fields",
+            "suiteql_schema_date_fields",
+        ):
+            if not hasattr(self._tap, attr):
+                setattr(self._tap, attr, {})
+        if not hasattr(self._tap, "accesible_tables"):
+            self._tap.accesible_tables = {}
+        if not hasattr(self._tap, "suiteql_schema_probed"):
+            self._tap.suiteql_schema_probed = set()
+        if not hasattr(self._tap, "custbody_datetime_fields"):
+            self._tap.custbody_datetime_fields = set()
+
+    def _register_custbody_datetime_fields_from_catalog(self) -> None:
+        """Record custbody Date/Time script IDs (main: bills merge appended these to class date_fields)."""
+        catalog = getattr(self._tap, "custom_fields", None)
+        if not catalog:
+            return
+        for script_id, cf_type in catalog.items():
+            if not script_id.startswith("custbody"):
+                continue
+            if cf_type and cf_type.strip().lower() == "date/time":
+                self._tap.custbody_datetime_fields.add(script_id)
+
+    def _apply_shared_custbody_datetime_types(self) -> None:
+        """Type custbody Date/Time columns when present in this stream's SuiteQL sample."""
+        shared = getattr(self._tap, "custbody_datetime_fields", None)
+        if not shared:
+            return
+        for field in self.fields:
+            key = self._typed_field_key(field)
+            if key in shared:
+                self.date_fields.add(key)
+
+    def _suiteql_schema_query(self) -> str:
+        if self.replication_key:
+            return f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
+        return f"SELECT * FROM {self.table}"
+
+    def _load_suiteql_schema_cache(self) -> bool:
+        cache_key = self._suiteql_schema_query()
+        if cache_key not in self._tap.suiteql_schema_probed:
+            return False
+        self.fields = set(self._tap.suiteql_schema_fields.get(cache_key, set()))
+        self.date_fields = {
+            self._typed_field_key(f)
+            for f in self._tap.suiteql_schema_date_fields.get(cache_key, set())
+        }
+        self.bool_fields = {
+            self._typed_field_key(f)
+            for f in self._tap.suiteql_schema_bool_fields.get(cache_key, set())
+        }
+        if self._tap.accesible_tables.get(self.table):
+            self.is_table_accessible = True
+        return True
+
+    def _cache_suiteql_schema(self) -> None:
+        cache_key = self._suiteql_schema_query()
+        self._tap.suiteql_schema_fields[cache_key] = (
+            self._tap.suiteql_schema_fields.get(cache_key, set()) | self.fields
+        )
+        self._tap.suiteql_schema_date_fields[cache_key] = (
+            self._tap.suiteql_schema_date_fields.get(cache_key, set())
+            | self.date_fields
+        )
+        self._tap.suiteql_schema_bool_fields[cache_key] = (
+            self._tap.suiteql_schema_bool_fields.get(cache_key, set())
+            | self.bool_fields
+        )
+        self._tap.suiteql_schema_probed.add(cache_key)
+        self._tap.accesible_tables[self.table] = True
+
+    def _apply_suiteql_sample_to_fields(self, items: list) -> None:
+        for item in items:
+            self.fields.update(item.keys())
+
+        pot_date_fields = [
+            f
+            for f in self.fields
+            if "date" in f and "custbody" not in f and "custrecord" not in f
+        ]
+        for field in pot_date_fields:
+            sample = next((row.get(field) for row in items if row.get(field)), None)
+            if sample is None:
+                continue
+            try:
+                try:
+                    parse(sample)
+                except Exception:
+                    pendulum.from_format(sample, "MM/DD/YYYY")
+                self.date_fields.add(self._typed_field_key(field))
+            except Exception:
+                pass
+
+        self.bool_fields = {
+            self._typed_field_key(field)
+            for field in self.fields
+            if all(row.get(field) in ("T", "F", None) for row in items)
+        }
+        self.fields -= SUITEQL_EXCLUDED_FIELDS
+
+    def _custom_field_prefix(self) -> Optional[str]:
+        return self._STREAM_CUSTOM_FIELD_PREFIX.get(self.name)
+
+    @staticmethod
+    def _typed_field_key(field: str) -> str:
+        return field.lower()
+
+    def _apply_custom_field_type_to_sets(self, field: str, cf_type: str) -> None:
+        """Map customfield.fieldvaluetype the same way main did (case-insensitive)."""
+        if not cf_type:
+            return
+        key = self._typed_field_key(field)
+        normalized = cf_type.strip().lower()
+        if normalized in ("decimal number", "percent"):
+            self.float_fields.add(key)
+        elif normalized == "integer number":
+            self.integer_fields.add(key)
+        elif normalized == "date/time":
+            self.date_fields.add(key)
+        elif normalized == "check box":
+            self.bool_fields.add(key)
+
+    def _fetch_custom_fields_catalog(self, session: requests.Session) -> None:
+        if (
+            self.schema_response
+            or self._tap.custom_fields is not None
+            or self.name not in self._CUSTOM_FIELD_STREAMS
+        ):
+            return
+
+        page_size = self.config.get("_discover_api_page_size", 500)
+        offset = 0
+        custom_fields: dict[str, Any] = {}
+        self.logger.info("Fetching custom fields data")
+        while offset is not None:
+            prepared_req = session.prepare_request(
+                requests.Request(
+                    method="POST",
+                    url=f"{self.url_base}?offset={offset}&limit={page_size}",
+                    headers=self.http_headers,
+                    json={"q": "SELECT * FROM customfield"},
+                )
+            )
+            response = session.send(prepared_req, timeout=self.timeout)
+            if response.status_code != 200:
+                self.logger.error(
+                    "Failed to fetch custom fields for %s - stream: %s, Error: %s, "
+                    "not able to add custom fields to the schema",
+                    self.table,
+                    self.name,
+                    response.text,
+                )
+                break
+            offset = self.get_next_page_token(response, offset)
+            custom_fields.update(
+                {
+                    cf.get("scriptid").lower(): cf.get("fieldvaluetype")
+                    for cf in response.json().get("items", [])
+                    if cf.get("scriptid")
+                }
+            )
+        self._tap.custom_fields = custom_fields
+        self._register_custbody_datetime_fields_from_catalog()
+
+    def _merge_inferred_custom_fields(self) -> None:
+        prefix = self._custom_field_prefix()
+        if not prefix or not self._tap.custom_fields:
+            return
+        table_cf = {
+            key: value
+            for key, value in self._tap.custom_fields.items()
+            if key.startswith(prefix)
+        }
+        self.fields.update(table_cf.keys())
+        for cf, cf_type in table_cf.items():
+            if not self._field_allows_custom_field_type(cf):
+                continue
+            self._apply_custom_field_type_to_sets(cf, cf_type)
+
+    def infer_schema_from_query(self, send_request: Callable) -> None:
+        discover_api_page_size = self.config.get("_discover_api_page_size", 500)
+        discover_api_total_records = self.config.get("_discover_api_total_records", 1000)
+        self._init_tap_schema_fields()
+        self.float_fields = set()
+        self.integer_fields = set()
+
+        if self._load_suiteql_schema_cache():
+            self._merge_inferred_custom_fields()
+            self._apply_shared_custbody_datetime_types()
+            self.logger.info(
+                "Using cached SuiteQL schema for %s (stream %s, %s fields)",
+                self.table,
+                self.name,
+                len(self.fields),
+            )
+            return
+
+        self.fields = set()
+        self.date_fields = set()
+        self.bool_fields = set()
+        schema_query = self._suiteql_schema_query()
+        self.logger.info("Getting suiteql schema for %s - stream: %s", self.table, self.name)
+        items = []
+        page_offset = 0
+        try:
+            while True:
+                response = send_request(
+                    method="POST",
+                    url=f"{self.url_base}?offset={page_offset}&limit={discover_api_page_size}",
+                    headers=self.http_headers,
+                    json={"q": schema_query},
+                )
+                self.logger.info(
+                    "get_schema(%s): suiteql schema inference POST done status=%s",
+                    self.name,
+                    response.status_code,
+                )
+                items.extend(response.json().get("items") or [])                    
+                page_offset = self.get_next_page_token(response, page_offset)
+                if page_offset is None or len(items) >= discover_api_total_records:
+                    break
+        
+            self.is_table_accessible = True
+            self._apply_suiteql_sample_to_fields(items)
+            self._cache_suiteql_schema()
+            self._merge_inferred_custom_fields()
+            self._apply_shared_custbody_datetime_types()
+
+        except Exception as e:
+            self.logger.info(
+                "Failed to get schema by fetching first %s records for %s - stream: %s, Error: %s",
+                discover_api_total_records,
+                self.table,
+                self.name,
+                e,
+            )
+            if "INVALID_PARAMETER" in str(e):
+                self.is_table_accessible = False
+
+    def _fetch_schema_from_metadata_catalog(self, send_request: Callable) -> None:
+        try:
+            self.logger.info(
+                "Getting metadata-catalog schema for %s - stream: %s",
+                self.table,
+                self.name,
+            )
+            url = (
+                f"https://{self.url_account}.suitetalk.api.netsuite.com/services/rest/"
+                f"record/v1/metadata-catalog/{self.table}"
+            )
+            catalog_headers = dict(self.http_headers)
+            catalog_headers["Accept"] = "application/schema+json"
+            response = send_request(
+                method="GET",
+                url=url,
+                headers=catalog_headers,
+            )
+            self.schema_response = response.json()
+        except Exception as e:
+            self.logger.warning(
+                "Failed to get schema using metadata-catalog for %s - stream: %s, Error: %s",
+                self.table,
+                self.name,
+                e,
+            )
+
+    @backoff.on_exception(
+        backoff.expo,
+        (
+            HTTPError,
+            RetriableAPIError,
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectionError,
+            RemoteDisconnected,
+        ),
+        max_tries=5,
+        factor=2,
+    )
+    def get_schema(self) -> None:
+        session = self.get_session()
         send_request = self.schema_request_decorator(self.send_schema_request)
-        self.logger.debug(
+        self.logger.info(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
             self.name,
             self.table,
             self.use_dynamic_fields,
         )
 
-        try:
-            if self.use_dynamic_fields:
-                # TODO: refactor this to not force the except like this lol
-                raise Exception("Switching to dynamic fields...")
+        if not self.use_dynamic_fields:
+            self._fetch_schema_from_metadata_catalog(send_request)
 
-            self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
+        self._fetch_custom_fields_catalog(session)
 
-            account = self.config["ns_account"].replace("_", "-").replace("SB", "sb")
-            url = f"https://{account}.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/{self.table}"
-            catalog_headers = dict(self.http_headers)
-            catalog_headers["Accept"] = "application/schema+json"
-            self.logger.debug("get_schema(%s): metadata-catalog GET send", self.name)
-            response = send_request(
-                method="GET",
-                url=url,
-                headers=catalog_headers,
-            )
-            self.logger.debug(
-                "get_schema(%s): metadata-catalog GET done status=%s",
-                self.name,
-                response.status_code,
-            )
-            self.schema_response = response.json()
-        except Exception as e:
-            self.logger.warning(f"Failed to get schema using metadata-catalog for {self.table} - stream: {self.name}, Error: {e}")
-        
-        # If metadata-catalog is unavailable, fetch sample 500 records and custom fields to build the schema.
-        discover_api_page_size = self.config.get("_discover_api_page_size", 500)
-        # fetch custom fields
-        add_custom_fields_streams = ["invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"]
-        if not self.schema_response  and self._tap.custom_fields is None and self.name in add_custom_fields_streams:
-            # request custom fields types
-            offset = 0
-            custom_fields = {}
+        # self.filter_fields has almost the same effect as self.use_dynamic_fields, except it doesn't skip metadata-catalog fields
+        # to avoid differences in schemas, we're keeping it as a separate flag
+        if not self.schema_response or self.use_dynamic_fields or self.filter_fields:
+            self.infer_schema_from_query(send_request)
 
-            self.logger.info("Fetching custom fields data")
-            while offset is not None:
-                self.logger.debug(
-                    "get_schema(%s): customfield suiteql send offset=%s",
-                    self.name,
-                    offset,
-                )
-                prepared_req = s.prepare_request(
-                    requests.Request(
-                        method="POST",
-                        url=f"{self.url_base}?offset={offset}&limit={discover_api_page_size}",
-                        headers=self.http_headers,
-                        json={
-                            "q": "SELECT * FROM customfield"
-                        }
-                    )
-                )
-                response = s.send(prepared_req, timeout=self.timeout)
-                self.logger.debug(
-                    "get_schema(%s): customfield suiteql done offset=%s status=%s",
-                    self.name,
-                    offset,
-                    response.status_code,
-                )
-                if response.status_code not in [200]:
-                    self.logger.error(f"Failed to fetch custom fields for {self.table} - stream: {self.name}, Error: {response.text}, not able to add custom fields to the schema")
-                    break
-                offset = self.get_next_page_token(response, offset)
-                custom_fields.update({cf.get("scriptid").lower(): cf.get("fieldvaluetype") for cf in response.json().get("items", [])})
-            
-            self._tap.custom_fields = custom_fields
+    def _property_for_inferred_field(self, field: str) -> th.Property:
+        name = self._typed_field_key(field)
+        replication_key = (
+            self._typed_field_key(self.replication_key)
+            if self.replication_key
+            else None
+        )
+        if name == replication_key or name in self.date_fields:
+            return th.Property(name, th.DateTimeType)
+        if name in self.bool_fields:
+            return th.Property(name, th.BooleanType)
+        if name in self.float_fields and self._field_allows_custom_field_type(field):
+            return th.Property(name, th.NumberType)
+        if name in self.integer_fields and self._field_allows_custom_field_type(field):
+            return th.Property(name, th.IntegerType)
+        return th.Property(name, th.StringType)
 
+    def _schema_dict_from_inferred_fields(self) -> dict:
+        properties_list = deepcopy(self.default_fields)
+        default_names = {prop.name for prop in self.default_fields}
+        for field in self.fields:
+            if field in SUITEQL_EXCLUDED_FIELDS or field.lower() in default_names:
+                continue
+            properties_list.append(self._property_for_inferred_field(field))
+        return th.PropertiesList(*properties_list).to_dict()
 
-        # Fetch sample 500 records to infer fields and types.
-        if not self.schema_response or self.filter_fields:
-            self.fields = set()
+    def _property_for_catalog_field(self, field: str, value: dict) -> th.Property:
+        name = field.lower()
+        if value.get("format") == "date-time":
+            return th.Property(name, th.DateTimeType)
+        if value.get("format") == "date":
+            return th.Property(name, th.DateType)
+        if value["type"] == "string":
+            return th.Property(name, th.StringType)
+        if value["type"] == "boolean":
+            return th.Property(name, th.BooleanType)
+        if value["type"] in ("number", "integer"):
+            return th.Property(name, th.NumberType)
+        return th.Property(name, th.CustomType({"type": [value["type"], "string"]}))
 
-            self.logger.info(f"Getting schema for {self.table} - stream: {self.name}")
-            url = f"{self.url_base}?offset=0&limit={discover_api_page_size}"
-            schema_query = (
-                f"SELECT * FROM {self.table} ORDER BY {self.replication_key} DESC"
-                if self.replication_key
-                else f"SELECT * FROM {self.table}"
-            )
+    def _schema_dict_from_metadata_catalog(self) -> dict:
+        properties_list = (
+            deepcopy(self.default_fields) if self.always_add_default_fields else []
+        )
+        response = self.schema_response
+        if not response or not response.get("properties"):
+            return th.PropertiesList(*properties_list).to_dict()
 
-            self.logger.debug(
-                "get_schema(%s): suiteql schema inference POST send url=%s",
-                self.name,
-                url,
-            )
-
-
-            try:
-                response = send_request(
-                    method="POST",
-                    url=url,
-                    headers=self.http_headers,
-                    json={"q": schema_query},
-                )
-                self.logger.debug(
-                    "get_schema(%s): suiteql schema inference POST done status=%s",
-                    self.name,
-                    response.status_code,
-                )
-                self.logger.debug(
-                    "get_schema(%s): suiteql schema inference parsing response JSON",
-                    self.name,
-                )
-                # NOTE: this will only get fields in the first 1k records, we could still miss things
-                for item in response.json().get("items"):
-                    self.fields.update(set(item.keys()))
-
-                # decide which ones are date fields
-                pot_date_fields = [f for f in self.fields if 'date' in f and 'custbody' not in f and 'custrecord' not in f]
-                for f in pot_date_fields:
-                    match = [i for i in response.json().get("items") if i.get(f)]
-                    if len(match) > 0:
-                        try:
-                            try:
-                                parse(match[0][f])
-                            except:
-                                pendulum.from_format(match[0][f], "MM/DD/YYYY")
-                            self.date_fields.append(f)
-                        except:
-                            pass
-
-                # decide who ones are boolean fields
-                def all_bool(f):
-                    match = [i for i in response.json().get("items") if i.get(f) in ["T", "F", None]]
-                    return len(match) == len(response.json().get("items"))
-
-                self.bool_fields = [f for f in self.fields if all_bool(f)]
-
-                self.fields -= SUITEQL_EXCLUDED_FIELDS
-
-                # for bills and invoices add/update custom fields and its types
-                if self._tap.custom_fields:
-                    cf_prefix = None
-                    if self.name in ["invoices", "bills"]:
-                        cf_prefix = "custbody"
-                    elif self.name in ["invoice_lines", "bill_lines", "bill_expenses"]:
-                        cf_prefix = "custcol"
-                    
-                    # add fields and types to build schema
-                    if cf_prefix:
-                        table_cf = {k:v for k,v in self._tap.custom_fields.items() if k.startswith(cf_prefix)}
-                        self.fields.update(table_cf.keys())              
-                        for cf, cf_type in table_cf.items():
-                            if cf_type in ["Decimal Number", "Percent"]:
-                                self.float_fields.append(cf)
-                            elif cf_type in ["Integer Number"]:
-                                self.integer_fields.append(cf)
-                            elif cf_type in ["Date/Time"]:
-                                self.date_fields.append(cf)
-                            elif cf_type in ["Check Box"]:
-                                self.bool_fields .append(cf)
-                self.logger.debug(
-                    "get_schema(%s): suiteql schema inference finished",
-                    self.name,
-                )
-            except Exception as e:
-                self.logger.warning(f"Failed to get schema by fetching first 1k records for {self.table} - stream: {self.name}, Error: {e}")
-                pass
-
+        for field, value in response["properties"].items():
+            field_lower = field.lower()
+            if field_lower in SUITEQL_EXCLUDED_FIELDS:
+                continue
+            if self.fields and self.filter_fields and field_lower not in self.fields:
+                continue
+            properties_list.append(self._property_for_catalog_field(field, value))
+        return th.PropertiesList(*properties_list).to_dict()
 
     @property
-    def schema(self): # noqa: C901
+    def schema(self) -> dict:
         if self.config.get("use_input_catalog", True) and self._tap.input_catalog and self._tap.input_catalog.get(self.name):
             return self._tap.input_catalog.get(self.name).schema.to_dict()
 
-        # Get netsuite schema for table
         if self.fields is None and self.schema_response is None:
-            self.logger.debug("schema(%s): calling get_schema()", self.name)
             self.get_schema()
-            self.logger.debug("schema(%s): get_schema() returned", self.name)
 
         if self.fields is not None and not self.schema_response:
-            fields = self.fields
-            properties_list = deepcopy(self.default_fields)
-            # Remove any fields that are already in default_fields to avoid overriding the type
-            fields = {f for f in fields if not any(df.name == f.lower() for df in self.default_fields)}
-            for field in fields:
-                if field in SUITEQL_EXCLUDED_FIELDS:
-                    continue
-                if field == self.replication_key or field in self.date_fields:
-                    properties_list.append(th.Property(field.lower(), th.DateTimeType))
-                elif field in self.bool_fields:
-                    properties_list.append(th.Property(field.lower(), th.BooleanType))
-                elif field in self.float_fields:
-                    properties_list.append(th.Property(field.lower(), th.NumberType))
-                elif field in self.integer_fields:
-                    properties_list.append(th.Property(field.lower(), th.IntegerType))
-                else:
-                    properties_list.append(th.Property(field.lower(), th.StringType))
-
-            return th.PropertiesList(*properties_list).to_dict()
+            return self._schema_dict_from_inferred_fields()
 
         if self.schema_response:
-            response = self.schema_response 
-            properties_list = deepcopy(self.default_fields) if self.always_add_default_fields else []
-            if response is not None and response.get("properties"):
-                for field, value in response.get("properties").items():
-                    field_lower = field.lower()
-                    if field_lower in SUITEQL_EXCLUDED_FIELDS:
-                        continue
-                    if self.fields and self.filter_fields and field_lower not in self.fields:
-                        continue
+            return self._schema_dict_from_metadata_catalog()
 
-                    if value.get("format") == 'date-time':
-                        properties_list.append(th.Property(field.lower(), th.DateTimeType))
-                    elif value.get("format") == "date":
-                        properties_list.append(th.Property(field.lower(), th.DateType))
-                    elif value["type"] == "string":
-                        properties_list.append(th.Property(field.lower(), th.StringType))
-                    elif value["type"] == "boolean":
-                        properties_list.append(th.Property(field.lower(), th.BooleanType))
-                    elif value["type"] in ["number", "integer"]:
-                        properties_list.append(th.Property(field.lower(), th.NumberType))
-                    else:
-                        #Object and array as custom types
-                        properties_list.append(th.Property(field.lower(), th.CustomType({"type": [value["type"],"string"]})))
-            return th.PropertiesList(*properties_list).to_dict()
 
 class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     schema_response = None
@@ -1219,6 +1381,7 @@ class NetsuiteDynamicStream(NetsuiteDynamicSchema):
     date_fields = []
     bool_fields = []
     use_dynamic_fields = False
+    filter_fields = False
     default_fields = []
 
     @property
@@ -1450,6 +1613,7 @@ class BulkParentStream(NetsuiteDynamicStream):
         # Reset interim bookmarks before emitting final STATE message:
         self._write_state_message()
 
+
 class TransactionRootStream(NetsuiteDynamicStream):
     select = None
     start_date = None
@@ -1457,6 +1621,9 @@ class TransactionRootStream(NetsuiteDynamicStream):
     fields = None
     default_fields = []
     date_fields = []
+
+    def _apply_shared_custbody_datetime_types(self) -> None:
+        """Main isolated this subtree via a separate class-level date_fields list."""
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
