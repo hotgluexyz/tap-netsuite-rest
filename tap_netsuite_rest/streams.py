@@ -1546,7 +1546,7 @@ class AccountsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "account"
     select = None
-    use_dynamic_fields = True
+    always_add_default_fields = True
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1558,6 +1558,9 @@ class AccountsStream(NetsuiteDynamicStream):
         th.Property("currency", th.StringType),
         th.Property("generalrate", th.StringType),
         th.Property("fullname", th.StringType),
+        th.Property("balance", th.StringType),
+        th.Property("fxbalance", th.StringType),
+        th.Property("sspecacct", th.StringType),
     ]
 
     def get_selected_properties(self):
