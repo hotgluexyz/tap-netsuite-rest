@@ -1563,6 +1563,11 @@ class AccountsStream(NetsuiteDynamicStream):
         th.Property("sspecacct", th.StringType),
     ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.config.get("remove_unauthorized_streams", True):
+            self.use_dynamic_fields = True
+
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
         # add accountsearchdisplayname as fullname as default field
