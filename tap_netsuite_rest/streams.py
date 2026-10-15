@@ -1533,6 +1533,7 @@ class AccountsStream(NetsuiteDynamicStream):
     table = "account"
     select = None
     use_dynamic_fields = True
+    page_size = 500
 
     default_fields = [
         th.Property("id", th.StringType),
