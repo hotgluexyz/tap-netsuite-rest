@@ -716,6 +716,18 @@ class NetSuiteStream(RESTStream):
                     invalid_field_names,
                     response.text,
                 )
+            elif (
+                "Invalid search query" in response.text
+                and "was not found" not in response.text.lower()
+                and response.elapsed
+                and response.elapsed.total_seconds() >= 180
+            ):
+                msg = (
+                    f"{response.status_code} Client Error: "
+                    f"{response.reason} for path: {self.path}"
+                    f"Response: {response.text}"
+                )
+                raise RetriableAPIError(msg)
 
         if response.status_code == 401:
             raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
