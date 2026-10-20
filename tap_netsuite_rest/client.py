@@ -1298,7 +1298,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         factor=2,
     )
     def get_schema(self) -> None:
-        session = self.get_session()
         send_request = self.schema_request_decorator(self.send_schema_request)
         self.logger.info(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
