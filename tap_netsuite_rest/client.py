@@ -716,6 +716,18 @@ class NetSuiteStream(RESTStream):
                     invalid_field_names,
                     response.text,
                 )
+            elif (
+                "Invalid search query" in response.text
+                and "was not found" not in response.text.lower()
+                and response.elapsed
+                and response.elapsed.total_seconds() >= 180
+            ):
+                msg = (
+                    f"{response.status_code} Client Error: "
+                    f"{response.reason} for path: {self.path}"
+                    f"Response: {response.text}"
+                )
+                raise RetriableAPIError(msg)
 
         if response.status_code == 401:
             raise InvalidCredentialsError(f"Authentication failed with response code {response.status_code}: {response.text}")
@@ -908,6 +920,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
+    prefer_default_field_types = False
     _CUSTOM_FIELD_STREAMS = frozenset(
         {"invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"}
     )
@@ -1126,8 +1139,14 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.date_fields.add(key)
         elif normalized == "check box":
             self.bool_fields.add(key)
+    
+    def get_schema_next_page_token(self, response: requests.Response, page_size: int) -> Optional[Any]:
+        has_next = next(extract_jsonpath("$.hasMore", response.json()))
+        offset = next(extract_jsonpath("$.offset", response.json()))
+        offset += page_size
+        return offset if has_next else None
 
-    def _fetch_custom_fields_catalog(self, session: requests.Session) -> None:
+    def _fetch_custom_fields_catalog(self, send_request: Callable) -> None:
         if (
             self.schema_response
             or self._tap.custom_fields is not None
@@ -1140,15 +1159,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         custom_fields: dict[str, Any] = {}
         self.logger.info("Fetching custom fields data")
         while offset is not None:
-            prepared_req = session.prepare_request(
-                requests.Request(
-                    method="POST",
-                    url=f"{self.url_base}?offset={offset}&limit={page_size}",
-                    headers=self.http_headers,
-                    json={"q": "SELECT * FROM customfield"},
-                )
+            response = send_request(
+                method="POST",
+                url=f"{self.url_base}?offset={offset}&limit={page_size}",
+                headers=self.http_headers,
+                json={"q": "SELECT * FROM customfield"},
             )
-            response = session.send(prepared_req, timeout=self.timeout)
             if response.status_code != 200:
                 self.logger.error(
                     "Failed to fetch custom fields for %s - stream: %s, Error: %s, "
@@ -1158,7 +1174,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     response.text,
                 )
                 break
-            offset = self.get_next_page_token(response, offset)
+            offset = self.get_schema_next_page_token(response, offset)
             custom_fields.update(
                 {
                     cf.get("scriptid").lower(): cf.get("fieldvaluetype")
@@ -1187,7 +1203,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def infer_schema_from_query(self, send_request: Callable) -> None:
         discover_api_page_size = self.config.get("_discover_api_page_size", 500)
         discover_api_total_records = self.config.get("_discover_api_total_records", 1000)
-        self._init_tap_schema_fields()
         self.float_fields = set()
         self.integer_fields = set()
 
@@ -1223,7 +1238,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     response.status_code,
                 )
                 items.extend(response.json().get("items") or [])                    
-                page_offset = self.get_next_page_token(response, page_offset)
+                page_offset = self.get_schema_next_page_token(response, discover_api_page_size)
                 if page_offset is None or len(items) >= discover_api_total_records:
                     break
         
@@ -1284,7 +1299,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         factor=2,
     )
     def get_schema(self) -> None:
-        session = self.get_session()
         send_request = self.schema_request_decorator(self.send_schema_request)
         self.logger.info(
             "get_schema(%s) start table=%s use_dynamic_fields=%s",
@@ -1293,10 +1307,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.use_dynamic_fields,
         )
 
+        self._init_tap_schema_fields()
         if not self.use_dynamic_fields:
             self._fetch_schema_from_metadata_catalog(send_request)
 
-        self._fetch_custom_fields_catalog(session)
+        self._fetch_custom_fields_catalog(send_request)
 
         # self.filter_fields has almost the same effect as self.use_dynamic_fields, except it doesn't skip metadata-catalog fields
         # to avoid differences in schemas, we're keeping it as a separate flag
@@ -1347,6 +1362,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         properties_list = (
             deepcopy(self.default_fields) if self.always_add_default_fields else []
         )
+        default_names = (
+            {prop.name for prop in self.default_fields}
+            if self.prefer_default_field_types
+            else set()
+        )
         response = self.schema_response
         if not response or not response.get("properties"):
             return th.PropertiesList(*properties_list).to_dict()
@@ -1354,6 +1374,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         for field, value in response["properties"].items():
             field_lower = field.lower()
             if field_lower in SUITEQL_EXCLUDED_FIELDS:
+                continue
+            if field_lower in default_names:
                 continue
             if self.fields and self.filter_fields and field_lower not in self.fields:
                 continue

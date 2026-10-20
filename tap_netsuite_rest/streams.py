@@ -1546,7 +1546,7 @@ class AccountsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "account"
     select = None
-    use_dynamic_fields = True
+    prefer_default_field_types = True
 
     default_fields = [
         th.Property("id", th.StringType),
@@ -1558,7 +1558,18 @@ class AccountsStream(NetsuiteDynamicStream):
         th.Property("currency", th.StringType),
         th.Property("generalrate", th.StringType),
         th.Property("fullname", th.StringType),
+        th.Property("balance", th.StringType),
+        th.Property("fxbalance", th.StringType),
+        th.Property("sspecacct", th.StringType),
+        th.Property("cashflowrate", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("subsidiary", th.StringType),
     ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.config.get("remove_unauthorized_streams", True):
+            self.use_dynamic_fields = True
 
     def get_selected_properties(self):
         selected_properties = super().get_selected_properties()
