@@ -1546,7 +1546,6 @@ class AccountsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "account"
     select = None
-    always_add_default_fields = True
     prefer_default_field_types = True
 
     default_fields = [
@@ -1562,6 +1561,9 @@ class AccountsStream(NetsuiteDynamicStream):
         th.Property("balance", th.StringType),
         th.Property("fxbalance", th.StringType),
         th.Property("sspecacct", th.StringType),
+        th.Property("cashflowrate", th.StringType),
+        th.Property("location", th.StringType),
+        th.Property("subsidiary", th.StringType),
     ]
 
     def __init__(self, *args, **kwargs):
