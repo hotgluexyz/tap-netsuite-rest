@@ -1145,7 +1145,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         offset += page_size
         return offset if has_next else None
 
-    def _fetch_custom_fields_catalog(self, session: requests.Session) -> None:
+    def _fetch_custom_fields_catalog(self, send_request: Callable) -> None:
         if (
             self.schema_response
             or self._tap.custom_fields is not None
@@ -1158,15 +1158,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         custom_fields: dict[str, Any] = {}
         self.logger.info("Fetching custom fields data")
         while offset is not None:
-            prepared_req = session.prepare_request(
-                requests.Request(
-                    method="POST",
-                    url=f"{self.url_base}?offset={offset}&limit={page_size}",
-                    headers=self.http_headers,
-                    json={"q": "SELECT * FROM customfield"},
-                )
+            response = send_request(
+                method="POST",
+                url=f"{self.url_base}?offset={offset}&limit={page_size}",
+                headers=self.http_headers,
+                json={"q": "SELECT * FROM customfield"},
             )
-            response = session.send(prepared_req, timeout=self.timeout)
             if response.status_code != 200:
                 self.logger.error(
                     "Failed to fetch custom fields for %s - stream: %s, Error: %s, "
@@ -1314,7 +1311,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         if not self.use_dynamic_fields:
             self._fetch_schema_from_metadata_catalog(send_request)
 
-        self._fetch_custom_fields_catalog(session)
+        self._fetch_custom_fields_catalog(send_request)
 
         # self.filter_fields has almost the same effect as self.use_dynamic_fields, except it doesn't skip metadata-catalog fields
         # to avoid differences in schemas, we're keeping it as a separate flag
