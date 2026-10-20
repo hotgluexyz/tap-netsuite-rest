@@ -1126,6 +1126,12 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.date_fields.add(key)
         elif normalized == "check box":
             self.bool_fields.add(key)
+    
+    def get_schema_next_page_token(self, response: requests.Response, page_size: int) -> Optional[Any]:
+        has_next = next(extract_jsonpath("$.hasMore", response.json()))
+        offset = next(extract_jsonpath("$.offset", response.json()))
+        offset += page_size
+        return offset if has_next else None
 
     def _fetch_custom_fields_catalog(self, session: requests.Session) -> None:
         if (
@@ -1158,7 +1164,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     response.text,
                 )
                 break
-            offset = self.get_next_page_token(response, offset)
+            offset = self.get_schema_next_page_token(response, offset)
             custom_fields.update(
                 {
                     cf.get("scriptid").lower(): cf.get("fieldvaluetype")
@@ -1187,7 +1193,6 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     def infer_schema_from_query(self, send_request: Callable) -> None:
         discover_api_page_size = self.config.get("_discover_api_page_size", 500)
         discover_api_total_records = self.config.get("_discover_api_total_records", 1000)
-        self._init_tap_schema_fields()
         self.float_fields = set()
         self.integer_fields = set()
 
@@ -1223,7 +1228,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
                     response.status_code,
                 )
                 items.extend(response.json().get("items") or [])                    
-                page_offset = self.get_next_page_token(response, page_offset)
+                page_offset = self.get_schema_next_page_token(response, discover_api_page_size)
                 if page_offset is None or len(items) >= discover_api_total_records:
                     break
         
@@ -1293,6 +1298,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
             self.use_dynamic_fields,
         )
 
+        self._init_tap_schema_fields()
         if not self.use_dynamic_fields:
             self._fetch_schema_from_metadata_catalog(send_request)
 
