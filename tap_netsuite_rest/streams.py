@@ -1547,6 +1547,7 @@ class AccountsStream(NetsuiteDynamicStream):
     table = "account"
     select = None
     always_add_default_fields = True
+    prefer_default_field_types = True
 
     default_fields = [
         th.Property("id", th.StringType),

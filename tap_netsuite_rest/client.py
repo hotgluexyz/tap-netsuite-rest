@@ -920,6 +920,7 @@ class NetsuiteDynamicSchema(NetSuiteStream):
     use_dynamic_fields = False
     filter_fields = False
     default_fields = []
+    prefer_default_field_types = False
     _CUSTOM_FIELD_STREAMS = frozenset(
         {"invoices", "bills", "invoice_lines", "bill_lines", "bill_expenses"}
     )
@@ -1361,6 +1362,11 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         properties_list = (
             deepcopy(self.default_fields) if self.always_add_default_fields else []
         )
+        default_names = (
+            {prop.name for prop in self.default_fields}
+            if self.prefer_default_field_types
+            else set()
+        )
         response = self.schema_response
         if not response or not response.get("properties"):
             return th.PropertiesList(*properties_list).to_dict()
@@ -1368,6 +1374,8 @@ class NetsuiteDynamicSchema(NetSuiteStream):
         for field, value in response["properties"].items():
             field_lower = field.lower()
             if field_lower in SUITEQL_EXCLUDED_FIELDS:
+                continue
+            if field_lower in default_names:
                 continue
             if self.fields and self.filter_fields and field_lower not in self.fields:
                 continue
