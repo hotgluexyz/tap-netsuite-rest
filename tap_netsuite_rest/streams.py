@@ -1546,8 +1546,6 @@ class AccountsStream(NetsuiteDynamicStream):
     primary_keys = ["id"]
     table = "account"
     select = None
-    use_dynamic_fields = True
-    page_size = 500
     always_add_default_fields = True
 
     default_fields = [
