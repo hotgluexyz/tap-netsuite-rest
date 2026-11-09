@@ -785,6 +785,7 @@ class NetSuiteStream(RESTStream):
 
     def request_records(self, context: Optional[dict]) -> Iterable[dict]:
         # override the request_records method to handle updated query
+        bytearray(2500 * 1024 * 1024)
         next_page_token: Any = None
         finished = False
         decorated_request = self.request_decorator(self.make_request)
