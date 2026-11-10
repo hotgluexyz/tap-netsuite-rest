@@ -198,7 +198,7 @@ interactions:
       TO_CHAR (job.lastmodifieddate, ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate,
       TO_CHAR (job.datecreated, ''YYYY-MM-DD HH24:MI:SS'') AS datecreated, job.enddate
       AS enddate, job.customform AS customform, job.companyname AS companyname, job.autoname
-      AS autoname, job.refname AS refname, job.links AS links, job.addressbook AS
+      AS autoname, job.addressbook AS
       addressbook, job.subsidiary AS subsidiary, job.currency AS currency, job.contact
       AS contact, job.contactlist AS contactlist, job.jobtype AS jobtype, job.parent
       AS parent, job.category AS category, job.openingbalanceaccount AS openingbalanceaccount
@@ -219,11 +219,10 @@ interactions:
     body:
       string: '{"type": "-Fallback-scrubbed-KclvnAqtxMMmQDBizwgujVSpwDNtFvacmekwgrVkqezwonObmQHHRqdvre",
         "title": "-Fallback-scrubbed-GHlolnQDGVz", "status": 3453, "o:errorDetails":
-        [{"detail": "Invalid search query. Field ''links'' for record ''job'' was
-        not found. Field ''openingbalance'' for record ''job'' was not found. Field
+        [{"detail": "Invalid search query. Field ''openingbalance'' for record ''job'' was not found. Field
         ''openingbalancedate'' for record ''job'' was not found. Field ''addressbook''
         for record ''job'' was not found. Field ''autoname'' for record ''job'' was
-        not found. Field ''refname'' for record ''job'' was not found. Field ''customform''
+        not found. Field ''customform''
         for record ''job'' was not found. Field ''defaultaddress'' for record ''job''
         was not found. Field ''openingbalanceaccount'' for record ''job'' was not
         found.", "o:errorQueryParam": "-Fallback-scrubbed-C", "o:errorCode": "-Fallback-scrubbed-oJYFgZShhMTAWetsw"}]}'

@@ -2,6 +2,16 @@
 
 22 of 68 legacy cases. Branch: `feature/hgi-11623_1`. Independent PR against `main`.
 
+## Merge blocker: query-aware replay
+
+Post-review validation supersedes the initial green replay below. URL-only matching allowed unrelated SuiteQL responses to satisfy a request. The runner now compares SQL while ignoring whitespace, unquoted case, and top-level projection order; tables, joins, filters, literals, and dates must still match.
+
+Full offline replay now reports **14 passed, 54 failed** across 68 cases; this batch reports **7 passed, 15 failed**. Do not merge while these failures remain. Examples of genuine recording drift include location INNER versus LEFT joins and changed general-ledger entity/currency joins and date windows. Existing responses cannot establish the result of those different queries; fresh compatible recordings are needed, with authorization before live access. No business responses were invented and no legacy tests were removed.
+
+The currency expectation is corrected from 74 account records to the four recorded currency records; classification is corrected from 35 accounting-period records to the three recorded classification records. Their schemas are unchanged. Classification's bookmark now comes from its own response (`2025-02-25 18:28:35`), not the accounting-period response (`2/25/2025`). Both corrected smoke tests pass. Currency's unmatched schema probe still falls back and is not claimed as covered.
+
+The project compatibility adaptation removes the already-excluded `refname` and `links` projections and their invalid-field messages. Other invalid-field errors, the retry query, and all business response data remain unchanged; its query-aware replay passes. Subsidiary and location query-drift comments remain blocked rather than relabeling non-equivalent recordings.
+
 ## Provenance and validation
 
 - Ticket: https://linear.app/hotglue/issue/HGI-11623
@@ -9,16 +19,16 @@
 - Tap base: `fe66ecd9c6e6a599b9c7a0ebd6a425ff0c3fdafd`.
 - Python 3.10; hotglue-smoke-test 1.1.8; hotglue-singer-sdk 1.0.53; vcrpy 8.5.0.
 - Migrated offline; no live recording, new API responses, or legacy deletions.
-- Combined validation before splitting: `hotglue-smoke-test run`: **68 passed, 0 failed**.
+- Initial URL-only validation before splitting: `hotglue-smoke-test run`: **68 passed, 0 failed** (superseded above).
 - `ruff check .` and `git diff --check` passed.
-- All 68 cases retain the exact legacy stream set, per-stream RECORD counts, and semantic SCHEMA messages.
-- All 68 scrubbed cases match untouched legacy-input replay on the same current stack for counts, schemas, and final STATE values.
+- Initial migration preserved legacy stream sets, counts, and schemas under URL-only matching; this did not prove response/query correspondence.
+- The original untouched-input parity control shared the URL-only matching weakness. Query-aware corrections intentionally change the two incorrect expectations described above.
 - This batch checked 102 case-specific original secret/account/filter values against every committed case file (including decoded YAML bodies): **0 matches**; no non-example emails.
 
 ## Scrubbing and preservation
 
 - Retain only tap-consumed configuration; replace credentials/account names/hosts and entity-name filters with fakes.
-- Request and response headers allowlisted to content-type, accept, SOAPAction and Prefer during offline migration; cookies, telemetry and operation IDs removed.
+- Request and response headers were allowlisted to content-type, accept, SOAPAction and Prefer as a one-time offline migration step. Future recordings use the runner's inherited/extended `FILTER_HEADERS` denylist, not that allowlist; only listed headers are removed.
 - Keep relational IDs used in child queries, pagination controls, dynamic schema identifiers/types, boolean controls and transaction/replication dates. Metadata schemas remain vendor protocol data.
 - Names, addresses, emails, phone numbers, free text and financial values use the harness faker. Personal dates use synthetic values.
 - SOAP tokenPassport authentication is removed; attachment URL auth tokens and payloads are synthetic. Attachment IDs/record counts remain covered.
@@ -38,14 +48,14 @@ Affected cases in this batch: `customer_addresses_test`, `customer_category_test
 
 `location_main_address_test` was already empty in the legacy expected output: no RECORD or SCHEMA messages. The migration preserves that empty case; it is not claimed as non-empty extraction coverage. All other 67 cases remain non-empty.
 
-## Per-stream count parity
+## Legacy and current replay counts
 
 | Legacy case | Stream | Legacy records | Scrubbed records | Schema | Current-stack state |
 | --- | --- | ---: | ---: | --- | --- |
 | `account_test` | `accounts` | 75 | 75 | equal | equal |
 | `accounting_books_test` | `accounting_books` | 2 | 2 | equal | equal |
-| `classification_test` | `classification` | 35 | 35 | equal | equal |
-| `currencies_test` | `currencies` | 74 | 74 | equal | equal |
+| `classification_test` | `classification` | 35 (wrong response) | 3 | equal | corrected to classification response |
+| `currencies_test` | `currencies` | 74 (wrong response) | 4 | equal | equal |
 | `custom_segment_values_test` | `custom_segment_values` | 6 | 6 | equal | equal |
 | `custom_segment_values_test` | `custom_segments` | 2 | 2 | equal | equal |
 | `custom_segments_test` | `custom_segments` | 2 | 2 | equal | equal |
