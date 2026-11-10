@@ -1,0 +1,1588 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "employees",
+      "replication_method": "FULL_TABLE",
+      "key_properties": [
+        "id"
+      ],
+      "schema": {
+        "properties": {
+          "fulluserqtymax": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "aliennumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "birthdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "wasfulluserhasaccess": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retailuserqty": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "externalid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entityid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "releasedate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "wasinactive": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hiredate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "password": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mobilephone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approvallimit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "issupportrep": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custentity3": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "fax": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custentity1": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "retailuserqtymax": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "initials": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "datecreated": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "effectivedatemode": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "btemplate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "socialsecuritynumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isempcenterqtyenforced": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "requirepwdchange": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "purchaseorderapprovallimit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "wasretailuserhasaccess": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "salutation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastreviewdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "purchaseorderlimit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "defaultbillingaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "defaultaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isinactive": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "firstname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "jobdescription": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "homephone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gender": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "i9verified": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "defaultshippingaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "giveaccess": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "fulluserqty": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "empcenterqtymax": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "password2": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "wasempcenterhasaccess": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nextreviewdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "comments": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accountnumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "authworkdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastmodifieddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visaexpdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "middlename": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "issalesrep": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isfulluserqtyenforced": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "empcenterqty": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "concurrentwebservicesuser": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "customform": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "expenselimit": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "terminationbydeath": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "autoname": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "officephone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sendemail": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isretailuserqtyenforced": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "refname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "links": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ]
+          },
+          "location": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "defaultacctcorpcardexp": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "workcalendar": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "approver": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "residentstatus": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "employeestatus": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "class": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "timeapprover": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "corporatecards": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "addressbook": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "image": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "directdepositlist": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "purchaseorderapprover": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "billingclass": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "roles": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "ethnicity": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "supervisor": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "department": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "currencylist": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "visatype": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "maritalstatus": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "defaultexpensereportcurrency": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "template": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "subsidiary": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "employeetype": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "employees",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "fulluserqtymax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "aliennumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "birthdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "wasfulluserhasaccess"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "retailuserqty"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "externalid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "entityid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "releasedate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "wasinactive"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "hiredate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "password"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "mobilephone"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "approvallimit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "issupportrep"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "inclusion": "automatic",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custentity3"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "fax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custentity1"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "retailuserqtymax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "initials"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "datecreated"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "effectivedatemode"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "btemplate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "socialsecuritynumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isempcenterqtyenforced"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "phone"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "requirepwdchange"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "purchaseorderapprovallimit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "wasretailuserhasaccess"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "salutation"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastreviewdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "purchaseorderlimit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultbillingaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isinactive"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "firstname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "jobdescription"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "homephone"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "gender"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "i9verified"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "title"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultshippingaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "giveaccess"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "fulluserqty"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "empcenterqtymax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "password2"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "wasempcenterhasaccess"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "email"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "nextreviewdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "comments"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "accountnumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "authworkdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastmodifieddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "visaexpdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "middlename"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "issalesrep"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isfulluserqtyenforced"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "empcenterqty"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "concurrentwebservicesuser"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "customform"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "expenselimit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "terminationbydeath"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "autoname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "officephone"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "sendemail"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isretailuserqtyenforced"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "refname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "links"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "location"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultacctcorpcardexp"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "workcalendar"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "approver"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "residentstatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "employeestatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "class"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "timeapprover"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "corporatecards"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "addressbook"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "image"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "directdepositlist"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "purchaseorderapprover"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "currency"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "billingclass"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "roles"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "ethnicity"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "supervisor"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "department"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "currencylist"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "visatype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "maritalstatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultexpensereportcurrency"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "template"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "subsidiary"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "employeetype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "table-key-properties": [
+              "id"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

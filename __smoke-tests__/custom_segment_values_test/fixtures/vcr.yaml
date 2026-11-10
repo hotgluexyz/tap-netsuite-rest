@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: '{"q": "SELECT customsegment.internalid AS internalid, customsegment.balancing
+      AS balancing, customsegment.displayorder AS displayorder, customsegment.glimpact
+      AS glimpact, customsegment.internal AS internal, customsegment.isinactive AS
+      isinactive, customsegment.name AS name, customsegment.recordtype AS recordtype,
+      customsegment.scriptid AS scriptid FROM customsegment   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-FpBu", "href": "-Fallback-scrubbed-JCyqAWYGwZgAEUYcBzHxwCZPeEeaWtgKjybcJjrlkldGZsxnZvVNoLJzKzjiECsTXltIvnRPaivCRQgDPfuWNFgbdnfXstnBP"}],
+        "count": 2, "hasMore": false, "items": [{"links": [], "balancing": "F", "displayorder":
+        "2436", "glimpact": "T", "internal": "F", "internalid": "1", "isinactive":
+        "F", "name": "Fake-Micheal Gonzalez", "recordtype": "669", "scriptid": "CSEGDIST_CHANNEL"},
+        {"links": [], "balancing": "F", "displayorder": "1967", "glimpact": "F", "internal":
+        "F", "internalid": "2", "isinactive": "F", "name": "Fake-Christian Ramirez",
+        "recordtype": "5835", "scriptid": "CSEGTEST_VINI"}], "offset": 0, "totalResults":
+        2}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT * FROM CUSTOMRECORD_CSEGDIST_CHANNEL   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-FpBu", "href": "-Fallback-scrubbed-JCyqAWYGwZgAEUYcBzHxwCZPeEeaWtgKjybcJjrlkldGZsxnZvVNoLJzKzjiECsTXltIvnRPaivCRQgDPfuWNFgbdnfXstnBP"}],
+        "count": 4, "hasMore": false, "items": [{"links": [], "created": "12/3/2025",
+        "csegdist_channel_filterby_subsidiary": "2507", "id": "3", "isinactive": "F",
+        "lastmodified": "12/3/2025", "lastmodifiedby": "331", "name": "Fake-Steven
+        Patterson", "owner": "4684", "recordid": "3", "scriptid": "VAL_15634_1234567_SB1_618"},
+        {"links": [], "created": "12/3/2025", "id": "4", "isinactive": "F", "lastmodified":
+        "12/3/2025", "lastmodifiedby": "331", "name": "Fake-Lisa Anderson", "owner":
+        "4684", "parent": "1967", "recordid": "4", "scriptid": "VAL_15635_1234567_SB1_696"},
+        {"links": [], "created": "12/3/2025", "csegdist_channel_filterby_subsidiary":
+        "-Fallback-scrubbed-SohKuSf", "id": "2", "isinactive": "F", "lastmodified":
+        "12/3/2025", "lastmodifiedby": "331", "name": "Fake-Robert Harvey", "owner":
+        "4684", "recordid": "2", "scriptid": "VAL_15633_1234567_SB1_811"}, {"links":
+        [], "created": "12/3/2025", "id": "1", "isinactive": "F", "lastmodified":
+        "12/3/2025", "lastmodifiedby": "331", "name": "Fake-Jesus Brooks", "owner":
+        "4684", "recordid": "1", "scriptid": "VAL_15632_1234567_SB1_867"}], "offset":
+        0, "totalResults": 4}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT * FROM CUSTOMRECORD_CSEGTEST_VINI   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-FpBu", "href": "-Fallback-scrubbed-JCyqAWYGwZgAEUYcBzHxwCZPeEeaWtgKjybcJjrlkldGZsxnZvVNoLJzKzjiECsTXltIvnRPaivCRQgDPfuWNFgbdnfXstnBP"}],
+        "count": 2, "hasMore": false, "items": [{"links": [], "created": "12/9/2025",
+        "id": "1", "isinactive": "F", "lastmodified": "12/9/2025", "lastmodifiedby":
+        "1192", "name": "Fake-Mr. Chad Vance", "owner": "4684", "recordid": "1", "scriptid":
+        "VAL_15652_1234567_SB1_845"}, {"links": [], "created": "12/9/2025", "id":
+        "2", "isinactive": "F", "lastmodified": "12/9/2025", "lastmodifiedby": "1192",
+        "name": "Fake-Patricia Barnes", "owner": "4684", "recordid": "2", "scriptid":
+        "VAL_15653_1234567_SB1_779"}], "offset": 0, "totalResults": 2}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

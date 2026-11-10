@@ -1,0 +1,311 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/schema+json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: GET
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/subsidiary
+  response:
+    body:
+      string: '{"type": "object", "properties": {"isInactive": {"title": "Subsidiary
+        is Inactive", "type": "boolean", "description": "Check this box if this subsidiary
+        is no longer active or used in your account. Inactivated subsidiaries no longer
+        show in the Subsidiary field on records and transactions unless they are currently
+        attached to a record. Web sites of inactive subsidiaries are no longer available
+        online."}, "country": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string", "enum": ["PR", "PS", "PT", "PW", "PY", "QA",
+        "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT",
+        "RE", "AU", "AW", "AX", "AZ", "RO", "BA", "BB", "RS", "BD", "BE", "RU", "BF",
+        "BG", "RW", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "SA", "BQ", "SB", "BR",
+        "SC", "BS", "SD", "BT", "SE", "BV", "SG", "BW", "SH", "SI", "BY", "SJ", "BZ",
+        "SK", "SL", "SM", "SN", "SO", "CA", "SR", "CC", "SS", "CD", "ST", "CF", "SV",
+        "CG", "CH", "SX", "CI", "SY", "SZ", "CK", "CL", "CM", "CN", "CO", "CR", "TC",
+        "CS", "TD", "CU", "TF", "CV", "TG", "CW", "TH", "CX", "CY", "TJ", "CZ", "TK",
+        "TL", "TM", "TN", "TO", "TR", "TT", "DE", "TV", "TW", "DJ", "TZ", "DK", "DM",
+        "DO", "UA", "UG", "DZ", "UM", "EA", "EC", "US", "EE", "EG", "EH", "UY", "UZ",
+        "VA", "ER", "VC", "ES", "ET", "VE", "VG", "VI", "VN", "VU", "FI", "FJ", "FK",
+        "FM", "FO", "FR", "WF", "GA", "GB", "WS", "GD", "GE", "GF", "GG", "GH", "GI",
+        "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "XK", "HK",
+        "HM", "HN", "HR", "HT", "YE", "HU", "IC", "ID", "YT", "IE", "IL", "IM", "IN",
+        "IO", "ZA", "IQ", "IR", "IS", "IT", "ZM", "JE", "ZW", "JM", "JO", "JP", "KE",
+        "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC",
+        "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF",
+        "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU",
+        "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO",
+        "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM",
+        "PN"]}, "refName": {"title": "Reference Name", "type": "string"}}}, "legalName":
+        {"title": "Legal Name", "type": "string", "description": "Enter the legal
+        name of this subsidiary as it should appear on tax forms.", "nullable": true},
+        "lastModifiedDate": {"title": "Last Modified Date", "type": "string", "format":
+        "date-time", "nullable": true}, "externalId": {"title": "External ID", "type":
+        "string", "nullable": true}, "url": {"title": "Web Site", "type": "string",
+        "description": "Enter this subsidiary&apos;s Web Site address, or URL.", "nullable":
+        true}, "internalId": {"title": "Internal ID", "type": "integer", "description":
+        "Either the internalID or externalID field is required for update, delete
+        and get operations.", "format": "int64", "nullable": true}, "isElimination":
+        {"title": "Elimination", "type": "boolean", "description": "Check this box
+        if this subsidiary record is to be used for only journal entries and transactions
+        between subsidiaries. When a loan, sale, or inventory transfer is made between
+        subsidiaries, you use an elimination subsidiary to balance your consolidated
+        books. By entering a journal entry against the elimination subsidiary in the
+        same amount as the inter-company transaction, you have both a record of the
+        transactions and a correct balance."}, "name": {"title": "Name", "type": "string",
+        "description": "Enter the name of this subsidiary the way it should appear
+        on all forms except checks. On checks, your company name is pre-printed with
+        address and MICR information. The name can be alphanumeric. The maximum number
+        of characters is 83.", "nullable": true}, "state": {"title": "State", "type":
+        "string", "description": "Select the state or province in which this subsidiary
+        is located.", "nullable": true}, "id": {"title": "Internal ID", "type": "string",
+        "nullable": true}, "fullName": {"title": "Full Name", "type": "string", "nullable":
+        true}, "fax": {"title": "Fax", "type": "string", "description": "Enter the
+        fax number for this subsidiary.", "nullable": true}, "email": {"title": "Return
+        Email Address", "type": "string", "description": "Enter the return email address
+        for this subsidiary.", "nullable": true}, "refName": {"title": "Reference
+        Name", "type": "string"}, "links": {"title": "Links", "type": "array", "readOnly":
+        true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "mainAddress": {"type": "object", "properties": {"zip": {"title": "Zip", "type":
+        "string", "nullable": true}, "country": {"type": "object", "properties": {"id":
+        {"title": "Internal identifier", "type": "string", "enum": ["PR", "PS", "PT",
+        "PW", "PY", "QA", "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ",
+        "AR", "AS", "AT", "RE", "AU", "AW", "AX", "AZ", "RO", "BA", "BB", "RS", "BD",
+        "BE", "RU", "BF", "BG", "RW", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "SA",
+        "BQ", "SB", "BR", "SC", "BS", "SD", "BT", "SE", "BV", "SG", "BW", "SH", "SI",
+        "BY", "SJ", "BZ", "SK", "SL", "SM", "SN", "SO", "CA", "SR", "CC", "SS", "CD",
+        "ST", "CF", "SV", "CG", "CH", "SX", "CI", "SY", "SZ", "CK", "CL", "CM", "CN",
+        "CO", "CR", "TC", "CS", "TD", "CU", "TF", "CV", "TG", "CW", "TH", "CX", "CY",
+        "TJ", "CZ", "TK", "TL", "TM", "TN", "TO", "TR", "TT", "DE", "TV", "TW", "DJ",
+        "TZ", "DK", "DM", "DO", "UA", "UG", "DZ", "UM", "EA", "EC", "US", "EE", "EG",
+        "EH", "UY", "UZ", "VA", "ER", "VC", "ES", "ET", "VE", "VG", "VI", "VN", "VU",
+        "FI", "FJ", "FK", "FM", "FO", "FR", "WF", "GA", "GB", "WS", "GD", "GE", "GF",
+        "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW",
+        "GY", "XK", "HK", "HM", "HN", "HR", "HT", "YE", "HU", "IC", "ID", "YT", "IE",
+        "IL", "IM", "IN", "IO", "ZA", "IQ", "IR", "IS", "IT", "ZM", "JE", "ZW", "JM",
+        "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ",
+        "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC",
+        "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR",
+        "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG",
+        "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH",
+        "PK", "PL", "PM", "PN"]}, "refName": {"title": "Reference Name", "type": "string"}}},
+        "addr2": {"title": "Address 2", "type": "string", "nullable": true}, "city":
+        {"title": "City", "type": "string", "nullable": true}, "addr1": {"title":
+        "Address 1", "type": "string", "nullable": true}, "lastModifiedDate": {"title":
+        "Last Modified Date", "type": "string", "format": "date-time", "nullable":
+        true}, "addr3": {"title": "Address 3", "type": "string", "nullable": true},
+        "externalId": {"title": "External ID", "type": "string", "nullable": true},
+        "addrPhone": {"title": "Phone", "type": "string", "nullable": true}, "addressee":
+        {"title": "Addressee", "type": "string", "nullable": true}, "attention": {"title":
+        "Attention", "type": "string", "nullable": true}, "override": {"title": "Override",
+        "type": "boolean"}, "state": {"title": "State/Province", "type": "string",
+        "nullable": true}, "addrText": {"title": "Address", "type": "string", "nullable":
+        true}, "refName": {"title": "Reference Name", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}},
+        "x-ns-filterable": []}, "parent": {"type": "object", "properties": {"id":
+        {"title": "Internal identifier", "type": "string"}, "refName": {"title": "Reference
+        Name", "type": "string"}, "externalId": {"title": "External identifier", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "returnAddress": {"type": "object", "properties": {"zip": {"title": "Zip",
+        "type": "string", "nullable": true}, "country": {"type": "object", "properties":
+        {"id": {"title": "Internal identifier", "type": "string", "enum": ["PR", "PS",
+        "PT", "PW", "PY", "QA", "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO",
+        "AQ", "AR", "AS", "AT", "RE", "AU", "AW", "AX", "AZ", "RO", "BA", "BB", "RS",
+        "BD", "BE", "RU", "BF", "BG", "RW", "BH", "BI", "BJ", "BL", "BM", "BN", "BO",
+        "SA", "BQ", "SB", "BR", "SC", "BS", "SD", "BT", "SE", "BV", "SG", "BW", "SH",
+        "SI", "BY", "SJ", "BZ", "SK", "SL", "SM", "SN", "SO", "CA", "SR", "CC", "SS",
+        "CD", "ST", "CF", "SV", "CG", "CH", "SX", "CI", "SY", "SZ", "CK", "CL", "CM",
+        "CN", "CO", "CR", "TC", "CS", "TD", "CU", "TF", "CV", "TG", "CW", "TH", "CX",
+        "CY", "TJ", "CZ", "TK", "TL", "TM", "TN", "TO", "TR", "TT", "DE", "TV", "TW",
+        "DJ", "TZ", "DK", "DM", "DO", "UA", "UG", "DZ", "UM", "EA", "EC", "US", "EE",
+        "EG", "EH", "UY", "UZ", "VA", "ER", "VC", "ES", "ET", "VE", "VG", "VI", "VN",
+        "VU", "FI", "FJ", "FK", "FM", "FO", "FR", "WF", "GA", "GB", "WS", "GD", "GE",
+        "GF", "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU",
+        "GW", "GY", "XK", "HK", "HM", "HN", "HR", "HT", "YE", "HU", "IC", "ID", "YT",
+        "IE", "IL", "IM", "IN", "IO", "ZA", "IQ", "IR", "IS", "IT", "ZM", "JE", "ZW",
+        "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY",
+        "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA",
+        "MC", "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ",
+        "MR", "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF",
+        "NG", "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG",
+        "PH", "PK", "PL", "PM", "PN"]}, "refName": {"title": "Reference Name", "type":
+        "string"}}}, "addr2": {"title": "Address 2", "type": "string", "nullable":
+        true}, "city": {"title": "City", "type": "string", "nullable": true}, "addr1":
+        {"title": "Address 1", "type": "string", "nullable": true}, "lastModifiedDate":
+        {"title": "Last Modified Date", "type": "string", "format": "date-time", "nullable":
+        true}, "addr3": {"title": "Address 3", "type": "string", "nullable": true},
+        "externalId": {"title": "External ID", "type": "string", "nullable": true},
+        "addrPhone": {"title": "Phone", "type": "string", "nullable": true}, "addressee":
+        {"title": "Addressee", "type": "string", "nullable": true}, "attention": {"title":
+        "Attention", "type": "string", "nullable": true}, "override": {"title": "Override",
+        "type": "boolean"}, "state": {"title": "State/Province", "type": "string",
+        "nullable": true}, "addrText": {"title": "Address", "type": "string", "nullable":
+        true}, "refName": {"title": "Reference Name", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}},
+        "x-ns-filterable": []}, "taxRegistration": {"type": "object", "properties":
+        {"links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}, "totalResults": {"title":
+        "Total Results", "type": "integer", "format": "int64", "readOnly": true},
+        "count": {"title": "Count", "type": "integer", "format": "int64", "readOnly":
+        true}, "hasMore": {"title": "Has More Results", "type": "boolean", "readOnly":
+        true}, "offset": {"title": "Query Offset", "type": "integer", "format": "int64",
+        "readOnly": true}, "items": {"type": "array", "items": {"type": "object",
+        "properties": {"links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}, "taxAgency":
+        {"title": "Tax Agency", "type": "string", "nullable": true}, "taxRegistrationNumber":
+        {"title": "Tax Reg. Number", "type": "string", "nullable": true}, "taxEngine":
+        {"title": "Tax Engine", "type": "integer", "format": "int64", "nullable":
+        true}, "nexusCountry": {"title": "Country", "type": "string", "nullable":
+        true}, "effectiveFrom": {"title": "Effective From", "type": "string", "format":
+        "date", "nullable": true}, "id": {"title": "ID", "type": "integer", "format":
+        "int64", "nullable": true}, "validUntil": {"title": "Valid Until", "type":
+        "string", "format": "date", "nullable": true}, "isTaxExempt": {"title": "Tax-Exempt",
+        "type": "boolean"}, "refName": {"title": "Reference Name", "type": "string"},
+        "nexus": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "x-ns-sublistkey": {"present": true, "value": {"new": ["id"], "existing":
+        ["id"]}}, "x-ns-filterable": []}}}}, "shippingAddress": {"type": "object",
+        "properties": {"zip": {"title": "Zip", "type": "string", "nullable": true},
+        "country": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string", "enum": ["PR", "PS", "PT", "PW", "PY", "QA", "AD", "AE",
+        "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT", "RE", "AU",
+        "AW", "AX", "AZ", "RO", "BA", "BB", "RS", "BD", "BE", "RU", "BF", "BG", "RW",
+        "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "SA", "BQ", "SB", "BR", "SC", "BS",
+        "SD", "BT", "SE", "BV", "SG", "BW", "SH", "SI", "BY", "SJ", "BZ", "SK", "SL",
+        "SM", "SN", "SO", "CA", "SR", "CC", "SS", "CD", "ST", "CF", "SV", "CG", "CH",
+        "SX", "CI", "SY", "SZ", "CK", "CL", "CM", "CN", "CO", "CR", "TC", "CS", "TD",
+        "CU", "TF", "CV", "TG", "CW", "TH", "CX", "CY", "TJ", "CZ", "TK", "TL", "TM",
+        "TN", "TO", "TR", "TT", "DE", "TV", "TW", "DJ", "TZ", "DK", "DM", "DO", "UA",
+        "UG", "DZ", "UM", "EA", "EC", "US", "EE", "EG", "EH", "UY", "UZ", "VA", "ER",
+        "VC", "ES", "ET", "VE", "VG", "VI", "VN", "VU", "FI", "FJ", "FK", "FM", "FO",
+        "FR", "WF", "GA", "GB", "WS", "GD", "GE", "GF", "GG", "GH", "GI", "GL", "GM",
+        "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "XK", "HK", "HM", "HN",
+        "HR", "HT", "YE", "HU", "IC", "ID", "YT", "IE", "IL", "IM", "IN", "IO", "ZA",
+        "IQ", "IR", "IS", "IT", "ZM", "JE", "ZW", "JM", "JO", "JP", "KE", "KG", "KH",
+        "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC", "LI", "LK",
+        "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF", "MG", "MH",
+        "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU", "MV", "MW",
+        "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO", "NP", "NR",
+        "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN"]},
+        "refName": {"title": "Reference Name", "type": "string"}}}, "addr2": {"title":
+        "Address 2", "type": "string", "nullable": true}, "city": {"title": "City",
+        "type": "string", "nullable": true}, "addr1": {"title": "Address 1", "type":
+        "string", "nullable": true}, "lastModifiedDate": {"title": "Last Modified
+        Date", "type": "string", "format": "date-time", "nullable": true}, "addr3":
+        {"title": "Address 3", "type": "string", "nullable": true}, "externalId":
+        {"title": "External ID", "type": "string", "nullable": true}, "addrPhone":
+        {"title": "Phone", "type": "string", "nullable": true}, "addressee": {"title":
+        "Addressee", "type": "string", "nullable": true}, "attention": {"title": "Attention",
+        "type": "string", "nullable": true}, "override": {"title": "Override", "type":
+        "boolean"}, "state": {"title": "State/Province", "type": "string", "nullable":
+        true}, "addrText": {"title": "Address", "type": "string", "nullable": true},
+        "refName": {"title": "Reference Name", "type": "string"}, "links": {"title":
+        "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}},
+        "x-ns-filterable": []}, "currency": {"type": "object", "properties": {"id":
+        {"title": "Internal identifier", "type": "string"}, "refName": {"title": "Reference
+        Name", "type": "string"}, "externalId": {"title": "External identifier", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "$schema": "http://json-schema.org/draft-06/hyper-schema#", "x-ns-filterable":
+        ["isInactive", "parent", "country", "legalName", "lastModifiedDate", "externalId",
+        "url", "isElimination", "name", "currency", "state", "id", "fullName", "fax",
+        "email"]}'
+    headers:
+      Content-Type:
+      - application/schema+json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT TOP 1000 * FROM subsidiary"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-NRMA", "href": "-Fallback-scrubbed-CxfnEQDtKCAlxstHiEyauavHPzqfiATPRRTyIWiLoVaLxoBProoMefOdOijBZmljnuaewXceZMRwIdavLMNkpMzAcOeIekoET"}],
+        "count": 3, "hasMore": false, "items": [{"links": [], "country": "-Fallback-scrubbed-kp",
+        "currency": "6129", "dropdownstate": "-Fallback-scrubbed-SU", "edition": "-Fallback-scrubbed-kp",
+        "fiscalcalendar": "6129", "fullname": "Fake-Sara Tate", "id": "2", "iselimination":
+        "F", "isinactive": "F", "lastmodifieddate": "1/11/2025", "mainaddress": "422",
+        "name": "Fake-Eugene Martinez", "parent": "6129", "showsubsidiaryname": "F",
+        "state": "-Fallback-scrubbed-SU"}, {"links": [], "country": "-Fallback-scrubbed-kp",
+        "currency": "6129", "dropdownstate": "-Fallback-scrubbed-CV", "edition": "-Fallback-scrubbed-kp",
+        "fiscalcalendar": "6129", "fullname": "Fake-Jesse Gardner", "id": "1", "iselimination":
+        "F", "isinactive": "F", "lastmodifieddate": "2/6/2025", "legalname": "-Fallback-scrubbed-VraazrbQfriOAyGWmDkiINmdTTdhMdDMbgxXz",
+        "mainaddress": "1", "name": "Fake-Jesse Gardner", "shippingaddress": "421",
+        "showsubsidiaryname": "F", "state": "-Fallback-scrubbed-CV"}, {"links": [],
+        "country": "-Fallback-scrubbed-kp", "currency": "6129", "dropdownstate": "-Fallback-scrubbed-fA",
+        "edition": "-Fallback-scrubbed-kp", "email": "fake.tperez@example.com", "federalidnumber":
+        "6253", "fiscalcalendar": "6129", "fullname": "Fake-John Curtis", "id": "3",
+        "iselimination": "F", "isinactive": "F", "lastmodifieddate": "2/25/2025",
+        "legalname": "-Fallback-scrubbed-guXCxpbErRCZCPoPjjKD", "mainaddress": "423",
+        "name": "Fake-Mason Dickerson", "parent": "6129", "returnaddress": "3834",
+        "shippingaddress": "3833", "showsubsidiaryname": "F", "state": "-Fallback-scrubbed-fA",
+        "tranprefix": "1324", "url": "-Fallback-scrubbed-EGoVHWfDKHOqXrC"}], "offset":
+        0, "totalResults": 3}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT subsidiary.isinactive AS isinactive, subsidiary.country AS
+      country, subsidiary.legalname AS legalname, TO_CHAR (subsidiary.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, subsidiary.url AS url, subsidiary.iselimination
+      AS iselimination, subsidiary.name AS name, subsidiary.state AS state, subsidiary.id
+      AS id, subsidiary.fullname AS fullname, subsidiary.email AS email, subsidiary.mainaddress
+      AS mainaddress, subsidiary.parent AS parent, subsidiary.returnaddress AS returnaddress,
+      subsidiary.shippingaddress AS shippingaddress, subsidiary.currency AS currency
+      FROM subsidiary   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-NRMA", "href": "-Fallback-scrubbed-CxfnEQDtKCAlxstHiEyauavHPzqfiATPRRTyIWiLoVaLxoBProoMefOdOijBZmljnuaewXceZMRwIdavLMNkpMzAcOeIekoET"}],
+        "count": 3, "hasMore": false, "items": [{"links": [], "country": "-Fallback-scrubbed-kp",
+        "currency": "6129", "fullname": "Fake-Sara Tate", "id": "2", "iselimination":
+        "F", "isinactive": "F", "lastmodifieddate": "2025-01-11 16:16:35", "mainaddress":
+        "422", "name": "Fake-Eugene Martinez", "parent": "6129", "state": "-Fallback-scrubbed-SU"},
+        {"links": [], "country": "-Fallback-scrubbed-kp", "currency": "6129", "fullname":
+        "Fake-Jesse Gardner", "id": "1", "iselimination": "F", "isinactive": "F",
+        "lastmodifieddate": "2025-02-06 12:30:29", "legalname": "-Fallback-scrubbed-VraazrbQfriOAyGWmDkiINmdTTdhMdDMbgxXz",
+        "mainaddress": "1", "name": "Fake-Jesse Gardner", "shippingaddress": "421",
+        "state": "-Fallback-scrubbed-CV"}, {"links": [], "country": "-Fallback-scrubbed-kp",
+        "currency": "6129", "email": "fake.tperez@example.com", "fullname": "Fake-John
+        Curtis", "id": "3", "iselimination": "F", "isinactive": "F", "lastmodifieddate":
+        "2025-02-25 15:09:06", "legalname": "-Fallback-scrubbed-guXCxpbErRCZCPoPjjKD",
+        "mainaddress": "423", "name": "Fake-Mason Dickerson", "parent": "6129", "returnaddress":
+        "3834", "shippingaddress": "3833", "state": "-Fallback-scrubbed-fA", "url":
+        "-Fallback-scrubbed-EGoVHWfDKHOqXrC"}], "offset": 0, "totalResults": 3}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1
