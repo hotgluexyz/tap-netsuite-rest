@@ -2,6 +2,12 @@
 
 10 of 68 legacy cases. Branch: `feature/hgi-11623_4`. Independent PR against `main`.
 
+## Merge blocker: query-aware replay
+
+Post-review validation supersedes the initial green replay below. URL-only matching allowed unrelated SuiteQL responses to satisfy a request. The runner now compares SQL while ignoring whitespace, unquoted case, and top-level projection order; tables, joins, filters, literals, and dates must still match.
+
+Full offline replay now reports **14 passed, 54 failed** across 68 cases; this batch reports **0 passed, 10 failed**. Do not merge while these failures remain. General-ledger recordings differ in entity/currency joins and date windows; existing responses cannot establish results for those different queries. Fresh compatible recordings are needed, with authorization before live access. The initial parity table below is historical preservation evidence, not proof of current query correctness. No business responses were invented and no legacy tests were removed.
+
 ## Provenance and validation
 
 - Ticket: https://linear.app/hotglue/issue/HGI-11623
@@ -9,16 +15,16 @@
 - Tap base: `fe66ecd9c6e6a599b9c7a0ebd6a425ff0c3fdafd`.
 - Python 3.10; hotglue-smoke-test 1.1.8; hotglue-singer-sdk 1.0.53; vcrpy 8.5.0.
 - Migrated offline; no live recording, new API responses, or legacy deletions.
-- Combined validation before splitting: `hotglue-smoke-test run`: **68 passed, 0 failed**.
+- Initial URL-only validation before splitting: `hotglue-smoke-test run`: **68 passed, 0 failed** (superseded above).
 - `ruff check .` and `git diff --check` passed.
-- All 68 cases retain the exact legacy stream set, per-stream RECORD counts, and semantic SCHEMA messages.
-- All 68 scrubbed cases match untouched legacy-input replay on the same current stack for counts, schemas, and final STATE values.
+- Initial migration preserved legacy stream sets, counts, and schemas under URL-only matching; this did not prove response/query correspondence.
+- The original untouched-input parity control shared the URL-only matching weakness.
 - This batch checked 33 case-specific original secret/account/filter values against every committed case file (including decoded YAML bodies): **0 matches**; no non-example emails.
 
 ## Scrubbing and preservation
 
 - Retain only tap-consumed configuration; replace credentials/account names/hosts and entity-name filters with fakes.
-- Request and response headers allowlisted to content-type, accept, SOAPAction and Prefer during offline migration; cookies, telemetry and operation IDs removed.
+- Request and response headers were allowlisted to content-type, accept, SOAPAction and Prefer as a one-time offline migration step. Future recordings use the runner's inherited/extended `FILTER_HEADERS` denylist, not that allowlist; only listed headers are removed.
 - Keep relational IDs used in child queries, pagination controls, dynamic schema identifiers/types, boolean controls and transaction/replication dates. Metadata schemas remain vendor protocol data.
 - Names, addresses, emails, phone numbers, free text and financial values use the harness faker. Personal dates use synthetic values.
 - SOAP tokenPassport authentication is removed; attachment URL auth tokens and payloads are synthetic. Attachment IDs/record counts remain covered.
