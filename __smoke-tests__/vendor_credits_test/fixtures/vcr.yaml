@@ -1,0 +1,132 @@
+interactions:
+- request:
+    body: '{"q": "SELECT *,TO_CHAR (transaction.discountdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS discountdate,TO_CHAR (transaction.taxpointdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS taxpointdate,TO_CHAR (transaction.nextbilldate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS nextbilldate,TO_CHAR (transaction.duedate, ''YYYY-MM-DD HH24:MI:SS'') AS
+      duedate,TO_CHAR (transaction.enddate, ''YYYY-MM-DD HH24:MI:SS'') AS enddate,TO_CHAR
+      (transaction.actualshipdate, ''YYYY-MM-DD HH24:MI:SS'') AS actualshipdate,TO_CHAR
+      (transaction.closedate, ''YYYY-MM-DD HH24:MI:SS'') AS closedate,TO_CHAR (transaction.shipdate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS shipdate,TO_CHAR (transaction.prevdate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS prevdate,TO_CHAR (transaction.createddate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS createddate,TO_CHAR (transaction.startdate, ''YYYY-MM-DD HH24:MI:SS'') AS
+      startdate,TO_CHAR (transaction.trandate, ''YYYY-MM-DD HH24:MI:SS'') AS trandate,TO_CHAR
+      (transaction.lastmodifieddate, ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate,TO_CHAR
+      (transaction.discountdate, ''YYYY-MM-DD HH24:MI:SS'') AS discountdate,TO_CHAR
+      (transaction.taxpointdate, ''YYYY-MM-DD HH24:MI:SS'') AS taxpointdate,TO_CHAR
+      (transaction.nextbilldate, ''YYYY-MM-DD HH24:MI:SS'') AS nextbilldate,TO_CHAR
+      (transaction.duedate, ''YYYY-MM-DD HH24:MI:SS'') AS duedate,TO_CHAR (transaction.enddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS enddate,TO_CHAR (transaction.actualshipdate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS actualshipdate,TO_CHAR (transaction.closedate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS closedate,TO_CHAR (transaction.shipdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS shipdate,TO_CHAR (transaction.prevdate, ''YYYY-MM-DD HH24:MI:SS'') AS prevdate,TO_CHAR
+      (transaction.createddate, ''YYYY-MM-DD HH24:MI:SS'') AS createddate,TO_CHAR
+      (transaction.startdate, ''YYYY-MM-DD HH24:MI:SS'') AS startdate,TO_CHAR (transaction.trandate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS trandate,TO_CHAR (transaction.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, BUILTIN.DF(status) status FROM
+      transaction  WHERE transaction.lastmodifieddate>TO_TIMESTAMP(''2025-02-13 00:00:00'',
+      ''YYYY-MM-DD HH24:MI:SS'') AND type = ''VendCred'' ORDER BY transaction.lastmodifieddate"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-GtTY", "href": "-Fallback-scrubbed-mxKyTsYFqEpkyWovEtGBYugDSSysUnLWklybcqrQhhEBEtGEDTGAHKsvUVFmIfyWyONlxkVBIkVyyEtUwTrtgLpuJlSqCBLzY"}],
+        "count": 4, "hasMore": false, "items": [{"links": [], "abbrevtype": "-Fallback-scrubbed-PVkofYNy",
+        "balsegstatus": "1853", "basetotalaftertaxes": "7838", "billingaddress": "12841",
+        "billingstatus": "T", "createdby": "6171", "createddate": "2025-06-02 06:45:13",
+        "currency": "3947", "custbody1": "-Fallback-scrubbed-ExFt", "custbody2": "3374",
+        "custbody3": "F", "custbody_ste_rcs_applicable": "F", "custbody_ste_use_tax":
+        "F", "customform": "938", "customtype": "208", "daysopen": "6310", "daysoverduesearch":
+        "6310", "duedate": "2025-06-10 00:00:00", "entity": "7199", "exchangerate":
+        "3947", "foreignpaymentamountunused": "7838", "foreignpaymentamountused":
+        "6310", "foreignpaymentamountusednopost": "6310", "foreigntotal": "7838",
+        "id": "21144", "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "1772",
+        "lastmodifieddate": "2025-06-02 08:53:32", "legacytax": "F", "memorized":
+        "F", "needsbill": "F", "nexus": "3947", "number": "6310", "ordpicked": "F",
+        "paymenthold": "F", "posting": "T", "postingperiod": "965", "prevdate": "2025-06-02
+        00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-uGyXnywelMGB",
+        "status": "-Fallback-scrubbed-NQowAlexwsXoYfxIeNXrcsO", "subsidiarytaxregnum":
+        "5212", "taxdetailsoverride": "F", "taxpointdate": "2025-06-02 00:00:00",
+        "taxpointdateoverride": "F", "taxregoverride": "F", "tobeprinted": "F", "totalaftertaxes":
+        "7838", "trandate": "2025-06-02 00:00:00", "trandisplayname": "-Fallback-scrubbed-bICYbxjcaNJdisrpzgMtbZJWJfh",
+        "tranid": "-Fallback-scrubbed-RvdKnYXqdWXRJs", "transactionnumber": "-Fallback-scrubbed-RWhQxbfuc",
+        "type": "-Fallback-scrubbed-tjCLZTfY", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-PVkofYNy",
+        "balsegstatus": "1853", "basetotalaftertaxes": "3520", "billingaddress": "12841",
+        "billingstatus": "T", "createdby": "6171", "createddate": "2025-06-02 09:00:11",
+        "currency": "3947", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "938", "customtype": "208", "daysopen":
+        "6310", "entity": "7199", "exchangerate": "3947", "foreignpaymentamountunused":
+        "3520", "foreignpaymentamountused": "6310", "foreignpaymentamountusednopost":
+        "6310", "foreigntotal": "3520", "id": "21347", "isfinchrg": "F", "isreversal":
+        "F", "lastmodifiedby": "1620", "lastmodifieddate": "2025-06-02 09:54:36",
+        "legacytax": "F", "memorized": "F", "needsbill": "F", "nexus": "3947", "number":
+        "6310", "ordpicked": "F", "paymenthold": "F", "posting": "T", "postingperiod":
+        "965", "prevdate": "2025-06-02 00:00:00", "printedpickingticket": "F", "recordtype":
+        "-Fallback-scrubbed-uGyXnywelMGB", "status": "-Fallback-scrubbed-NQowAlexwsXoYfxIeNXrcsO",
+        "subsidiarytaxregnum": "5212", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-06-02 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "3520", "trandate": "2025-06-02 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-AtQfpgayoepDYqPXnMdGKWUYMZP", "tranid":
+        "-Fallback-scrubbed-JEArBrKlPjVqfZ", "transactionnumber": "-Fallback-scrubbed-JJczDsyQt",
+        "type": "-Fallback-scrubbed-tjCLZTfY", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-PVkofYNy",
+        "balsegstatus": "1853", "basetotalaftertaxes": "8758", "billingstatus": "T",
+        "createdby": "9777", "createddate": "2025-06-02 11:49:46", "currency": "3947",
+        "custbody2": "2858", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "938", "customtype": "208", "daysopen":
+        "7799", "daysoverduesearch": "6310", "duedate": "2025-06-05 00:00:00", "entity":
+        "5194", "exchangerate": "3947", "externalid": "-Fallback-scrubbed-zVFgLnICCtOF",
+        "foreignpaymentamountunused": "8758", "foreignpaymentamountused": "6310",
+        "foreignpaymentamountusednopost": "6310", "foreigntotal": "8758", "id": "21448",
+        "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "9777", "lastmodifieddate":
+        "2025-06-02 12:38:41", "legacytax": "F", "memo": "-Fallback-scrubbed-oZLiePVBaNDazD",
+        "memorized": "F", "needsbill": "F", "nexus": "3947", "number": "6310", "ordpicked":
+        "F", "paymenthold": "F", "posting": "T", "postingperiod": "556", "prevdate":
+        "2025-05-27 00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-uGyXnywelMGB",
+        "source": "-Fallback-scrubbed-BxcQAJxeQWaLkAE", "status": "-Fallback-scrubbed-NQowAlexwsXoYfxIeNXrcsO",
+        "subsidiarytaxregnum": "5212", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-05-27 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "8758", "trandate": "2025-05-27 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-POeXdsSUXFjhtXQKGZOXOCgvI", "tranid":
+        "-Fallback-scrubbed-zVFgLnICCtOF", "transactionnumber": "-Fallback-scrubbed-KggrdGvgI",
+        "type": "-Fallback-scrubbed-tjCLZTfY", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-PVkofYNy",
+        "balsegstatus": "1853", "basetotalaftertaxes": "8758", "billingstatus": "T",
+        "createdby": "9777", "createddate": "2025-06-02 12:30:47", "currency": "3947",
+        "custbody2": "2858", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "938", "customtype": "208", "daysopen":
+        "1853", "daysoverduesearch": "6310", "duedate": "2025-06-06 00:00:00", "entity":
+        "5194", "exchangerate": "3947", "externalid": "-Fallback-scrubbed-muGyZJFbhhAG",
+        "foreignpaymentamountunused": "8758", "foreignpaymentamountused": "6310",
+        "foreignpaymentamountusednopost": "6310", "foreigntotal": "8758", "id": "21548",
+        "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "9777", "lastmodifieddate":
+        "2025-06-02 12:52:27", "legacytax": "F", "memo": "-Fallback-scrubbed-bLacEJKdGhKqzQMm",
+        "memorized": "F", "needsbill": "F", "nexus": "3947", "number": "6310", "ordpicked":
+        "F", "paymenthold": "F", "posting": "T", "postingperiod": "556", "prevdate":
+        "2025-05-27 00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-uGyXnywelMGB",
+        "source": "-Fallback-scrubbed-BxcQAJxeQWaLkAE", "status": "-Fallback-scrubbed-NQowAlexwsXoYfxIeNXrcsO",
+        "subsidiarytaxregnum": "5212", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-05-28 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "8758", "trandate": "2025-05-28 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-STuabvrKifjrFTJEoazTBQsHy", "tranid":
+        "-Fallback-scrubbed-muGyZJFbhhAG", "transactionnumber": "-Fallback-scrubbed-QiuOOLEJg",
+        "type": "-Fallback-scrubbed-tjCLZTfY", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}], "offset": 0, "totalResults": 4}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

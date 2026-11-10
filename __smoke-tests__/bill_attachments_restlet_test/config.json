@@ -1,0 +1,14 @@
+{
+  "start_date": "2000-01-01T00:00:00Z",
+  "remove_unauthorized_streams": false,
+  "ns_account": "1234567_SB1",
+  "ns_consumer_key": "fake-credential",
+  "ns_consumer_secret": "fake-credential",
+  "ns_token_key": "fake-credential",
+  "ns_token_secret": "fake-credential",
+  "end_date": null,
+  "use_input_catalog": false,
+  "child_context_size": 1000,
+  "bill_attachments_restlet_url": "https://1234567-sb1.restlets.api.netsuite.com/app/site/hosting/restlet.nl?script=117&deploy=4",
+  "bill_attachments_suitelet_url": "https://1234567-sb1.extforms.netsuite.com/app/site/hosting/scriptlet.nl?script=118&deploy=2&compid=1234567_SB1&ns-at=fake-token"
+}
