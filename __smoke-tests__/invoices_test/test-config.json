@@ -1,0 +1,10 @@
+{
+  "include_streams": [
+    "InvoicesStream"
+  ],
+  "ignore_columns": {
+    "invoices": [
+      "taxtotal"
+    ]
+  }
+}

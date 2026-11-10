@@ -1,0 +1,479 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/schema+json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: GET
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/employee
+  response:
+    body:
+      string: '{"type": "object", "properties": {"fulluserqtymax": {"title": "FullUser
+        max", "type": "string", "nullable": true}, "aliennumber": {"title": "Alien
+        Number", "type": "string", "description": "Enter the employee&apos;s alien
+        number. This is required only if the employee&apos;s work status is Alien
+        authorized to work. The alien number is located in Section 1 of the completed
+        I-9 form.", "nullable": true}, "birthdate": {"title": "Birth Date", "type":
+        "string", "description": "Enter the employee&apos;s date of birth.", "format":
+        "date", "nullable": true}, "wasfulluserhasaccess": {"title": "FullUser hasaccess",
+        "type": "string", "nullable": true}, "retailuserqty": {"title": "RetailUser
+        current", "type": "string", "nullable": true}, "externalId": {"title": "External
+        ID", "type": "string", "description": "Returns the employee&apos;s external
+        ID, if one is assigned.", "nullable": true}, "entityId": {"title": "Entity
+        ID", "type": "string", "description": "If the Auto box is not checked, manually
+        enter an ID for this record. If the Auto box is checked, NetSuite assigns
+        an ID for this record based on your settings at Setup &gt; Company &gt; Auto-Generated
+        Numbers.", "nullable": true}, "releasedate": {"title": "Termination/Release
+        Date", "type": "string", "description": "Enter this person&apos;s last date
+        of employment.", "format": "date", "nullable": true}, "wasinactive": {"title":
+        "wasinactive", "type": "string", "nullable": true}, "hireDate": {"title":
+        "Hire Date", "type": "string", "description": "Enter the date this employee
+        was hired.", "format": "date", "nullable": true}, "password": {"title": "Password",
+        "type": "string", "description": "The Password and Confirm Password fields
+        are only available if you checked the Manually Assign or Change Password box.
+        Enter a password for the employee. As you type, the characters are validated
+        against the password policy criteria, and the results displayed. You must
+        tell the employee the password you assigned. Do not send the password by email.
+        When you assign a password manually, you should also check the Require Password
+        Change on Next Login box. For more information, see the help topic Password
+        Requirements and Policies in NetSuite.", "nullable": true}, "mobilePhone":
+        {"title": "Mobile Phone", "type": "string", "description": "Enter this employee&apos;s
+        mobile or cell phone number here.", "nullable": true}, "approvallimit": {"title":
+        "Expense Approval Limit", "type": "number", "description": "In the Expense
+        Approval Limit field, enter the maximum amount this employee is allowed to
+        approve on an expense report when specified as an approver for another employee.
+        Expenses that exceed this amount must be approved by another supervisor or
+        approver with a sufficient approval limit.", "format": "double", "nullable":
+        true}, "issupportrep": {"title": "Support Rep", "type": "boolean", "description":
+        "Check this box to mark this employee as a support representative. Support
+        representatives are listed in the assigned to dropdown list for case forms
+        and in the support rep dropdown list for support territory assignments."},
+        "id": {"title": "Internal ID", "type": "string", "description": "Returns the
+        employee&apos;s internal ID.", "nullable": true}, "fax": {"title": "Fax",
+        "type": "string", "description": "Enter a fax number for this record. You
+        should enter the fax number exactly as it must be dialed. If a &apos;1&apos;
+        is required to fax to this number, be sure to include it at the beginning
+        of the number. The number you enter here automatically appears in the To Be
+        Faxed field of transactions when you select this employee. To fax NetSuite
+        forms, an administrator must first set up fax service at Setup &gt; Company
+        &gt; Printing, Fax &amp; Email Preferences.", "nullable": true}, "custentity1":
+        {"title": "additional_notes", "type": "string", "nullable": true, "x-ns-custom-field":
+        true}, "retailuserqtymax": {"title": "RetailUser max", "type": "string", "nullable":
+        true}, "initials": {"title": "Initials", "type": "string", "description":
+        "NetSuite automatically completes this field as you enter first, middle and
+        last names. If you want to make changes to an employee&apos;s initials, enter
+        up to three letters in this field.", "nullable": true}, "dateCreated": {"title":
+        "Date Created", "type": "string", "description": "The date and time at which
+        the Employee Record was created.", "format": "date-time", "nullable": true},
+        "lastName": {"title": "Last Name", "type": "string", "description": "Enter
+        the employee&apos;s last name here. What you enter here automatically appears
+        last in the Employee field. The first letter of what you enter here appears
+        in the Initials field. This field is required for the Online Bill Pay feature.",
+        "nullable": true}, "effectivedatemode": {"type": "object", "properties": {"id":
+        {"title": "Internal identifier", "type": "string", "enum": ["PAST", "CURRENT",
+        "FUTURE"]}, "refName": {"title": "Reference Name", "type": "string"}}}, "btemplate":
+        {"title": "Employee is Template", "type": "string", "nullable": true}, "socialsecuritynumber":
+        {"title": "Social Security Number", "type": "string", "description": "Enter
+        this employee&apos;s social security number here in the following format:
+        123-45-6789.", "nullable": true}, "isempcenterqtyenforced": {"title": "Employee
+        Center Enforce", "type": "string", "nullable": true}, "phone": {"title": "Phone",
+        "type": "string", "description": "Enter a phone number for your employee.
+        This field is required for Online Bill Pay enabled employees.", "nullable":
+        true}, "requirePwdChange": {"title": "Require Password Change On Next Login",
+        "type": "boolean", "description": "Check this box to require this user to
+        change their password on their next login to NetSuite. When the user next
+        logs in, they see the Change Password page and cannot access other NetSuite
+        pages until a new password is created and saved. Requiring this action protects
+        your account from unauthorized access using generic passwords and prepares
+        your account for an audit. The Require Password Change on Next Login box never
+        displays as checked. When you check this box and save the record, an internal
+        flag is set. When the password change occurs, the flag is cleared. If you
+        later check the box again and save the record, the internal flag is reset
+        to require another password change."}, "purchaseorderapprovallimit": {"title":
+        "Purchase Approval Limit", "type": "number", "description": "In the Purchase
+        Approval Limit field, enter the maximum amount an employee is allowed to approve
+        on a purchase request when specified as an approver for an employee.", "format":
+        "double", "nullable": true}, "wasretailuserhasaccess": {"title": "RetailUser
+        hasaccess", "type": "string", "nullable": true}, "salutation": {"title": "Mr./Ms...",
+        "type": "string", "description": "Enter the employee&apos;s salutation, such
+        as Mr. or Ms., here.", "nullable": true}, "lastReviewDate": {"title": "Last
+        Review Date", "type": "string", "description": "Enter the date of this person&apos;s
+        last salary evaluation.", "format": "date", "nullable": true}, "purchaseorderlimit":
+        {"title": "Purchase Limit", "type": "number", "description": "In the Purchase
+        Limit field, enter the amount this employee can purchase without approval
+        from a supervisor or approver.", "format": "double", "nullable": true}, "defaultBillingAddress":
+        {"title": "Default Billing Address", "type": "string", "nullable": true},
+        "defaultAddress": {"title": "Default Address", "type": "string", "description":
+        "The employee&apos;s address. You can enter this information on the Address
+        subtab, and it will appear here.", "nullable": true}, "isInactive": {"title":
+        "Is Inactive", "type": "boolean", "description": "Check this box to inactivate
+        this employee record. Inactivated records no longer appear in lists or as
+        choices anywhere in your account. To view inactivated employee records or
+        reactivate them, go to Lists &gt; Employees &gt; Employees, and check the
+        Show Inactives box."}, "firstName": {"title": "First Name", "type": "string",
+        "description": "Enter the employee&apos;s first name here. What you enter
+        here automatically appears first in the Employee field. The first letter of
+        what you enter here appears in the Initials field. This field is required
+        for the Online Bill Pay feature.", "nullable": true}, "jobdescription": {"title":
+        "Job Description", "type": "string", "description": "Enter a description of
+        the duties related to the job this person currently performs.", "nullable":
+        true}, "homePhone": {"title": "Home Phone", "type": "string", "description":
+        "Enter this employee&apos;s home phone number here.", "nullable": true}, "gender":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string", "enum": ["b", "ns", "nb", "m", "f"]}, "refName": {"title": "Reference
+        Name", "type": "string"}}}, "i9verified": {"title": "I-9 Verified", "type":
+        "boolean", "description": "Check this box if the employee has completed an
+        I-9 form."}, "title": {"title": "Job Title", "type": "string", "description":
+        "Enter this employee&apos;s official job title here.", "nullable": true},
+        "defaultShippingAddress": {"title": "Default Shipping Address", "type": "string",
+        "nullable": true}, "giveAccess": {"title": "Login Access", "type": "boolean",
+        "description": "Check this box to give your employee access to NetSuite. Then,
+        assign a role to customize the level of access. You can assign multiple roles.
+        To let your employee track time and enter expense reports, select the Employee
+        Center role."}, "fulluserqty": {"title": "FullUser current", "type": "string",
+        "nullable": true}, "empcenterqtymax": {"title": "EMP_CENTER_MAX", "type":
+        "string", "nullable": true}, "password2": {"title": "Confirm Password", "type":
+        "string", "description": "Re-enter the employee&apos;s password for verification.
+        When you manually assign a password, you need to tell the employee the login
+        information. Do not send the password by email.", "nullable": true}, "wasempcenterhasaccess":
+        {"title": "Employee Center Has Access", "type": "string", "nullable": true},
+        "email": {"title": "Email", "type": "string", "description": "Enter your employee&apos;s
+        email address. If you allow your employees to track time or enter expense
+        reports online, this will become part of their access codes.", "nullable":
+        true}, "nextReviewDate": {"title": "Next Review Date", "type": "string", "description":
+        "Enter the date of this person&apos;s next salary evaluation.", "format":
+        "date", "nullable": true}, "comments": {"title": "Notes", "type": "string",
+        "description": "Enter other information you want to track for this employee.",
+        "nullable": true}, "accountNumber": {"title": "Account", "type": "string",
+        "description": "If you, your payroll service, or other benefits provider assigns
+        account numbers to your employees, enter that account number here. This field
+        is required for the Online Bill Pay feature.", "nullable": true}, "authworkdate":
+        {"title": "Work Authorization Expiry Date", "type": "string", "description":
+        "Enter the date through which the employee is authorized to work until. This
+        is required only if the employee&apos;s work status is Alien authorized to
+        work. This date is located in Section 1 of the completed I-9 form.", "format":
+        "date", "nullable": true}, "lastModifiedDate": {"title": "Last Modified Date",
+        "type": "string", "description": "Returns the date on which the employee record
+        was last modified.", "format": "date-time", "nullable": true}, "visaexpdate":
+        {"title": "Visa Expiration Date", "type": "string", "description": "Enter
+        the expiration date of the employee&apos;s visa. This information can be obtained
+        from the employee&apos;s passport.", "format": "date", "nullable": true},
+        "middleName": {"title": "Middle Name", "type": "string", "description": "Enter
+        a middle name or initial here. What you enter here automatically appears second
+        in the Employee field. The first letter of what you enter here appears in
+        the Initials field. Enter up to 25 characters in this field.", "nullable":
+        true}, "issalesrep": {"title": "Sales Rep", "type": "boolean", "description":
+        "Check this box to mark this employee as a sales representative. Sales representatives
+        are listed in the sales rep dropdown list for sales order forms and for sales
+        territory assignments."}, "isfulluserqtyenforced": {"title": "FullUser enforce",
+        "type": "string", "nullable": true}, "empcenterqty": {"title": "Employee Center
+        Current", "type": "string", "nullable": true}, "concurrentwebservicesuser":
+        {"title": "Concurrent Web Services User", "type": "boolean", "description":
+        "A user type that allows concurrent web services access into NetSuite. Check
+        this box to allow a user to have standard UI login access plus up to ten concurrent
+        web services sessions."}, "customForm": {"type": "object", "properties": {"id":
+        {"title": "Internal identifier", "type": "string", "enum": ["-10"]}, "refName":
+        {"title": "Reference Name", "type": "string"}}}, "expenselimit": {"title":
+        "Expense Limit", "type": "number", "description": "In the Expense Limit field,
+        enter the amount this employee can expense without approval from a supervisor
+        or approver.", "format": "double", "nullable": true}, "terminationbydeath":
+        {"title": "Termination Due To Death", "type": "boolean"}, "autoName": {"title":
+        "Auto", "type": "boolean", "description": "Clear this box to manually enter
+        an ID for this record. If you leave this box checked, NetSuite assigns an
+        ID for this record based on your settings at Setup &gt; Company &gt; Auto-Generated
+        Numbers."}, "officePhone": {"title": "Office Phone", "type": "string", "description":
+        "Enter this employee&apos;s office phone number here.", "nullable": true},
+        "sendEmail": {"title": "Send New Access Notification Email", "type": "boolean",
+        "description": "Check this box to send an automatic email notifying this employee
+        of access privileges to NetSuite. The standard NetSuite email message also
+        contains a link to let the user create a password. If you do not check this
+        box, you must check the Manually Assign or Change Password box. You must create
+        the password, and tell the user the password, and when and how to log in.
+        For security reasons, do not send the password by email."}, "isretailuserqtyenforced":
+        {"title": "RetailUser enforce", "type": "string", "nullable": true}, "refName":
+        {"title": "Reference Name", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "location": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "defaultacctcorpcardexp": {"type": "object", "properties": {"id": {"title":
+        "Internal identifier", "type": "string"}, "refName": {"title": "Reference
+        Name", "type": "string"}, "externalId": {"title": "External identifier", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "workCalendar": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "approver": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "residentstatus": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "employeestatus":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string"}, "refName": {"title": "Reference Name", "type": "string"}, "externalId":
+        {"title": "External identifier", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "class": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "timeapprover": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "corporatecards":
+        {"type": "object", "properties": {"links": {"title": "Links", "type": "array",
+        "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "expiration": {"title": "Expiration Date", "type": "string", "format": "date",
+        "nullable": true}, "embossedname": {"title": "Name on Card", "type": "string",
+        "nullable": true}, "refName": {"title": "Reference Name", "type": "string"},
+        "corporatecardprofile": {"type": "object", "properties": {"id": {"title":
+        "Internal identifier", "type": "string"}, "refName": {"title": "Reference
+        Name", "type": "string"}, "externalId": {"title": "External identifier", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "x-ns-sublistkey": {"present": false}, "x-ns-filterable": []}}}}, "addressBook":
+        {"type": "object", "properties": {"links": {"title": "Links", "type": "array",
+        "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "internalId": {"title": "Internal ID", "type": "integer", "format": "int64",
+        "nullable": true}, "defaultBilling": {"title": "Home", "type": "boolean"},
+        "addressBookAddress_text": {"title": "Address", "type": "string", "nullable":
+        true}, "defaultShipping": {"title": "Default Shipping", "type": "boolean"},
+        "label": {"title": "Label", "type": "string", "nullable": true}, "id": {"type":
+        "integer", "format": "int64", "nullable": true}, "addressId": {"title": "Internal
+        ID", "type": "string", "nullable": true}, "refName": {"title": "Reference
+        Name", "type": "string"}, "addressBookAddress": {"type": "object", "properties":
+        {"zip": {"title": "Zip", "type": "string", "nullable": true}, "country": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string",
+        "enum": ["PR", "PS", "PT", "PW", "PY", "QA", "AD", "AE", "AF", "AG", "AI",
+        "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT", "RE", "AU", "AW", "AX", "AZ",
+        "RO", "BA", "BB", "RS", "BD", "BE", "RU", "BF", "BG", "RW", "BH", "BI", "BJ",
+        "BL", "BM", "BN", "BO", "SA", "BQ", "SB", "BR", "SC", "BS", "SD", "BT", "SE",
+        "BV", "SG", "BW", "SH", "SI", "BY", "SJ", "BZ", "SK", "SL", "SM", "SN", "SO",
+        "CA", "SR", "CC", "SS", "CD", "ST", "CF", "SV", "CG", "CH", "SX", "CI", "SY",
+        "SZ", "CK", "CL", "CM", "CN", "CO", "CR", "TC", "CS", "TD", "CU", "TF", "CV",
+        "TG", "CW", "TH", "CX", "CY", "TJ", "CZ", "TK", "TL", "TM", "TN", "TO", "TR",
+        "TT", "DE", "TV", "TW", "DJ", "TZ", "DK", "DM", "DO", "UA", "UG", "DZ", "UM",
+        "EA", "EC", "US", "EE", "EG", "EH", "UY", "UZ", "VA", "ER", "VC", "ES", "ET",
+        "VE", "VG", "VI", "VN", "VU", "FI", "FJ", "FK", "FM", "FO", "FR", "WF", "GA",
+        "GB", "WS", "GD", "GE", "GF", "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ",
+        "GR", "GS", "GT", "GU", "GW", "GY", "XK", "HK", "HM", "HN", "HR", "HT", "YE",
+        "HU", "IC", "ID", "YT", "IE", "IL", "IM", "IN", "IO", "ZA", "IQ", "IR", "IS",
+        "IT", "ZM", "JE", "ZW", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN",
+        "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT",
+        "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM",
+        "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ",
+        "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO", "NP", "NR", "NU", "NZ", "OM",
+        "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN"]}, "refName": {"title":
+        "Reference Name", "type": "string"}}}, "addr2": {"title": "Address 2", "type":
+        "string", "nullable": true}, "city": {"title": "City", "type": "string", "nullable":
+        true}, "addr1": {"title": "Address 1", "type": "string", "nullable": true},
+        "lastModifiedDate": {"title": "Last Modified Date", "type": "string", "format":
+        "date-time", "nullable": true}, "addr3": {"title": "Address 3", "type": "string",
+        "nullable": true}, "externalId": {"title": "External ID", "type": "string",
+        "nullable": true}, "addrPhone": {"title": "Phone", "type": "string", "nullable":
+        true}, "addressee": {"title": "Addressee", "type": "string", "nullable": true},
+        "attention": {"title": "Attention", "type": "string", "nullable": true}, "override":
+        {"title": "Override", "type": "boolean"}, "state": {"title": "State/Province",
+        "type": "string", "nullable": true}, "addrText": {"title": "Address", "type":
+        "string", "nullable": true}, "refName": {"title": "Reference Name", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}, "x-ns-filterable":
+        []}}, "x-ns-sublistkey": {"present": true, "value": {"new": ["internalId"],
+        "existing": ["internalId"]}}, "x-ns-filterable": []}}}}, "image": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "directDepositList": {"type": "object", "properties": {"links": {"title":
+        "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "amount": {"title": "Amount", "type": "number", "format": "double", "nullable":
+        true}, "bankroutingnumber": {"title": "Routing Number", "type": "string",
+        "nullable": true}, "inactive": {"title": "Inactive", "type": "boolean"}, "accountstatus":
+        {"title": "Status", "type": "string", "nullable": true}, "bankaccountnumber":
+        {"title": "Account Number", "type": "string", "nullable": true}, "accountprenoted":
+        {"title": "Prenoted", "type": "boolean"}, "netaccount": {"title": "Net Account",
+        "type": "boolean"}, "id": {"title": "ID", "type": "string", "nullable": true},
+        "bankName": {"title": "Bank Name", "type": "string", "nullable": true}, "savingsaccount":
+        {"title": "Savings Account", "type": "boolean"}, "refName": {"title": "Reference
+        Name", "type": "string"}}, "x-ns-sublistkey": {"present": true, "value": {"new":
+        ["id"], "existing": ["id"]}}, "x-ns-filterable": []}}}}, "purchaseorderapprover":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string"}, "refName": {"title": "Reference Name", "type": "string"}, "externalId":
+        {"title": "External identifier", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "currency": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "billingClass": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "roles": {"type":
+        "object", "properties": {"links": {"title": "Links", "type": "array", "readOnly":
+        true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "ssoOnly": {"type": "string", "nullable": true}, "wsOnly": {"type": "string",
+        "nullable": true}, "masterRole": {"type": "integer", "format": "int64", "nullable":
+        true}, "deviceidOnly": {"type": "string", "nullable": true}, "billingWarn":
+        {"title": "<A href=''/app/billing/billingterms.nl?user=T''>Charges may apply</a>",
+        "type": "string", "nullable": true}, "centerType": {"type": "string", "nullable":
+        true}, "refName": {"title": "Reference Name", "type": "string"}, "selectedRole":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string"}, "refName": {"title": "Reference Name", "type": "string"}, "externalId":
+        {"title": "External identifier", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "x-ns-sublistkey": {"present": true, "value": {"new": ["selectedRole"], "existing":
+        ["selectedRole"]}}, "x-ns-filterable": []}}}}, "ethnicity": {"type": "object",
+        "properties": {"id": {"title": "Internal identifier", "type": "string"}, "refName":
+        {"title": "Reference Name", "type": "string"}, "externalId": {"title": "External
+        identifier", "type": "string"}, "links": {"title": "Links", "type": "array",
+        "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "supervisor": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "department": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "currencylist": {"type": "object", "properties": {"links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "refName": {"title": "Reference Name", "type": "string"}, "currency": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "x-ns-sublistkey": {"present": true, "value": {"new": ["currency"], "existing":
+        ["currency"]}}, "x-ns-filterable": []}}}}, "visatype": {"type": "object",
+        "properties": {"id": {"title": "Internal identifier", "type": "string"}, "refName":
+        {"title": "Reference Name", "type": "string"}, "externalId": {"title": "External
+        identifier", "type": "string"}, "links": {"title": "Links", "type": "array",
+        "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "maritalstatus": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "defaultexpensereportcurrency":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string"}, "refName": {"title": "Reference Name", "type": "string"}, "externalId":
+        {"title": "External identifier", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "template": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "subsidiary": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "employeetype": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "$schema": "http://json-schema.org/draft-06/hyper-schema#", "x-ns-filterable":
+        ["aliennumber", "birthdate", "defaultexpensereportcurrency", "billingClass",
+        "employeestatus", "externalId", "entityId", "releasedate", "hireDate", "mobilePhone",
+        "approvallimit", "issupportrep", "id", "fax", "custentity1", "defaultacctcorpcardexp",
+        "workCalendar", "timeapprover", "initials", "dateCreated", "subsidiary", "lastName",
+        "btemplate", "maritalstatus", "phone", "purchaseorderapprovallimit", "salutation",
+        "lastReviewDate", "purchaseorderlimit", "supervisor", "isInactive", "firstName",
+        "jobdescription", "ethnicity", "homePhone", "gender", "i9verified", "title",
+        "giveAccess", "currency", "department", "class", "email", "nextReviewDate",
+        "approver", "employeetype", "comments", "accountNumber", "residentstatus",
+        "authworkdate", "lastModifiedDate", "visaexpdate", "middleName", "issalesrep",
+        "purchaseorderapprover", "expenselimit", "visatype", "location", "officePhone"]}'
+    headers:
+      Content-Type:
+      - application/schema+json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT * FROM employee  WHERE issalesrep = ''T'' "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-uahP", "href": "-Fallback-scrubbed-JgjwiAnmApLKTHXFzuWFEPiZtiwRlCMDNDqaFAMKLvMdeRGeyJAaCyIEMtBYdmayGqHZjabQIIPjPGjJOMKnohJUwdfsRIUdT"}],
+        "count": 2, "hasMore": false, "items": [{"links": [], "btemplate": "F", "currency":
+        "4514", "datecreated": "2/11/2025", "defaultexpensereportcurrency": "4514",
+        "email": "fake.meltonjuan@example.com", "entityid": "-Fallback-scrubbed-BBRRhRyypNqO",
+        "firstname": "Fake-Kim", "gender": "-Fallback-scrubbed-C", "giveaccess": "T",
+        "hiredate": "2/11/2025", "i9verified": "F", "id": "2526", "initials": "-Fallback-scrubbed-hU",
+        "isinactive": "F", "issalesrep": "T", "issupportrep": "F", "lastmodifieddate":
+        "2/20/2025", "lastname": "Fake-George", "rolesforsearch": "4752", "subsidiary":
+        "4514", "title": "-Fallback-scrubbed-rWZyawAG", "workcalendar": "4514"}, {"links":
+        [], "btemplate": "F", "currency": "4514", "datecreated": "11/11/2024", "defaultexpensereportcurrency":
+        "4514", "email": "fake.shannon50@example.com", "employeestatus": "2016", "employeetype":
+        "4752", "entityid": "-Fallback-scrubbed-SiFCfGQfBMZT", "firstname": "Fake-Brenda",
+        "gender": "-Fallback-scrubbed-C", "giveaccess": "T", "hiredate": "11/11/2024",
+        "i9verified": "F", "id": "315", "initials": "-Fallback-scrubbed-if", "isinactive":
+        "F", "issalesrep": "T", "issupportrep": "F", "lastmodifieddate": "2/10/2025",
+        "lastname": "Fake-Allen", "rolesforsearch": "-Fallback-scrubbed-mmmPpypGZhSuQSoc",
+        "subsidiary": "4514", "workcalendar": "4514"}], "offset": 0, "totalResults":
+        2}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1
