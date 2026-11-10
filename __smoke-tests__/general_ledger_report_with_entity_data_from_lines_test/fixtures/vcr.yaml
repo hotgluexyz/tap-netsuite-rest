@@ -1,0 +1,1040 @@
+interactions:
+- request:
+    body: '{"q": "SELECT name, scriptid FROM customsegment"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - application/json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-HFEw", "href": "-Fallback-scrubbed-eKUbcwCsBJaKSxFqNnEUDBvpgTLdUopIvvAqSDbaQOOkCTcAqmKaxnkLMZkFLnlloubGUTNeiIQwEtQUWTDsgrvw"}],
+        "count": 3, "hasMore": false, "items": [{"links": [], "name": "Fake-Susan
+        Davis", "scriptid": "CSEG1"}, {"links": [], "name": "Fake-Laura Luna", "scriptid":
+        "CSEGDIST_CHANNEL"}, {"links": [], "name": "Fake-Alexander Alexander", "scriptid":
+        "CSEGTEST_VINI"}], "offset": 0, "totalResults": 3}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy
+      as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid,
+      COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname,
+      LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname)
+      as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type,
+      LineEntity.Type) as entitytype, (Transaction.id || ''_'' || TransactionLine.id)
+      AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as
+      transactiontype, TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD HH24:MI:SS'') as
+      date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo
+      as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id
+      as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN
+      ''Credit'' ELSE ''Debit'' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit
+      creditamount, TransactionAccountingLine.debit debitamount, department.id as
+      departmentid, department.fullname as department, TransactionLine.location as
+      locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name
+      as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid,
+      TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary
+      as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid,
+      Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate
+      AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD
+      HH24:MI:SS'') ELSE TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'')
+      END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname,
+      TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'') as startdate,
+      TO_CHAR(AccountingPeriod.EndDate, ''YYYY-MM-DD HH24:MI:SS'') as enddate, ''BK-Cust-Segment''
+      as custom_segment_cseg1, TransactionLine.cseg1 as cseg1_value_id, BUILTIN.DF(
+      TransactionLine.cseg1 ) as cseg1_value_name, ''Distribution Channel'' as custom_segment_csegdist_channel,
+      TransactionLine.csegdist_channel as csegdist_channel_value_id, BUILTIN.DF( TransactionLine.csegdist_channel
+      ) as csegdist_channel_value_name, ''Test Vini Custom Segment'' as custom_segment_csegtest_vini,
+      TransactionLine.csegtest_vini as csegtest_vini_value_id, BUILTIN.DF( TransactionLine.csegtest_vini
+      ) as csegtest_vini_value_name FROM Transaction INNER JOIN TransactionLine ON
+      (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine
+      ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine
+      = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook
+      LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN
+      Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod
+      ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity
+      ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON
+      (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary
+      = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)
+      LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT
+      JOIN Location ON (Transactionline.location = Location.id) WHERE ( Transaction.TranDate
+      BETWEEN TO_DATE( ''2025-12-01'', ''YYYY-MM-DD'' ) AND TO_DATE( ''2026-01-10'',
+      ''YYYY-MM-DD'' ) ) AND ( Transaction.Posting = ''T'' ) AND TransactionAccountingLine.amount
+      !=0 ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id
+      ASC, TransactionAccountingLine.accountingBook ASC"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-HFEw", "href": "-Fallback-scrubbed-zhcCoCwlBaudJnMHeuSJBLdWbBMrCZBQPfBQrTznwSDzOYkrqKczrnMMfQgXZLGOxPqjPdGPalREFGZjbsDOJXDHmhsWaMnKD"}],
+        "count": 52, "hasMore": false, "items": [{"links": [], "accountid": "8946",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-uiqgxYP", "amount":
+        "2734", "categories": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-31 00:00:00", "debitamount": "2734", "enddate": "2025-12-31
+        00:00:00", "entityid": "7603", "entitytype": "-Fallback-scrubbed-LntOTAC",
+        "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "id": "39216_0",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-VUbTnfVmafLCoEKMFWIv",
+        "memo": "-Fallback-scrubbed-FewNfdWyOFWvTdpoW", "name": "Fake-Kenneth Parrish",
+        "num": "8946", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-31 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-qVvCYsPYoeBpAZjcBJOROPkaqas",
+        "subsidiaryid": "6988", "trandisplayname": "-Fallback-scrubbed-epWZlrPCmloi",
+        "tranid": "5872", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-XdSxKSGlgS",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "9530", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "7025", "categories": "-Fallback-scrubbed-yXcUREAastQSz", "creditamount":
+        "2734", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-31 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entityid": "2829", "entitytype": "-Fallback-scrubbed-lWJQpy",
+        "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862", "id": "39216_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "memo": "-Fallback-scrubbed-FewNfdWyOFWvTdpoW",
+        "name": "Fake-Jonathan Barnes", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-31 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-yXcUREAastQSz",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-qVvCYsPYoeBpAZjcBJOROPkaqas",
+        "subsidiaryid": "6988", "trandisplayname": "-Fallback-scrubbed-epWZlrPCmloi",
+        "tranid": "5872", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-XdSxKSGlgS",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "7410", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "2734", "categories": "-Fallback-scrubbed-uZpfPloGIhERTfPq", "class":
+        "-Fallback-scrubbed-FcMvzZOXUicxqv", "classid": "8301", "csegdist_channel_value_id":
+        "9799", "csegdist_channel_value_name": "-Fallback-scrubbed-ZRuthuumeO", "csegtest_vini_value_id":
+        "7862", "csegtest_vini_value_name": "-Fallback-scrubbed-YVSucxsz", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "debitamount": "2734", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37709_0", "journaltype": "-Fallback-scrubbed-nLiKJkL",
+        "locationid": "9249", "locationname": "-Fallback-scrubbed-lCWx", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-uZpfPloGIhERTfPq", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-QAHjQIWmeNZr", "tranid": "7109",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-HqdYNNRmjj",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5711", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "7025", "categories": "-Fallback-scrubbed-JZNdfmqjdgrYgXEwSQUjtsy", "class":
+        "-Fallback-scrubbed-FcMvzZOXUicxqv", "classid": "8301", "creditamount": "2734",
+        "cseg1_value_id": "7862", "cseg1_value_name": "-Fallback-scrubbed-JsTbVzCrLlcGtju",
+        "csegdist_channel_value_id": "9799", "csegdist_channel_value_name": "-Fallback-scrubbed-ZRuthuumeO",
+        "csegtest_vini_value_id": "6988", "csegtest_vini_value_name": "-Fallback-scrubbed-swYBNcgF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "department": "-Fallback-scrubbed-igDXFIiBl",
+        "departmentid": "2237", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37709_1", "journaltype": "-Fallback-scrubbed-nLiKJkL",
+        "locationid": "9249", "locationname": "-Fallback-scrubbed-lCWx", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-GCiTTtYRQjiMSquW", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-QAHjQIWmeNZr", "tranid": "7109",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-HqdYNNRmjj",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "194", "accountingbook": "1", "accttype": "-Fallback-scrubbed-xaKRvNQ", "amount":
+        "8946", "categories": "-Fallback-scrubbed-fIXJvJhcfRwYzwgYVjrjABBwhzfNIgVoVTyGxA",
+        "class": "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "cseg1_value_id":
+        "7862", "cseg1_value_name": "-Fallback-scrubbed-JsTbVzCrLlcGtju", "csegdist_channel_value_id":
+        "6732", "csegdist_channel_value_name": "-Fallback-scrubbed-lmWrNWgpEmLKblceNWQJkUF",
+        "csegtest_vini_value_id": "7862", "csegtest_vini_value_name": "-Fallback-scrubbed-YVSucxsz",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "debitamount": "8946", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37710_0", "journaltype": "-Fallback-scrubbed-nLiKJkL",
+        "locationid": "9249", "locationname": "-Fallback-scrubbed-lCWx", "num": "70",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-wfboejPFGDQnEknjYvexltQkZdU",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-rvSUxMNmGxYC",
+        "tranid": "1384", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-hIAZNZZbYK",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5711", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "1790", "categories": "-Fallback-scrubbed-JZNdfmqjdgrYgXEwSQUjtsy", "class":
+        "-Fallback-scrubbed-fArDzOhQZ", "classid": "7862", "creditamount": "8946",
+        "cseg1_value_id": "8301", "cseg1_value_name": "-Fallback-scrubbed-tuSsdbPdbORnbbj",
+        "csegdist_channel_value_id": "9799", "csegdist_channel_value_name": "-Fallback-scrubbed-ZRuthuumeO",
+        "csegtest_vini_value_id": "6988", "csegtest_vini_value_name": "-Fallback-scrubbed-swYBNcgF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "department": "-Fallback-scrubbed-pGCtO", "departmentid":
+        "9249", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37710_1", "journaltype": "-Fallback-scrubbed-nLiKJkL",
+        "locationid": "9249", "locationname": "-Fallback-scrubbed-lCWx", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-GCiTTtYRQjiMSquW", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-rvSUxMNmGxYC", "tranid": "1384",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-hIAZNZZbYK",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "8946", "accountingbook": "1", "accttype": "-Fallback-scrubbed-uiqgxYP", "amount":
+        "6590", "categories": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX", "class":
+        "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "creditamount": "1776",
+        "cseg1_value_id": "8301", "cseg1_value_name": "-Fallback-scrubbed-tuSsdbPdbORnbbj",
+        "csegdist_channel_value_id": "6732", "csegdist_channel_value_name": "-Fallback-scrubbed-lmWrNWgpEmLKblceNWQJkUF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "department": "-Fallback-scrubbed-igDXFIiBl",
+        "departmentid": "2237", "enddate": "2025-12-31 00:00:00", "entityid": "3606",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37711_0", "locationid": "2237", "locationname":
+        "-Fallback-scrubbed-iUFts", "name": "Fake-Christopher Becker", "num": "8946",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-ZYqGUPkzkTWQrnc",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-lupddDSwFcN",
+        "transactiontype": "-Fallback-scrubbed-CtzR"}, {"links": [], "accountid":
+        "8781", "accountingbook": "1", "accttype": "-Fallback-scrubbed-xaKRvNQ", "amount":
+        "8946", "categories": "-Fallback-scrubbed-EJjRVqbKWvZilfw", "class": "-Fallback-scrubbed-FcMvzZOXUicxqv",
+        "classid": "8301", "cseg1_value_id": "8301", "cseg1_value_name": "-Fallback-scrubbed-tuSsdbPdbORnbbj",
+        "csegdist_channel_value_id": "6732", "csegdist_channel_value_name": "-Fallback-scrubbed-lmWrNWgpEmLKblceNWQJkUF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "debitamount": "8946", "department": "-Fallback-scrubbed-igDXFIiBl",
+        "departmentid": "2237", "enddate": "2025-12-31 00:00:00", "entityid": "3606",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37711_1", "locationid": "9249", "locationname":
+        "-Fallback-scrubbed-lCWx", "name": "Fake-Christopher Becker", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-EJjRVqbKWvZilfw", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-ZYqGUPkzkTWQrnc", "transactioncurrencyid":
+        "7862", "transactionnumber": "-Fallback-scrubbed-lupddDSwFcN", "transactiontype":
+        "-Fallback-scrubbed-CtzR"}, {"links": [], "accountid": "5380", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu", "amount": "3815", "categories":
+        "-Fallback-scrubbed-crzTtboEuStlZAk", "class": "-Fallback-scrubbed-jHOJzITZd",
+        "classid": "6988", "cseg1_value_id": "2237", "cseg1_value_name": "-Fallback-scrubbed-JRMlHKhZOBe",
+        "csegdist_channel_value_id": "3264", "csegdist_channel_value_name": "-Fallback-scrubbed-ypyJLvJ",
+        "csegtest_vini_value_id": "6988", "csegtest_vini_value_name": "-Fallback-scrubbed-swYBNcgF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-22 00:00:00", "debitamount": "3815", "department": "-Fallback-scrubbed-igDXFIiBl",
+        "departmentid": "2237", "enddate": "2025-12-31 00:00:00", "entityid": "3606",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37711_2", "locationid": "6334", "locationname":
+        "-Fallback-scrubbed-xtlHVa", "name": "Fake-Christopher Becker", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-22 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-crzTtboEuStlZAk", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-ZYqGUPkzkTWQrnc", "transactioncurrencyid":
+        "7862", "transactionnumber": "-Fallback-scrubbed-lupddDSwFcN", "transactiontype":
+        "-Fallback-scrubbed-CtzR"}, {"links": [], "accountid": "7410", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg", "amount": "2734", "categories":
+        "-Fallback-scrubbed-uZpfPloGIhERTfPq", "cseg1_value_id": "7862", "cseg1_value_name":
+        "-Fallback-scrubbed-JsTbVzCrLlcGtju", "csegdist_channel_value_id": "6732",
+        "csegdist_channel_value_name": "-Fallback-scrubbed-lmWrNWgpEmLKblceNWQJkUF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-19 00:00:00", "debitamount": "2734", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "id": "37708_0", "journaltype": "-Fallback-scrubbed-nLiKJkL", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-19 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-uZpfPloGIhERTfPq", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-SRAfRkiIqRzM", "tranid": "1583",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-ATcZqDTBjM",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5711", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "7025", "categories": "-Fallback-scrubbed-JZNdfmqjdgrYgXEwSQUjtsy", "creditamount":
+        "2734", "cseg1_value_id": "7862", "cseg1_value_name": "-Fallback-scrubbed-JsTbVzCrLlcGtju",
+        "csegdist_channel_value_id": "6732", "csegdist_channel_value_name": "-Fallback-scrubbed-lmWrNWgpEmLKblceNWQJkUF",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-19 00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype":
+        "-Fallback-scrubbed-yUliZh", "exchangerate": "7862", "id": "37708_1", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-19 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-GCiTTtYRQjiMSquW",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-SRAfRkiIqRzM",
+        "tranid": "1583", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-ATcZqDTBjM",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "6771", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "4507", "categories": "-Fallback-scrubbed-ignUNYh", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-16 00:00:00", "debitamount": "4507", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-XiGHkpAOza", "id": "37406_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-TGUTlFHFAVqmfOvZcFdZdfUaXzRSaUeFulcnewRPunHfTWzHA",
+        "num": "2415", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-ignUNYh",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-qAVgLfYRFbuD",
+        "tranid": "8269", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-tDmpthzYjR",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "6771", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8789", "categories": "-Fallback-scrubbed-ignUNYh", "creditamount":
+        "4507", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-16 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-XiGHkpAOza", "id": "37406_3", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-bYElRSIlNUNmjlhJxwxvqHxuIKxVUCeKUFqfPtgdvSgsOgPzyN",
+        "num": "2415", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-ignUNYh",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-qAVgLfYRFbuD",
+        "tranid": "8269", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-tDmpthzYjR",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "7862", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "5741", "categories": "-Fallback-scrubbed-Ibhj", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-16
+        00:00:00", "debitamount": "5741", "enddate": "2025-12-31 00:00:00", "entrytype":
+        "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "id": "37506_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-Ibhj",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-lHmJNZOGGpMr",
+        "tranid": "7852", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-IkllsTrmxI",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1181", "accountingbook": "1", "accttype": "-Fallback-scrubbed-lCMFVyJDCD",
+        "amount": "8731", "categories": "-Fallback-scrubbed-zDBdlRAfi", "creditamount":
+        "5741", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-16 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862",
+        "id": "37506_1", "journaltype": "-Fallback-scrubbed-nLiKJkL", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-16 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-zDBdlRAfi", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-lHmJNZOGGpMr", "tranid": "7852",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-IkllsTrmxI",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5168", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8808", "categories": "-Fallback-scrubbed-MyyGeSVhSfvdHtGrn", "class":
+        "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "creditamount": "4577",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-16 00:00:00", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entityid": "623",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37507_0", "locationid": "7862", "locationname":
+        "-Fallback-scrubbed-OjTi", "name": "Fake-Brian Smith", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-MyyGeSVhSfvdHtGrn",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-iqgRdmvQqtkFSHW",
+        "tranid": "2237", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-rybEdYgCn",
+        "transactiontype": "-Fallback-scrubbed-qFsQxmgy"}, {"links": [], "accountid":
+        "5380", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "4577", "categories": "-Fallback-scrubbed-crzTtboEuStlZAk", "class":
+        "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-16
+        00:00:00", "debitamount": "4577", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entityid": "623",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37507_1", "locationid": "8301", "locationname":
+        "-Fallback-scrubbed-CJL", "name": "Fake-Brian Smith", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-crzTtboEuStlZAk",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-iqgRdmvQqtkFSHW",
+        "tranid": "2237", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-rybEdYgCn",
+        "transactiontype": "-Fallback-scrubbed-qFsQxmgy"}, {"links": [], "accountid":
+        "1196", "accountingbook": "1", "accttype": "-Fallback-scrubbed-JQkg", "amount":
+        "4577", "categories": "-Fallback-scrubbed-oAogKVIJlfSTfsQOobMGaRvFg", "class":
+        "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-16
+        00:00:00", "debitamount": "4577", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entityid": "623",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37507_2", "linememo": "-Fallback-scrubbed-oyhwDmZygeFKjSTHQNrEpJOU",
+        "locationid": "8301", "locationname": "-Fallback-scrubbed-CJL", "name": "Fake-Brian
+        Smith", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-16
+        00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-oAogKVIJlfSTfsQOobMGaRvFg",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-iqgRdmvQqtkFSHW",
+        "tranid": "2237", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-rybEdYgCn",
+        "transactiontype": "-Fallback-scrubbed-qFsQxmgy"}, {"links": [], "accountid":
+        "5380", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "8808", "categories": "-Fallback-scrubbed-crzTtboEuStlZAk", "class":
+        "-Fallback-scrubbed-jHOJzITZd", "classid": "6988", "creditamount": "4577",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-16 00:00:00", "department": "-Fallback-scrubbed-PMbHevcquYvesHTTWkyScBYbBsJ",
+        "departmentid": "9799", "enddate": "2025-12-31 00:00:00", "entityid": "623",
+        "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37507_3", "linememo": "-Fallback-scrubbed-oyhwDmZygeFKjSTHQNrEpJOU",
+        "locationid": "8301", "locationname": "-Fallback-scrubbed-CJL", "name": "Fake-Brian
+        Smith", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-16
+        00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-crzTtboEuStlZAk",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-iqgRdmvQqtkFSHW",
+        "tranid": "2237", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-rybEdYgCn",
+        "transactiontype": "-Fallback-scrubbed-qFsQxmgy"}, {"links": [], "accountid":
+        "8946", "accountingbook": "1", "accttype": "-Fallback-scrubbed-uiqgxYP", "amount":
+        "9997", "categories": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX", "creditamount":
+        "6736", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-16 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entityid": "9323", "entitytype": "-Fallback-scrubbed-lWJQpy",
+        "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862", "id": "38814_0",
+        "locationid": "8301", "locationname": "-Fallback-scrubbed-CJL", "name": "Fake-Corey
+        Doyle", "num": "8946", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-16 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-tvimTqDphYMrlyyewuAX",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-MBPhqulswgHpBxW",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-HNKAYeziBOc",
+        "transactiontype": "-Fallback-scrubbed-CtzR"}, {"links": [], "accountid":
+        "5358", "accountingbook": "1", "accttype": "-Fallback-scrubbed-xaKRvNQ", "amount":
+        "6736", "categories": "-Fallback-scrubbed-rWlzRrsVyrw", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-16
+        00:00:00", "debitamount": "6736", "enddate": "2025-12-31 00:00:00", "entityid":
+        "9323", "entitytype": "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "38814_1", "locationid": "8301", "locationname":
+        "-Fallback-scrubbed-CJL", "name": "Fake-Corey Doyle", "num": "5358", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-16 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-rWlzRrsVyrw", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-MBPhqulswgHpBxW", "transactioncurrencyid":
+        "7862", "transactionnumber": "-Fallback-scrubbed-HNKAYeziBOc", "transactiontype":
+        "-Fallback-scrubbed-CtzR"}, {"links": [], "accountid": "6771", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg", "amount": "8470", "categories":
+        "-Fallback-scrubbed-ignUNYh", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-15
+        00:00:00", "debitamount": "8470", "enddate": "2025-12-31 00:00:00", "entrytype":
+        "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "externalid": "-Fallback-scrubbed-puEMpSdFPw",
+        "id": "37306_0", "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo":
+        "-Fallback-scrubbed-hSTFRhWDBkpAHXyUnJBYBGwjeAZMYuQbHfBHXzBIvRsyVadIa", "num":
+        "2415", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-15
+        00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-ignUNYh",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-SzLbiOTelfqN",
+        "tranid": "4364", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-GPlgwnKIOk",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "6771", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "9587", "categories": "-Fallback-scrubbed-ignUNYh", "creditamount":
+        "8470", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-15 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-puEMpSdFPw", "id": "37306_1", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-hvsHqpXpcOuiBqRCxnwAFNGDkiaBIvDxQrzlPiTMyHhUjsuAzt",
+        "num": "2415", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-15 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-ignUNYh",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-SzLbiOTelfqN",
+        "tranid": "4364", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-GPlgwnKIOk",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "9530", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "1482", "categories": "-Fallback-scrubbed-yXcUREAastQSz", "currency":
+        "-Fallback-scrubbed-niQt", "currencyid": "2237", "currencysymbol": "-Fallback-scrubbed-kEO",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-08 00:00:00", "debitamount": "1482", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "id": "36805_0", "journaltype": "-Fallback-scrubbed-nLiKJkL", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-08 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-yXcUREAastQSz", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM", "subsidiaryid":
+        "6732", "trandisplayname": "-Fallback-scrubbed-dYLavZZvVsM", "tranid": "3372",
+        "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-MBIpOrvNV",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "3273", "accountingbook": "1", "accttype": "-Fallback-scrubbed-kJximJj", "amount":
+        "7025", "categories": "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-08
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "36805_1", "journaltype": "-Fallback-scrubbed-nLiKJkL",
+        "num": "3273", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-08 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-dYLavZZvVsM",
+        "tranid": "3372", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-MBIpOrvNV",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8731", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-08
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "id": "36805_2", "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo":
+        "-Fallback-scrubbed-LswhK", "name": "Fake-Monica Adams", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-08 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-dYLavZZvVsM",
+        "tranid": "3372", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-MBIpOrvNV",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "3273", "accountingbook": "1", "accttype": "-Fallback-scrubbed-kJximJj", "amount":
+        "832", "categories": "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-08 00:00:00", "debitamount": "832", "enddate": "2025-12-31
+        00:00:00", "entityid": "7603", "entitytype": "-Fallback-scrubbed-LntOTAC",
+        "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "id": "36906_0",
+        "locationid": "7862", "locationname": "-Fallback-scrubbed-OjTi", "name": "Fake-Kenneth
+        Parrish", "num": "3273", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-08 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-yFhOFWGZKoygrukIgnMapM",
+        "tranid": "-Fallback-scrubbed-SufPKPqRxitaZ", "transactioncurrencyid": "7862",
+        "transactionnumber": "-Fallback-scrubbed-NPzqomSmSWH", "transactiontype":
+        "-Fallback-scrubbed-DXl"}, {"links": [], "accountid": "7858", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-ZXYRpd", "amount": "6309", "categories":
+        "-Fallback-scrubbed-EFxYonkumBhDhNGWvnEXA", "creditamount": "832", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-08 00:00:00", "enddate": "2025-12-31 00:00:00", "entityid":
+        "7603", "entitytype": "-Fallback-scrubbed-LntOTAC", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "36906_1", "linememo": "-Fallback-scrubbed-BSgnWulqu",
+        "name": "Fake-Kenneth Parrish", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-08 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-yjdeakqewzeFN",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-yFhOFWGZKoygrukIgnMapM",
+        "tranid": "-Fallback-scrubbed-SufPKPqRxitaZ", "transactioncurrencyid": "7862",
+        "transactionnumber": "-Fallback-scrubbed-NPzqomSmSWH", "transactiontype":
+        "-Fallback-scrubbed-DXl"}, {"links": [], "accountid": "3273", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-kJximJj", "amount": "832", "categories":
+        "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-08
+        00:00:00", "debitamount": "832", "enddate": "2025-12-31 00:00:00", "entityid":
+        "7603", "entitytype": "-Fallback-scrubbed-LntOTAC", "entrytype": "-Fallback-scrubbed-rkRvR",
+        "exchangerate": "7862", "id": "37006_0", "locationid": "7862", "locationname":
+        "-Fallback-scrubbed-OjTi", "name": "Fake-Kenneth Parrish", "num": "3273",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-08 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-SNVSpEDPvTvxpgOiquLpkZMLUjtQL",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-atxrqTgzGXOuQKhDgIgNTHi",
+        "tranid": "-Fallback-scrubbed-JnyXiJdxhVUqET", "transactioncurrencyid": "7862",
+        "transactionnumber": "-Fallback-scrubbed-CxNgyMmZMNL", "transactiontype":
+        "-Fallback-scrubbed-DXl"}, {"links": [], "accountid": "7858", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-ZXYRpd", "amount": "6309", "categories":
+        "-Fallback-scrubbed-EFxYonkumBhDhNGWvnEXA", "creditamount": "832", "currency":
+        "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl",
+        "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-08 00:00:00", "enddate": "2025-12-31 00:00:00", "entityid":
+        "7603", "entitytype": "-Fallback-scrubbed-LntOTAC", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "id": "37006_1", "linememo": "-Fallback-scrubbed-BSgnWulqu",
+        "name": "Fake-Kenneth Parrish", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-08 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-yjdeakqewzeFN",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-atxrqTgzGXOuQKhDgIgNTHi",
+        "tranid": "-Fallback-scrubbed-JnyXiJdxhVUqET", "transactioncurrencyid": "7862",
+        "transactionnumber": "-Fallback-scrubbed-CxNgyMmZMNL", "transactiontype":
+        "-Fallback-scrubbed-DXl"}, {"links": [], "accountid": "1615", "accountingbook":
+        "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg", "amount": "1482", "categories":
+        "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy", "currency": "-Fallback-scrubbed-niQt",
+        "currencyid": "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "debitamount": "1482", "enddate": "2025-12-31 00:00:00", "entrytype":
+        "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "externalid": "-Fallback-scrubbed-ZTrHtn",
+        "id": "36806_0", "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo":
+        "-Fallback-scrubbed-hoFrGoT", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-07 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-gBGzFlvxSzT",
+        "tranid": "1930", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-KeAJDkYnI",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "7025", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "externalid": "-Fallback-scrubbed-ZTrHtn", "id": "36806_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-OtaNdFH",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-gBGzFlvxSzT",
+        "tranid": "1930", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-KeAJDkYnI",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8731", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "externalid": "-Fallback-scrubbed-ZTrHtn", "id": "36806_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-LswhK", "name":
+        "Fake-Monica Adams", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-07 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-gBGzFlvxSzT",
+        "tranid": "1930", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-KeAJDkYnI",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "1482", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "currency": "-Fallback-scrubbed-niQt", "currencyid": "2237", "currencysymbol":
+        "-Fallback-scrubbed-kEO", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-07 00:00:00", "debitamount": "1482", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-QyMREB", "id": "37206_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-urCcSGOCg",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-pQCGWrFpNVGg",
+        "tranid": "1987", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-ybwuGHbIIL",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "7025", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "externalid": "-Fallback-scrubbed-QyMREB", "id": "37206_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-khOVfBcif",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-pQCGWrFpNVGg",
+        "tranid": "1987", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-ybwuGHbIIL",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "6916", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "8731", "categories": "-Fallback-scrubbed-jucHHHlHpcNpBaaHaRAhcMRgUXqPAwgpCFQehZ",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "externalid": "-Fallback-scrubbed-QyMREB", "id": "37206_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-LswhK", "name":
+        "Fake-Monica Adams", "num": "-Fallback-scrubbed-MZRBdUkXacNOn", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-jucHHHlHpcNpBaaHaRAhcMRgUXqPAwgpCFQehZ",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-pQCGWrFpNVGg",
+        "tranid": "1987", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-ybwuGHbIIL",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "1482", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "currency": "-Fallback-scrubbed-niQt", "currencyid": "2237", "currencysymbol":
+        "-Fallback-scrubbed-kEO", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-07 00:00:00", "debitamount": "1482", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-dkIQwD", "id": "37207_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-urCcSGOCg",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-SbeTvfiowQPm",
+        "tranid": "6938", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-GcwrPVYtdQ",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "7025", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "externalid": "-Fallback-scrubbed-dkIQwD", "id": "37207_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-khOVfBcif",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-SbeTvfiowQPm",
+        "tranid": "6938", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-GcwrPVYtdQ",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "6916", "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu",
+        "amount": "8731", "categories": "-Fallback-scrubbed-jucHHHlHpcNpBaaHaRAhcMRgUXqPAwgpCFQehZ",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-07
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "externalid": "-Fallback-scrubbed-dkIQwD", "id": "37207_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-LswhK", "name":
+        "Fake-Monica Adams", "num": "-Fallback-scrubbed-MZRBdUkXacNOn", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-07 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-jucHHHlHpcNpBaaHaRAhcMRgUXqPAwgpCFQehZ",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-SbeTvfiowQPm",
+        "tranid": "6938", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-GcwrPVYtdQ",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "1482", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "currency": "-Fallback-scrubbed-niQt", "currencyid": "2237", "currencysymbol":
+        "-Fallback-scrubbed-kEO", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-06 00:00:00", "debitamount": "1482", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-IfhGUT", "id": "36807_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-kPJgeGQrY",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-06 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-goNQJUxzkbR",
+        "tranid": "3219", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-kxwiOQQyj",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "7025", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-06
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "externalid": "-Fallback-scrubbed-IfhGUT", "id": "36807_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-mpFMkxFWU",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-06 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-goNQJUxzkbR",
+        "tranid": "3219", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-kxwiOQQyj",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8731", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-06
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "externalid": "-Fallback-scrubbed-IfhGUT", "id": "36807_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-LswhK", "name":
+        "Fake-Monica Adams", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-06 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-goNQJUxzkbR",
+        "tranid": "3219", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-kxwiOQQyj",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "1482", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "currency": "-Fallback-scrubbed-niQt", "currencyid": "2237", "currencysymbol":
+        "-Fallback-scrubbed-kEO", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-06 00:00:00", "debitamount": "1482", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate": "7862",
+        "externalid": "-Fallback-scrubbed-pDtBBu", "id": "36808_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-urCcSGOCg",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-06 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-JEQnPlKYrpoZ",
+        "tranid": "2734", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-IkhQXSpWuy",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "7025", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "2734", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-06
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "7862", "externalid": "-Fallback-scrubbed-pDtBBu", "id": "36808_1",
+        "journaltype": "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-khOVfBcif",
+        "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-06 00:00:00",
+        "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-JEQnPlKYrpoZ",
+        "tranid": "2734", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-IkhQXSpWuy",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "1615", "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg",
+        "amount": "8731", "categories": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "creditamount": "5741", "currency": "-Fallback-scrubbed-niQt", "currencyid":
+        "2237", "currencysymbol": "-Fallback-scrubbed-kEO", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-06
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "5281", "entitytype":
+        "-Fallback-scrubbed-lWJQpy", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "7862", "externalid": "-Fallback-scrubbed-pDtBBu", "id": "36808_2", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "linememo": "-Fallback-scrubbed-LswhK", "name":
+        "Fake-Monica Adams", "periodname": "-Fallback-scrubbed-zELKPOZH", "postingdate":
+        "2025-12-06 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-QfibQeipkVVCLxztWJqy",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-oqBlmNZekakgKriavmkuPgKM",
+        "subsidiaryid": "6732", "trandisplayname": "-Fallback-scrubbed-JEQnPlKYrpoZ",
+        "tranid": "2734", "transactioncurrencyid": "2237", "transactionnumber": "-Fallback-scrubbed-IkhQXSpWuy",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5141", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "502262826125.48", "categories": "-Fallback-scrubbed-SpWPHRqbJrhGbJEQZjWg",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-01 00:00:00", "debitamount": "502262826125.48", "enddate":
+        "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate":
+        "408.613927240469", "id": "36804_0", "num": "2162", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-01 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-SpWPHRqbJrhGbJEQZjWg",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-OQDHpUkfTI",
+        "tranid": "7862", "transactioncurrencyid": "8301", "transactionnumber": "-Fallback-scrubbed-fNgXjxrD",
+        "transactiontype": "-Fallback-scrubbed-ypB"}, {"links": [], "accountid": "4602",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu", "amount":
+        "995359.484934752", "categories": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR",
+        "creditamount": "-81830679571958.0", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-01
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "7603", "entitytype":
+        "-Fallback-scrubbed-LntOTAC", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "408.613927240469", "id": "36804_1", "name": "Fake-Kenneth Parrish", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-01 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-OQDHpUkfTI", "tranid": "7862",
+        "transactioncurrencyid": "8301", "transactionnumber": "-Fallback-scrubbed-fNgXjxrD",
+        "transactiontype": "-Fallback-scrubbed-ypB"}, {"links": [], "accountid": "4602",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu", "amount":
+        "2883114.24333441", "categories": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR",
+        "creditamount": "-5715387534.66985", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-01
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entityid": "1583", "entitytype":
+        "-Fallback-scrubbed-LntOTAC", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate":
+        "408.613927240469", "id": "36804_2", "name": "7862", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-01 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-OQDHpUkfTI",
+        "tranid": "7862", "transactioncurrencyid": "8301", "transactionnumber": "-Fallback-scrubbed-fNgXjxrD",
+        "transactiontype": "-Fallback-scrubbed-ypB"}, {"links": [], "accountid": "4602",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-qNDnAqgcqQnu", "amount":
+        "-303327.547339688", "categories": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR",
+        "creditamount": "4.59410389765817", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-01
+        00:00:00", "enddate": "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh",
+        "exchangerate": "408.613927240469", "id": "36804_3", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-01 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-qdEpVBxmnlwTSGCbR",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-OQDHpUkfTI",
+        "tranid": "7862", "transactioncurrencyid": "8301", "transactionnumber": "-Fallback-scrubbed-fNgXjxrD",
+        "transactiontype": "-Fallback-scrubbed-ypB"}, {"links": [], "accountid": "4197",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-fjTIGUhkId", "amount":
+        "4.59410389765817", "categories": "-Fallback-scrubbed-bcHvIDwHvmyXwLudUKvRanvxQxxNJ",
+        "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862", "currencysymbol":
+        "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan Davis", "custom_segment_csegdist_channel":
+        "Fake-Laura Luna", "custom_segment_csegtest_vini": "Fake-Alexander Alexander",
+        "date": "2025-12-01 00:00:00", "debitamount": "4.59410389765817", "enddate":
+        "2025-12-31 00:00:00", "entrytype": "-Fallback-scrubbed-rkRvR", "exchangerate":
+        "408.613927240469", "id": "36804_4", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-01 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-bcHvIDwHvmyXwLudUKvRanvxQxxNJ",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-OQDHpUkfTI",
+        "tranid": "7862", "transactioncurrencyid": "8301", "transactionnumber": "-Fallback-scrubbed-fNgXjxrD",
+        "transactiontype": "-Fallback-scrubbed-ypB"}, {"links": [], "accountid": "5405",
+        "accountingbook": "1", "accttype": "-Fallback-scrubbed-ivUxeBqRXpg", "amount":
+        "5741", "categories": "-Fallback-scrubbed-uiMPgjEfRSaxppY", "currency": "-Fallback-scrubbed-IFYBFdgUk",
+        "currencyid": "7862", "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1":
+        "Fake-Susan Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna",
+        "custom_segment_csegtest_vini": "Fake-Alexander Alexander", "date": "2025-12-01
+        00:00:00", "debitamount": "5741", "enddate": "2025-12-31 00:00:00", "entrytype":
+        "-Fallback-scrubbed-rkRvR", "exchangerate": "7862", "id": "39215_0", "journaltype":
+        "-Fallback-scrubbed-nLiKJkL", "periodname": "-Fallback-scrubbed-zELKPOZH",
+        "postingdate": "2025-12-01 00:00:00", "postingperiod": "4762", "split": "-Fallback-scrubbed-uiMPgjEfRSaxppY",
+        "startdate": "2025-12-01 00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai",
+        "subsidiaryid": "7862", "trandisplayname": "-Fallback-scrubbed-tBVaIlYTAFXh",
+        "tranid": "35", "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-qyPNvgqrel",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}, {"links": [], "accountid":
+        "5711", "accountingbook": "1", "accttype": "-Fallback-scrubbed-gEwJ", "amount":
+        "8731", "categories": "-Fallback-scrubbed-JZNdfmqjdgrYgXEwSQUjtsy", "creditamount":
+        "5741", "currency": "-Fallback-scrubbed-IFYBFdgUk", "currencyid": "7862",
+        "currencysymbol": "-Fallback-scrubbed-ddl", "custom_segment_cseg1": "Fake-Susan
+        Davis", "custom_segment_csegdist_channel": "Fake-Laura Luna", "custom_segment_csegtest_vini":
+        "Fake-Alexander Alexander", "date": "2025-12-01 00:00:00", "enddate": "2025-12-31
+        00:00:00", "entrytype": "-Fallback-scrubbed-yUliZh", "exchangerate": "7862",
+        "id": "39215_1", "journaltype": "-Fallback-scrubbed-nLiKJkL", "periodname":
+        "-Fallback-scrubbed-zELKPOZH", "postingdate": "2025-12-01 00:00:00", "postingperiod":
+        "4762", "split": "-Fallback-scrubbed-GCiTTtYRQjiMSquW", "startdate": "2025-12-01
+        00:00:00", "subsidiary": "-Fallback-scrubbed-jJbKxuOAdhwrai", "subsidiaryid":
+        "7862", "trandisplayname": "-Fallback-scrubbed-tBVaIlYTAFXh", "tranid": "35",
+        "transactioncurrencyid": "7862", "transactionnumber": "-Fallback-scrubbed-qyPNvgqrel",
+        "transactiontype": "-Fallback-scrubbed-UqXqdfG"}], "offset": 0, "totalResults":
+        52}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy
+      as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid,
+      COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname,
+      LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname)
+      as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type,
+      LineEntity.Type) as entitytype, (Transaction.id || ''_'' || TransactionLine.id)
+      AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as
+      transactiontype, TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD HH24:MI:SS'') as
+      date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo
+      as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id
+      as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN
+      ''Credit'' ELSE ''Debit'' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit
+      creditamount, TransactionAccountingLine.debit debitamount, department.id as
+      departmentid, department.fullname as department, TransactionLine.location as
+      locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name
+      as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid,
+      TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary
+      as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid,
+      Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate
+      AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD
+      HH24:MI:SS'') ELSE TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'')
+      END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname,
+      TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'') as startdate,
+      TO_CHAR(AccountingPeriod.EndDate, ''YYYY-MM-DD HH24:MI:SS'') as enddate, ''BK-Cust-Segment''
+      as custom_segment_cseg1, TransactionLine.cseg1 as cseg1_value_id, BUILTIN.DF(
+      TransactionLine.cseg1 ) as cseg1_value_name, ''Distribution Channel'' as custom_segment_csegdist_channel,
+      TransactionLine.csegdist_channel as csegdist_channel_value_id, BUILTIN.DF( TransactionLine.csegdist_channel
+      ) as csegdist_channel_value_name, ''Test Vini Custom Segment'' as custom_segment_csegtest_vini,
+      TransactionLine.csegtest_vini as csegtest_vini_value_id, BUILTIN.DF( TransactionLine.csegtest_vini
+      ) as csegtest_vini_value_name FROM Transaction INNER JOIN TransactionLine ON
+      (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine
+      ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine
+      = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook
+      LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN
+      Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod
+      ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity
+      ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON
+      (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary
+      = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)
+      LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT
+      JOIN Location ON (Transactionline.location = Location.id) WHERE ( Transaction.TranDate
+      BETWEEN TO_DATE( ''2026-01-11'', ''YYYY-MM-DD'' ) AND TO_DATE( ''2026-01-21'',
+      ''YYYY-MM-DD'' ) ) AND ( Transaction.Posting = ''T'' ) AND TransactionAccountingLine.amount
+      !=0 ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id
+      ASC, TransactionAccountingLine.accountingBook ASC"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-HFEw", "href": "-Fallback-scrubbed-zhcCoCwlBaudJnMHeuSJBLdWbBMrCZBQPfBQrTznwSDzOYkrqKczrnMMfQgXZLGOxPqjPdGPalREFGZjbsDOJXDHmhsWaMnKD"}],
+        "count": 0, "hasMore": false, "items": [], "offset": 0, "totalResults": 0}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT Account.accountsearchdisplayname as split, Account.displaynamewithhierarchy
+      as categories, Account.accttype, Account.acctnumber as num, Account.id as accountid,
+      COALESCE(HeaderEntity.altname, LineEntity.altname) as name, COALESCE(HeaderEntity.firstname,
+      LineEntity.firstname) as firstname, COALESCE(HeaderEntity.lastname, LineEntity.lastname)
+      as lastname, COALESCE(HeaderEntity.id, LineEntity.id) as entityid, COALESCE(HeaderEntity.Type,
+      LineEntity.Type) as entitytype, (Transaction.id || ''_'' || TransactionLine.id)
+      AS id, Transaction.tranid, Transaction.externalid, Transaction.abbrevtype as
+      transactiontype, TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD HH24:MI:SS'') as
+      date, Transaction.transactionnumber, Transaction.trandisplayname, Transaction.memo
+      as memo, Transaction.journaltype, TransactionLine.memo as linememo, AccountingBook.id
+      as accountingbook, CASE WHEN TransactionAccountingLine.credit IS NOT NULL THEN
+      ''Credit'' ELSE ''Debit'' END entrytype, TransactionAccountingLine.amount, TransactionAccountingLine.credit
+      creditamount, TransactionAccountingLine.debit debitamount, department.id as
+      departmentid, department.fullname as department, TransactionLine.location as
+      locationid, Location.name as locationname, Subsidiary.currency currencyid, Currency.name
+      as currency, Currency.symbol as currencysymbol, Transaction.currency as transactioncurrencyid,
+      TransactionAccountingLine.exchangeRate as exchangerate, TransactionLine.subsidiary
+      as subsidiaryid, Subsidiary.fullname as subsidiary, Classification.id as classid,
+      Classification.name as class, CASE WHEN Transaction.TranDate BETWEEN AccountingPeriod.StartDate
+      AND AccountingPeriod.EndDate THEN TO_CHAR(Transaction.TranDate, ''YYYY-MM-DD
+      HH24:MI:SS'') ELSE TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'')
+      END AS postingDate, Transaction.postingperiod, AccountingPeriod.periodname,
+      TO_CHAR(AccountingPeriod.StartDate, ''YYYY-MM-DD HH24:MI:SS'') as startdate,
+      TO_CHAR(AccountingPeriod.EndDate, ''YYYY-MM-DD HH24:MI:SS'') as enddate, ''BK-Cust-Segment''
+      as custom_segment_cseg1, TransactionLine.cseg1 as cseg1_value_id, BUILTIN.DF(
+      TransactionLine.cseg1 ) as cseg1_value_name, ''Distribution Channel'' as custom_segment_csegdist_channel,
+      TransactionLine.csegdist_channel as csegdist_channel_value_id, BUILTIN.DF( TransactionLine.csegdist_channel
+      ) as csegdist_channel_value_name, ''Test Vini Custom Segment'' as custom_segment_csegtest_vini,
+      TransactionLine.csegtest_vini as csegtest_vini_value_id, BUILTIN.DF( TransactionLine.csegtest_vini
+      ) as csegtest_vini_value_name FROM Transaction INNER JOIN TransactionLine ON
+      (TransactionLine.transaction = Transaction.id) INNER JOIN TransactionAccountingLine
+      ON (TransactionAccountingLine.Transaction = Transaction.id AND TransactionAccountingLine.TransactionLine
+      = TransactionLine.id) LEFT JOIN AccountingBook ON AccountingBook.id = TransactionAccountingLine.accountingBook
+      LEFT JOIN department ON (TransactionLine.department = department.id) INNER JOIN
+      Account ON (Account.id = TransactionAccountingLine.account) INNER JOIN AccountingPeriod
+      ON (AccountingPeriod.id = Transaction.postingperiod) LEFT JOIN Entity AS HeaderEntity
+      ON (Transaction.entity = HeaderEntity.id) LEFT JOIN Entity AS LineEntity ON
+      (TransactionLine.entity = LineEntity.id) LEFT JOIN subsidiary ON (Transactionline.subsidiary
+      = Subsidiary.id) INNER JOIN Currency ON (Currency.ID = Subsidiary.Currency)
+      LEFT JOIN Classification ON (Transactionline.class = Classification.id) LEFT
+      JOIN Location ON (Transactionline.location = Location.id) WHERE ( Transaction.TranDate
+      BETWEEN TO_DATE( ''2026-01-22'', ''YYYY-MM-DD'' ) AND TO_DATE( ''2026-02-01'',
+      ''YYYY-MM-DD'' ) ) AND ( Transaction.Posting = ''T'' ) AND TransactionAccountingLine.amount
+      !=0 ORDER BY Transaction.TranDate DESC, Transaction.id ASC, TransactionLine.id
+      ASC, TransactionAccountingLine.accountingBook ASC"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-HFEw", "href": "-Fallback-scrubbed-zhcCoCwlBaudJnMHeuSJBLdWbBMrCZBQPfBQrTznwSDzOYkrqKczrnMMfQgXZLGOxPqjPdGPalREFGZjbsDOJXDHmhsWaMnKD"}],
+        "count": 0, "hasMore": false, "items": [], "offset": 0, "totalResults": 0}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

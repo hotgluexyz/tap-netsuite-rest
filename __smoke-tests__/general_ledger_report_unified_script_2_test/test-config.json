@@ -1,0 +1,12 @@
+{
+  "include_streams": [
+    "GeneralLedgerReportStream"
+  ],
+  "ignore_columns": {
+    "general_ledger_report": [
+      "creditamount",
+      "debitamount",
+      "amount"
+    ]
+  }
+}
