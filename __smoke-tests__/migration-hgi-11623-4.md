@@ -2,11 +2,11 @@
 
 10 of 68 legacy cases. Branch: `feature/hgi-11623_4`. Independent PR against `main`.
 
-## Merge blocker: query-aware replay
+## Replay scope: legacy compatibility
 
-Post-review validation supersedes the initial green replay below. URL-only matching allowed unrelated SuiteQL responses to satisfy a request. The runner now compares SQL while ignoring whitespace, unquoted case, and top-level projection order; tables, joins, filters, literals, and dates must still match.
+The owner requested preservation of the legacy URL-only replay contract, not stronger SQL-query coverage. The experimental SuiteQL matcher and its normalization helpers have been removed. Replay retains VCR's default method/URL matchers and `record_mode="none"`; no live recording, invented responses, or legacy deletions were used.
 
-Full offline replay now reports **14 passed, 54 failed** across 68 cases; this batch reports **0 passed, 10 failed**. Do not merge while these failures remain. General-ledger recordings differ in entity/currency joins and date windows; existing responses cannot establish results for those different queries. Fresh compatible recordings are needed, with authorization before live access. The initial parity table below is historical preservation evidence, not proof of current query correctness. No business responses were invented and no legacy tests were removed.
+The SQL-aware experiment produced 14 passes and 54 failures across all cases. Those results exposed inherited query/recording drift, not scrub-induced changes. They are not the acceptance criterion for this compatibility-only migration. URL-only replay can consume a response recorded for different SQL at the same endpoint, so passing replay establishes legacy parity, not current SQL correctness. In particular, GL joins/date windows and missing custom-segment probe responses remain known limitations of the legacy coverage. Tenant-specific custom-field identifiers remain structural schema metadata. Workflow hardening, the harness pin, and scrubbing rules are retained.
 
 ## Provenance and validation
 
@@ -15,10 +15,9 @@ Full offline replay now reports **14 passed, 54 failed** across 68 cases; this b
 - Tap base: `fe66ecd9c6e6a599b9c7a0ebd6a425ff0c3fdafd`.
 - Python 3.10; hotglue-smoke-test 1.1.8; hotglue-singer-sdk 1.0.53; vcrpy 8.5.0.
 - Migrated offline; no live recording, new API responses, or legacy deletions.
-- Initial URL-only validation before splitting: `hotglue-smoke-test run`: **68 passed, 0 failed** (superseded above).
+- Independently rerun on 2026-11-13 with legacy URL-only matching: `hotglue-smoke-test run`: **68 passed, 0 failed** combined; this batch: **10 passed, 0 failed**.
 - `ruff check .` and `git diff --check` passed.
-- Initial migration preserved legacy stream sets, counts, and schemas under URL-only matching; this did not prove response/query correspondence.
-- The original untouched-input parity control shared the URL-only matching weakness.
+- Legacy stream sets, counts, schemas, and current-stack final STATE parity are retained under the original matching behavior. Neither this parity control nor green replay proves response/query correspondence.
 - This batch checked 33 case-specific original secret/account/filter values against every committed case file (including decoded YAML bodies): **0 matches**; no non-example emails.
 
 ## Scrubbing and preservation
