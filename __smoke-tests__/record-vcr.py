@@ -3,6 +3,7 @@
 import base64
 import json
 import re
+from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
 import vcr
@@ -16,7 +17,7 @@ class NetsuiteTestRunner(VCRTapTestRunner):
     # Pagination controls, relational IDs used in child queries, and dynamic field types.
     PRESERVE_KEYS = {
         "count", "hasMore", "offset", "totalResults", "id", "internalid", "transaction",
-        "billingaddress", "shippingaddress", "mainaddress", "returnaddress",
+        "mainaddress", "returnaddress",
         "defaultshippingaddress", "defaultbillingaddress", "scriptid", "fieldvaluetype",
         "fieldtype", "file_id", "recordid", "key", "nkey", "accountingbook",
         "transactionline", "subscriptionchangeorder", "subscriptionline",
@@ -52,6 +53,17 @@ class NetsuiteTestRunner(VCRTapTestRunner):
             before_record_request=self.before_record_request,
             before_record_response=self.before_record_response,
         )
+
+    def sanitize_cassette(self):
+        """Normalize the replay config alongside the captured cassette."""
+        super().sanitize_cassette()
+        config_path = Path(self.test_case_path) / "config.json"
+        config = json.loads(config_path.read_text())
+        config["ns_account"] = "1234567_SB1"
+        for key in ("bill_attachments_restlet_url", "bill_attachments_suitelet_url"):
+            if key in config:
+                config[key] = self.scrub_uri(config[key])
+        config_path.write_text(json.dumps(config, indent=4) + "\n")
 
     def before_record_request(self, request):
         """Remove SOAP credentials not covered by HTTP header filtering."""
@@ -103,9 +115,17 @@ class NetsuiteTestRunner(VCRTapTestRunner):
                 # Personal dates are not transaction/replication boundaries.
                 if key.lower() in {"hiredate", "birthdate", "dateofbirth", "dob"} and value:
                     restored[key] = "2000-01-01"
-                # SOAP attributes/page numbers and standard namespace URNs are protocol data.
-                if key in {"@isSuccess", "platformCore:pageIndex", "platformCore:totalPages",
-                           "platformCore:totalRecords", "@internalId"} or key.startswith("@xmlns"):
+                # Keep SOAP controls and numeric address references, not formatted addresses.
+                if (
+                    key in {"@isSuccess", "platformCore:pageIndex", "platformCore:totalPages",
+                            "platformCore:totalRecords", "@internalId"}
+                    or key.startswith("@xmlns")
+                    or (
+                        key.lower() in {"billingaddress", "shippingaddress"}
+                        and isinstance(value, (str, int))
+                        and re.fullmatch(r"-?\d+", str(value))
+                    )
+                ):
                     restored[key] = value
                 if key == "detail" and isinstance(value, str):
                     # Keep only the syntax that drives invalid-field and permission fallbacks.
