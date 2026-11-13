@@ -1,0 +1,13 @@
+{
+  "include_streams": [
+    "GeneralLedgerReportStream"
+  ],
+  "freeze_time": "2025-06-12 00:00:00",
+  "ignore_columns": {
+    "general_ledger_report": [
+      "amount",
+      "debitamount",
+      "creditamount"
+    ]
+  }
+}

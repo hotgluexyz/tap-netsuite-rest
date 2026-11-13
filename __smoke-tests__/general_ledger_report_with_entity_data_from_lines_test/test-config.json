@@ -1,0 +1,23 @@
+{
+  "freeze_time": "2026-02-01 00:00:00",
+  "ignore_columns": {
+    "general_ledger_report": [
+      "csegdist_channel_value_name",
+      "csegtest_vini_value_id",
+      "csegtest_vini_value_name",
+      "custom_segment_csegdist_channel",
+      "custom_segment_csegtest_vini",
+      "csegdist_channel_value_id",
+      "cseg1_value_id",
+      "cseg1_value_name",
+      "custom_segment_cseg1"
+    ]
+  },
+  "ignore_streams": [
+    "JobTypesStream",
+    "PartnersStream",
+    "EntityGroupsStream",
+    "ContactsStream",
+    "EntityStatusStream"
+  ]
+}
