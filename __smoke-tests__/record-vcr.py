@@ -101,14 +101,19 @@ class NetsuiteTestRunner(VCRTapTestRunner):
             scrubbed, flags=re.DOTALL,
         )
 
-    def restore_controls(self, original, scrubbed):
+    def restore_controls(self, original, scrubbed, in_address=False):
         """Restore structural values needed for pagination, schemas, and fallbacks."""
         if isinstance(original, dict):
             # Vendor metadata schemas drive types and field selection, not customer records.
             if "properties" in original and original.get("type") == "object":
                 return original
-            restored = {key: self.restore_controls(value, scrubbed[key])
-                        for key, value in original.items()}
+            restored = {
+                key: self.restore_controls(
+                    value, scrubbed[key],
+                    in_address or key.lower() in {"billingaddress", "shippingaddress"},
+                )
+                for key, value in original.items()
+            }
             for key, value in original.items():
                 if key == "download_token":
                     restored[key] = "fake-token"
@@ -138,12 +143,12 @@ class NetsuiteTestRunner(VCRTapTestRunner):
                         restored[key] = "Invalid search query. " + " ".join(fragments)
             return restored
         if isinstance(original, list):
-            return [self.restore_controls(value, fake)
+            return [self.restore_controls(value, fake, in_address)
                     for value, fake in zip(original, scrubbed)]
         if isinstance(original, bool) or original in ("T", "F"):
             return original
-        # NetSuite infers dates from data, then uses them as incremental boundaries.
-        if isinstance(original, str) and re.fullmatch(
+        # NetSuite infers dates as incremental boundaries; address text is never one.
+        if not in_address and isinstance(original, str) and re.fullmatch(
             r"(?:\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4})(?:[T ].*)?", original
         ):
             return original
