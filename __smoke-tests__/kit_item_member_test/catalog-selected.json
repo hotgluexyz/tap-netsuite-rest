@@ -1,0 +1,2010 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "item",
+      "replication_key": "lastmodifieddate",
+      "replication_method": "INCREMENTAL",
+      "key_properties": [
+        "id",
+        "lastmodifieddate"
+      ],
+      "schema": {
+        "properties": {
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastmodifieddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fullname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "itemid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "displayname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "itemtype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subtype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "totalquantityonhand": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "subsidiary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assetaccount": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "incomeaccount": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expenseaccount": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "location": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "department": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isinactive": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "createddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_sku": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "enforceminqtyinternally": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "autoleadtime": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "costestimate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fxcost": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem5": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isonline": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "averagecost": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_width": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "countryofmanufacture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_order_delay_count": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "printitems": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "usebins": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "vendorname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "costingmethod": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isspecialorderitem": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_available_at_supplier": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "saleunit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isdropshipitem": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "totalvalue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_height": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_cookinglifeeu": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_length": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_datepricelist": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "islotitem": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_max_expectedreceiptdate2": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "copydescription": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitemcl_packingcode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_cookinglifefr": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "atpmethod": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "costingmethoddisplay": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "generateaccruals": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem1": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_inno": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_wmsse_itemfamily": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_msrp": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_wmsse_mix_lot": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_product_category": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "includechildren": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "shipindividually": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_external_amazon": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_commodity_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_kaufland": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "cost": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_shopify_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_cookinglifenl": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "externalid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_sc_ignore_lot_number": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "weightunit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isfulfillable": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "isserialitem": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_supply_allocation_count": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastpurchaseprice": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "weightunits": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem4": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_bol": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_cookinglbe": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_external_wehkamp": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_external_fonq": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_cookinglifede": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_packing_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_stock": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "upccode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_brand": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "autopreferredstocklevel": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitemcustitem_cl_promoeind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "leadtime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "weight": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitemcustitemcustitem_cl_promostart": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_home24": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_supply_planning_count": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem2": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem3": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seasonaldemand": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "purchaseunit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_image_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_wmsse_mix_item": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_product_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitemstores_groningen": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "tracklandedcost": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_external_maison_du_monde": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "matchbilltoreceipt": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "reordermultiple": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "supplyreplenishmentmethod": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "autoreorderpoint": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_wms_usetallyscan": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitemstores_nijmegen": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_sc_force_blind_count": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_sc_disable_manualcount_entry": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custitem_cl_item_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_sc_ignore_serial_number": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "unitstype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "costestimatetype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stockunit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custitem_cl_external_xxx_lutz": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "item",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "inclusion": "automatic",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastmodifieddate"
+          ],
+          "metadata": {
+            "inclusion": "automatic",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "fullname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "itemid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "displayname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "itemtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "subtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "totalquantityonhand"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "subsidiary"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "assetaccount"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "incomeaccount"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "expenseaccount"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "location"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "class"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "department"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isinactive"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "createddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_sku"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "enforceminqtyinternally"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "autoleadtime"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "costestimate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "fxcost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem5"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isonline"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "averagecost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_width"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "countryofmanufacture"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_order_delay_count"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "printitems"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "usebins"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "vendorname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "costingmethod"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isspecialorderitem"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_available_at_supplier"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "saleunit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isdropshipitem"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "totalvalue"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_height"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_cookinglifeeu"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_length"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_datepricelist"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "islotitem"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_max_expectedreceiptdate2"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "copydescription"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcl_packingcode"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_cookinglifefr"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "atpmethod"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "costingmethoddisplay"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "description"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "generateaccruals"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem1"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_inno"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_wmsse_itemfamily"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_msrp"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_wmsse_mix_lot"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_product_category"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "includechildren"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "shipindividually"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_amazon"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_commodity_code"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_kaufland"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "cost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_shopify_id"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_cookinglifenl"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "externalid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_sc_ignore_lot_number"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "weightunit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isfulfillable"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isserialitem"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_supply_allocation_count"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastpurchaseprice"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "weightunits"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem4"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_bol"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_cookinglbe"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_wehkamp"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_fonq"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_cookinglifede"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_packing_type"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_stock"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "upccode"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_brand"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "autopreferredstocklevel"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitem_cl_promoeind"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "leadtime"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "weight"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemcustitemcustitem_cl_promostart"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_home24"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_supply_planning_count"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem2"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem3"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "seasonaldemand"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "purchaseunit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_image_url"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_wmsse_mix_item"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_product_type"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemstores_groningen"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "tracklandedcost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_maison_du_monde"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "matchbilltoreceipt"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "reordermultiple"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "supplyreplenishmentmethod"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "autoreorderpoint"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_wms_usetallyscan"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitemstores_nijmegen"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_sc_force_blind_count"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_sc_disable_manualcount_entry"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_item_status"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_sc_ignore_serial_number"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "unitstype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "costestimatetype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "stockunit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custitem_cl_external_xxx_lutz"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "table-key-properties": [
+              "id",
+              "lastmodifieddate"
+            ],
+            "valid-replication-keys": [
+              "lastmodifieddate"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "tap_stream_id": "kit_item_members",
+      "replication_method": "FULL_TABLE",
+      "key_properties": [],
+      "schema": {
+        "properties": {
+          "parentitemname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "itemname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parentitem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "linenumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dropshipmember": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "item": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "memberunit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "kit_item_members",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "parentitemname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "itemname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "parentitem"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "linenumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "quantity"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "dropshipmember"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "item"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "memberunit"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "table-key-properties": []
+          }
+        }
+      ]
+    }
+  ]
+}
