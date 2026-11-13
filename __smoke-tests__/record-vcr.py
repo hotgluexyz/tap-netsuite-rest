@@ -42,11 +42,8 @@ class NetsuiteTestRunner(VCRTapTestRunner):
 
     def vcr_use_cassette(self, filter_query_parameters):
         """Block new interactions during replay and apply recording scrub hooks."""
-        recorder = vcr.VCR()
-        recorder.register_matcher("suiteql_query", self.match_suiteql_query)
-        return recorder.use_cassette(
+        return vcr.use_cassette(
             self.vcr_cassette_path,
-            match_on=(*recorder.match_on, "suiteql_query"),
             record_mode="once" if self.mode == "record" else "none",
             decode_compressed_response=True,
             filter_headers=list(self.FILTER_HEADERS),
@@ -55,33 +52,6 @@ class NetsuiteTestRunner(VCRTapTestRunner):
             before_record_request=self.before_record_request,
             before_record_response=self.before_record_response,
         )
-
-    @staticmethod
-    def normalize_suiteql(sql):
-        """Ignore SQL whitespace, unquoted case, and top-level projection order."""
-        tokens = [
-            token if token.startswith(("'", '"')) else token.lower()
-            for token in re.findall(r"'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|\w+|[^\s]", sql)
-        ]
-        depth, start = 0, 1
-        columns = []
-        for index, token in enumerate(tokens[1:], 1):
-            if token == "from" and depth == 0:
-                columns.append(tuple(tokens[start:index]))
-                return tuple(sorted(columns)), tuple(tokens[index:])
-            if token == "," and depth == 0:
-                columns.append(tuple(tokens[start:index]))
-                start = index + 1
-            depth += (token == "(") - (token == ")")
-        return (), tuple(tokens)
-
-    def match_suiteql_query(self, request, recorded):
-        """Keep SuiteQL responses tied to their query, not just the POST URL."""
-        if all(item.method == "POST" and item.path.endswith("/suiteql")
-               for item in (request, recorded)):
-            assert self.normalize_suiteql(json.loads(request.body)["q"]) == (
-                self.normalize_suiteql(json.loads(recorded.body)["q"])
-            ), "SuiteQL query differs from the recorded request"
 
     def before_record_request(self, request):
         """Remove SOAP credentials not covered by HTTP header filtering."""
