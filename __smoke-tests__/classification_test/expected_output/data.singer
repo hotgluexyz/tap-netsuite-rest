@@ -1,5 +1,37 @@
 {"type": "SCHEMA", "stream": "classification", "schema": {"properties": {"id": {"type": ["string", "null"]}, "fullname": {"type": ["string", "null"]}, "includechildren": {"type": ["string", "null"]}, "isinactive": {"type": ["string", "null"]}, "lastmodifieddate": {"format": "date-time", "type": ["string", "null"]}, "name": {"type": ["string", "null"]}, "subsidiary": {"type": ["string", "null"]}}, "type": "object"}, "key_properties": ["id", "lastmodifieddate"], "bookmark_properties": ["lastmodifieddate"]}
-{"type": "RECORD", "stream": "classification", "record": {"fullname": "Fake-Dr. Mary Zhang", "id": "2", "includechildren": "F", "isinactive": "F", "lastmodifieddate": "2024-10-21 13:46:16", "name": "Fake-Dr. Mary Zhang", "subsidiary": "9259"}, "time_extracted": "2026-11-10T10:37:47.258371Z"}
-{"type": "RECORD", "stream": "classification", "record": {"fullname": "Fake-Jacob Blankenship", "id": "3", "includechildren": "F", "isinactive": "F", "lastmodifieddate": "2024-10-21 13:46:20", "name": "Fake-Jacob Blankenship", "subsidiary": "9259"}, "time_extracted": "2026-11-10T10:37:47.258544Z"}
-{"type": "RECORD", "stream": "classification", "record": {"fullname": "Fake-Mindy Harmon", "id": "1", "includechildren": "T", "isinactive": "F", "lastmodifieddate": "2025-02-25 18:28:35", "name": "Fake-Jim Bond", "subsidiary": "-Fallback-scrubbed-GYpDaxl"}, "time_extracted": "2026-11-10T10:37:47.258610Z"}
-{"type": "STATE", "value": {"bookmarks": {"classification": {"replication_key": "lastmodifieddate", "replication_key_value": "2025-02-25 18:28:35"}}}}
+{"type": "RECORD", "stream": "classification", "record": {"id": "1", "isinactive": "F", "lastmodifieddate": "2/25/2025"}, "time_extracted": "2026-11-10T00:57:35.147933Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "2", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "9259"}, "time_extracted": "2026-11-10T00:57:35.148116Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "3", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5512"}, "time_extracted": "2026-11-10T00:57:35.148180Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "4", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5512"}, "time_extracted": "2026-11-10T00:57:35.148233Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "5", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5512"}, "time_extracted": "2026-11-10T00:57:35.148283Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "6", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "9259"}, "time_extracted": "2026-11-10T00:57:35.148333Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "7", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "7015"}, "time_extracted": "2026-11-10T00:57:35.148384Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "8", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "7015"}, "time_extracted": "2026-11-10T00:57:35.148434Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "9", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "7015"}, "time_extracted": "2026-11-10T00:57:35.148484Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "10", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "9259"}, "time_extracted": "2026-11-10T00:57:35.148540Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "11", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5581"}, "time_extracted": "2026-11-10T00:57:35.148591Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "12", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5581"}, "time_extracted": "2026-11-10T00:57:35.148640Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "13", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "5581"}, "time_extracted": "2026-11-10T00:57:35.148689Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "14", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "9259"}, "time_extracted": "2026-11-10T00:57:35.148767Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "15", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "1295"}, "time_extracted": "2026-11-10T00:57:35.148830Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "16", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "1295"}, "time_extracted": "2026-11-10T00:57:35.148882Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "17", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "1295"}, "time_extracted": "2026-11-10T00:57:35.148933Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "18", "isinactive": "F", "lastmodifieddate": "1/12/2025", "parent": "9259"}, "time_extracted": "2026-11-10T00:57:35.148983Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "19", "isinactive": "F", "lastmodifieddate": "2/25/2025"}, "time_extracted": "2026-11-10T00:57:35.149034Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "20", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "2004"}, "time_extracted": "2026-11-10T00:57:35.149085Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "21", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "3546"}, "time_extracted": "2026-11-10T00:57:35.149151Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "22", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "3546"}, "time_extracted": "2026-11-10T00:57:35.149202Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "23", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "3546"}, "time_extracted": "2026-11-10T00:57:35.149251Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "24", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "2004"}, "time_extracted": "2026-11-10T00:57:35.149299Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "25", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8585"}, "time_extracted": "2026-11-10T00:57:35.149348Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "26", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8585"}, "time_extracted": "2026-11-10T00:57:35.149397Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "27", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8585"}, "time_extracted": "2026-11-10T00:57:35.149447Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "28", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "2004"}, "time_extracted": "2026-11-10T00:57:35.149496Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "29", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8520"}, "time_extracted": "2026-11-10T00:57:35.149553Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "30", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8520"}, "time_extracted": "2026-11-10T00:57:35.149602Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "31", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "8520"}, "time_extracted": "2026-11-10T00:57:35.149652Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "32", "isinactive": "F", "lastmodifieddate": "2/25/2025", "parent": "2004"}, "time_extracted": "2026-11-10T00:57:35.149701Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "33", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "6979"}, "time_extracted": "2026-11-10T00:57:35.149781Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "34", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "6979"}, "time_extracted": "2026-11-10T00:57:35.149837Z"}
+{"type": "RECORD", "stream": "classification", "record": {"id": "35", "isinactive": "F", "lastmodifieddate": "1/30/2025", "parent": "6979"}, "time_extracted": "2026-11-10T00:57:35.149887Z"}
+{"type": "STATE", "value": {"bookmarks": {"classification": {"replication_key": "lastmodifieddate", "replication_key_value": "2/25/2025"}}}}
