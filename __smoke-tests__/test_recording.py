@@ -34,10 +34,13 @@ class RecordingTest(unittest.TestCase):
             ),
         }))
         self.rows = [
-            {"id": "18", "billingaddress": "987 Synthetic Privacy Street, Test City",
-             "shippingaddress": "654 Example Lane, Test Town"},
+            {"id": "18", "billingaddress": "12/10/2023 Main Street, Test City",
+             "shippingaddress": "654 Example Lane, Test Town",
+             "lastmodifieddate": "2023-10-12T13:14:15Z"},
             {"id": "19", "billingaddress": "246", "shippingaddress": 357},
-            {"id": "20", "billingaddress": {"id": "468", "addr1": "321 Synthetic Road"}},
+            {"id": "20", "billingaddress": {
+                "id": "468", "addr1": "2023-10-12 Private Street", "addr2": "2023-10-13",
+            }},
         ]
         self.cassette_path = self.case / "fixtures" / "vcr.yaml"
         self.cassette_path.write_text(yaml.safe_dump({
@@ -64,11 +67,13 @@ class RecordingTest(unittest.TestCase):
         body = cassette["interactions"][0]["response"]["body"]["string"]
         rows = json.loads(body)["items"]
         for value in (self.rows[0]["billingaddress"], self.rows[0]["shippingaddress"],
-                      self.rows[2]["billingaddress"]["addr1"]):
+                      self.rows[2]["billingaddress"]["addr1"],
+                      self.rows[2]["billingaddress"]["addr2"]):
             self.assertNotIn(value, body)
         self.assertEqual(rows[1]["billingaddress"], "246")
         self.assertEqual(rows[1]["shippingaddress"], 357)
         self.assertEqual(rows[2]["billingaddress"]["id"], "468")
+        self.assertEqual(rows[0]["lastmodifieddate"], "2023-10-12T13:14:15Z")
 
     def test_normalized_config_can_replay_the_saved_capture(self):
         """The sanitized config and cassette must identify the same fake account."""
