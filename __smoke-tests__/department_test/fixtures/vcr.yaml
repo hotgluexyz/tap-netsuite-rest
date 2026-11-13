@@ -1,0 +1,97 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/schema+json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: GET
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/department
+  response:
+    body:
+      string: '{"type": "object", "properties": {"isInactive": {"title": "Department
+        is Inactive", "type": "boolean", "description": "Check this box to inactivate
+        this department record. Inactive departments do not show in lists of departments
+        on records and transactions."}, "internalId": {"title": "Internal ID", "type":
+        "integer", "format": "int64", "nullable": true}, "lastModifiedDate": {"title":
+        "Last Modified Date", "type": "string", "format": "date-time", "nullable":
+        true}, "name": {"title": "Name", "type": "string", "description": "Enter a
+        name for this department. The name you enter here shows in lists of departments
+        on records and transactions. The name can be alphanumeric. The maximum number
+        of characters is 60.", "nullable": true}, "externalId": {"title": "External
+        ID", "type": "string", "nullable": true}, "fullName": {"title": "Full Name",
+        "type": "string", "nullable": true}, "id": {"title": "Internal ID", "type":
+        "string", "nullable": true}, "includeChildren": {"title": "Include Children",
+        "type": "boolean", "description": "Check the Include Children box to associate
+        the department with all the sub-subsidiaries associated with each subsidiary
+        selected in the Subsidiary field."}, "refName": {"title": "Reference Name",
+        "type": "string"}, "links": {"title": "Links", "type": "array", "readOnly":
+        true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "subsidiary": {"type": "object", "properties": {"links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/subsidiary"}}}},
+        "parent": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "$schema": "http://json-schema.org/draft-06/hyper-schema#", "x-ns-filterable":
+        ["isInactive", "parent", "lastModifiedDate", "name", "externalId", "fullName",
+        "id", "subsidiary", "includeChildren"]}'
+    headers:
+      Content-Type:
+      - application/schema+json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT * FROM department  WHERE department.lastmodifieddate>TO_TIMESTAMP(''2000-01-01
+      00:00:00'', ''YYYY-MM-DD HH24:MI:SS'') ORDER BY department.lastmodifieddate"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-ziNQ", "href": "-Fallback-scrubbed-WpBonHQaQSdeWSUeKXEjGWwUDZGYfzNcGHiUKXTUmAoZfkHcskPJoaOeBFidzCDAHaIOCnzZdkJcRhTrKCjQpiEbBqDWHqtBd"}],
+        "count": 7, "hasMore": false, "items": [{"links": [], "fullname": "Fake-Kelly
+        Austin", "id": "1", "includechildren": "F", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "name": "Fake-Kelly Austin", "subsidiary": "6001"}, {"links":
+        [], "fullname": "Fake-Jeremy Harrison", "id": "2", "includechildren": "F",
+        "isinactive": "F", "lastmodifieddate": "10/21/2024", "name": "Fake-Jeremy
+        Harrison", "subsidiary": "6001"}, {"links": [], "fullname": "Fake-Brian Roberts",
+        "id": "3", "includechildren": "F", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "name": "Fake-Brian Roberts", "subsidiary": "6001"}, {"links":
+        [], "fullname": "Fake-Jacqueline Keith", "id": "4", "includechildren": "F",
+        "isinactive": "F", "lastmodifieddate": "10/21/2024", "name": "Fake-Jacqueline
+        Keith", "subsidiary": "6001"}, {"links": [], "fullname": "Fake-Marcia Joseph",
+        "id": "6", "includechildren": "F", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "name": "Fake-Marcia Joseph", "subsidiary": "6001"}, {"links":
+        [], "fullname": "Fake-Bianca Gordon", "id": "7", "includechildren": "F", "isinactive":
+        "F", "lastmodifieddate": "10/21/2024", "name": "Fake-Bianca Gordon", "subsidiary":
+        "6001"}, {"links": [], "externalid": "-Fallback-scrubbed-mShVSgCA", "fullname":
+        "Fake-Holly Phillips", "id": "5", "includechildren": "T", "isinactive": "F",
+        "lastmodifieddate": "2/25/2025", "name": "Fake-Daniel Anderson", "parent":
+        "8536", "subsidiary": "-Fallback-scrubbed-KyVVzod"}], "offset": 0, "totalResults":
+        7}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

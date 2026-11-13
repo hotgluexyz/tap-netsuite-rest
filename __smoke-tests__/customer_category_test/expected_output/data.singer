@@ -1,0 +1,4 @@
+{"type": "SCHEMA", "stream": "customer_category", "schema": {"properties": {"isinactive": {"type": ["boolean", "null"]}, "name": {"type": ["string", "null"]}, "externalid": {"type": ["string", "null"]}, "id": {"type": ["string", "null"]}, "refname": {"type": ["string", "null"]}, "links": {"type": ["array", "string", "null"]}}, "type": "object"}, "key_properties": ["id"]}
+{"type": "RECORD", "stream": "customer_category", "record": {"id": "1", "isinactive": false, "name": "Fake-Cheryl Murphy"}, "time_extracted": "2026-11-10T00:57:39.444957Z"}
+{"type": "RECORD", "stream": "customer_category", "record": {"id": "2", "isinactive": false, "name": "Fake-Todd Michael"}, "time_extracted": "2026-11-10T00:57:39.445281Z"}
+{"type": "STATE", "value": {"bookmarks": {"customer_category": {}}}}
