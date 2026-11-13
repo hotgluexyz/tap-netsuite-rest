@@ -139,4 +139,6 @@ dmypy.json
 .vscode
 .history
 
+__smoke-tests__/**/test_runtime/
+__smoke-tests__/unsanitized_*_test/
 
