@@ -81,8 +81,13 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         """Replace opaque attachment bytes before the sanitizer's UTF-8 decode."""
         response = super().before_record_response(response)
         body = response["body"]["string"]
-        if isinstance(body, bytes) and not body.lstrip().startswith((b"{", b"[", b"<")):
-            response["body"]["string"] = self.FAKE_ATTACHMENT.encode("utf-8")
+        if isinstance(body, bytes):
+            try:
+                text = body.decode("utf-8")
+            except UnicodeDecodeError:
+                text = ""
+            if not text.lstrip().startswith(("{", "[", "<")):
+                response["body"]["string"] = self.FAKE_ATTACHMENT.encode("utf-8")
         return response
 
     def scrub_uri(self, uri):
