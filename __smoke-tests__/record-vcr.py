@@ -14,6 +14,8 @@ from hotglue_smoke_test.vcr.tap import VCRTapTestRunner
 class NetsuiteTestRunner(VCRTapTestRunner):
     """Replay NetSuite fixtures offline and scrub newly recorded customer data."""
 
+    FAKE_ATTACHMENT = "%PDF-1.4\n% Fake smoke-test attachment\n%%EOF\n"
+
     # Pagination controls, relational IDs used in child queries, and dynamic field types.
     PRESERVE_KEYS = {
         "count", "hasMore", "offset", "totalResults", "id", "internalid", "transaction",
@@ -75,6 +77,14 @@ class NetsuiteTestRunner(VCRTapTestRunner):
             )
         return request
 
+    def before_record_response(self, response):
+        """Replace opaque attachment bytes before the sanitizer's UTF-8 decode."""
+        response = super().before_record_response(response)
+        body = response["body"]["string"]
+        if isinstance(body, bytes) and not body.lstrip().startswith((b"{", b"[", b"<")):
+            response["body"]["string"] = self.FAKE_ATTACHMENT.encode("utf-8")
+        return response
+
     def scrub_uri(self, uri):
         """Replace account hostnames and attachment authentication tokens."""
         parts = urlsplit(uri)
@@ -87,7 +97,7 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         """Fake response data while retaining protocol and incremental controls."""
         # Attachment bytes are opaque to the tap: replace the document, not its filename/ID.
         if not body.lstrip().startswith(("{", "[", "<")):
-            return "%PDF-1.4\n% Fake smoke-test attachment\n%%EOF\n"
+            return self.FAKE_ATTACHMENT
         scrubbed = super().scrub_response_body(body, faker, cache)
         if body.lstrip().startswith(("{", "[")):
             return json.dumps(self.restore_controls(json.loads(body), json.loads(scrubbed)))
@@ -110,7 +120,10 @@ class NetsuiteTestRunner(VCRTapTestRunner):
             restored = {
                 key: self.restore_controls(
                     value, scrubbed[key],
-                    in_address or key.lower() in {"billingaddress", "shippingaddress"},
+                    in_address or key.lower() in {
+                        "billingaddress", "shippingaddress", "addr1", "addr2", "addr3",
+                        "addrtext", "addressee",
+                    },
                 )
                 for key, value in original.items()
             }
