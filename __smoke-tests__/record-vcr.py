@@ -22,7 +22,7 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         "mainaddress", "returnaddress",
         "defaultshippingaddress", "defaultbillingaddress", "scriptid", "fieldvaluetype",
         "fieldtype", "file_id", "recordid", "key", "nkey", "accountingbook",
-        "transactionline", "subscriptionchangeorder", "subscriptionline",
+        "transactionline", "subscriptionchangeorder", "subscriptionline", "detail",
     }
     TOKEN_KEYS = [
         *VCRTapTestRunner.TOKEN_KEYS, "consumerKey", "signature", "nonce",
@@ -44,10 +44,9 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         TapNetSuite.cli()
 
     def vcr_use_cassette(self, filter_query_parameters):
-        """Block new interactions during replay and apply recording scrub hooks."""
+        """Apply recording scrub hooks."""
         return vcr.use_cassette(
             self.vcr_cassette_path,
-            record_mode="once" if self.mode == "record" else "none",
             decode_compressed_response=True,
             filter_headers=list(self.FILTER_HEADERS),
             filter_post_data_parameters=list(self.TOKEN_KEYS),
@@ -150,15 +149,6 @@ class NetsuiteTestRunner(VCRTapTestRunner):
                     )
                 ):
                     restored[key] = value
-                if key == "detail" and isinstance(value, str):
-                    # Keep only the syntax that drives invalid-field and permission fallbacks.
-                    fragments = re.findall(
-                        r"(?i)(?:Field '\w+'(?: for record '\w+')? was not found\.|"
-                        r"Record '\w+' was not found\.|field '\w+'|Unknown identifier '[\w.]+')",
-                        value,
-                    )
-                    if fragments:
-                        restored[key] = "Invalid search query. " + " ".join(fragments)
             return restored
         if isinstance(original, list):
             return [self.restore_controls(value, fake, in_address)
