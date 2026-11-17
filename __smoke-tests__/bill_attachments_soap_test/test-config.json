@@ -1,4 +1,19 @@
 {
+  "preserve_keys": [
+    "isSuccess",
+    "platformCore:pageIndex",
+    "platformCore:totalPages",
+    "platformCore:totalRecords",
+    "xmlns",
+    "xmlns:docFileCab",
+    "xmlns:platformCommon",
+    "xmlns:platformCore",
+    "xmlns:platformMsgs",
+    "xmlns:soapenv",
+    "xmlns:tranSales",
+    "xmlns:xsd",
+    "xmlns:xsi"
+  ],
   "include_streams": [
     "BillsStream",
     "BillAttachmentsStream"
