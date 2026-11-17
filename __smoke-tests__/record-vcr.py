@@ -137,16 +137,11 @@ class NetsuiteTestRunner(VCRTapTestRunner):
                 # Personal dates are not transaction/replication boundaries.
                 if key.lower() in {"hiredate", "birthdate", "dateofbirth", "dob"} and value:
                     restored[key] = "2000-01-01"
-                # Keep SOAP controls and numeric address references, not formatted addresses.
+                # Keep numeric address references, not formatted addresses.
                 if (
-                    key in {"@isSuccess", "platformCore:pageIndex", "platformCore:totalPages",
-                            "platformCore:totalRecords", "@internalId"}
-                    or key.startswith("@xmlns")
-                    or (
-                        key.lower() in {"billingaddress", "shippingaddress"}
-                        and isinstance(value, (str, int))
-                        and re.fullmatch(r"-?\d+", str(value))
-                    )
+                    key.lower() in {"billingaddress", "shippingaddress"}
+                    and isinstance(value, (str, int))
+                    and re.fullmatch(r"-?\d+", str(value))
                 ):
                     restored[key] = value
             return restored
