@@ -21,8 +21,8 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         "count", "hasMore", "offset", "totalResults", "id", "internalid", "transaction",
         "mainaddress", "returnaddress",
         "defaultshippingaddress", "defaultbillingaddress", "scriptid", "fieldvaluetype",
-        "fieldtype", "file_id", "recordid", "key", "nkey", "accountingbook",
-        "transactionline", "subscriptionchangeorder", "subscriptionline", "detail",
+        "fieldtype", "file_id", "recordid", "nkey", "accountingbook",
+        "subscriptionchangeorder", "subscriptionline", "detail",
     }
     TOKEN_KEYS = [
         *VCRTapTestRunner.TOKEN_KEYS, "consumerKey", "signature", "nonce",
