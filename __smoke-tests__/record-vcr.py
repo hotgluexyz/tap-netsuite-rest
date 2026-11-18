@@ -6,7 +6,6 @@ import re
 from pathlib import Path
 from urllib.parse import urlsplit, urlunsplit
 
-import vcr
 import xmltodict
 from hotglue_smoke_test.vcr.tap import VCRTapTestRunner
 
@@ -42,18 +41,6 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         from tap_netsuite_rest.tap import TapNetSuite
 
         TapNetSuite.cli()
-
-    def vcr_use_cassette(self, filter_query_parameters):
-        """Apply recording scrub hooks."""
-        return vcr.use_cassette(
-            self.vcr_cassette_path,
-            decode_compressed_response=True,
-            filter_headers=list(self.FILTER_HEADERS),
-            filter_post_data_parameters=list(self.TOKEN_KEYS),
-            filter_query_parameters=filter_query_parameters,
-            before_record_request=self.before_record_request,
-            before_record_response=self.before_record_response,
-        )
 
     def sanitize_cassette(self):
         """Normalize the replay config alongside the captured cassette."""
