@@ -1,0 +1,19 @@
+{
+  "include_streams": [
+    "GeneralLedgerReportStream"
+  ],
+  "ignore_columns": {
+    "general_ledger_report": [
+      "enddate",
+      "currencyid",
+      "currencysymbol",
+      "journaltype",
+      "linememo",
+      "entrytype",
+      "creditamount",
+      "debitamount",
+      "exchangerate",
+      "amount"
+    ]
+  }
+}
