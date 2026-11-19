@@ -1,0 +1,1965 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/schema+json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: GET
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/item
+  response:
+    body:
+      string: '{"type": "-Fallback-scrubbed-eJlksvoLLXZiejxcaOBCwDoWRjorUmHwkKmITumffNTMUqFDINrjbQkrRx",
+        "title": "-Fallback-scrubbed-pUzQZqZYH", "status": 2924, "o:errorDetails":
+        [{"detail": "-Fallback-scrubbed-AnSjZBkeZlHTGsnSQDggxeVyieuGcpoYVW", "o:errorUrl":
+        "-Fallback-scrubbed-xgvjShKdStPgrMjWsRwrjyefhKYom", "o:errorCode": "-Fallback-scrubbed-rGseatLAwjxsEo"}]}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=error; charset=UTF-8
+    status:
+      code: 404
+      message: Not Found
+- request:
+    body: '{"q": "SELECT TOP 1000 * FROM item ORDER BY lastmodifieddate DESC"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-dpsV", "href": "-Fallback-scrubbed-OTnQrIRnWIPBXFcAPrtVnAkFWQKHwTwRHyUuymWMLGwkdQKMttaeuqFoqBdEwjSlwkAusZXcjHmZWmqwpBVuXeGzyOQXGpYPm"}],
+        "count": 108, "hasMore": false, "items": [{"links": [], "assetaccount": "6719",
+        "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "class":
+        "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Sandra Reyes", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "externalid": "-Fallback-scrubbed-quwJuXc",
+        "fullname": "-Fallback-scrubbed-quwJuXc", "generateaccruals": "T", "id": "4312",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-quwJuXc", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "3/10/2025", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/10/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "enforceminqtyinternally": "F", "expenseaccount": "9044", "externalid":
+        "-Fallback-scrubbed-mXJwYzhbHy", "fullname": "-Fallback-scrubbed-mXJwYzhbHy",
+        "generateaccruals": "F", "id": "5712", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-mXJwYzhbHy",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-UUUqWeqWXg", "fullname": "-Fallback-scrubbed-UUUqWeqWXg",
+        "generateaccruals": "F", "id": "5811", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-UUUqWeqWXg", "itemtype": "-Fallback-scrubbed-xFXIeyihi",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "6654", "createddate":
+        "3/10/2025", "custitem_ste_item_taxitem_type": "8020", "department": "6740",
+        "enforceminqtyinternally": "T", "externalid": "-Fallback-scrubbed-qOHKELFIZc",
+        "fullname": "-Fallback-scrubbed-qOHKELFIZc", "generateaccruals": "F", "id":
+        "5711", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-qOHKELFIZc",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "6654", "department": "6740", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-aNtJNNuHFZ", "fullname": "-Fallback-scrubbed-aNtJNNuHFZ",
+        "generateaccruals": "F", "id": "5613", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-aNtJNNuHFZ",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "6654", "department": "6740", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-NfkuyUewrS", "fullname": "-Fallback-scrubbed-NfkuyUewrS",
+        "generateaccruals": "F", "id": "5512", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-NfkuyUewrS", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "6654", "createddate":
+        "3/10/2025", "custitem_ste_item_taxitem_type": "6654", "department": "6740",
+        "enforceminqtyinternally": "T", "externalid": "-Fallback-scrubbed-aqVUXFoySt",
+        "fullname": "-Fallback-scrubbed-aqVUXFoySt", "generateaccruals": "F", "id":
+        "5612", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-aqVUXFoySt",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "class": "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "enforceminqtyinternally": "T", "expenseaccount":
+        "2829", "externalid": "-Fallback-scrubbed-zPoyXqzhVV", "fullname": "-Fallback-scrubbed-zPoyXqzhVV",
+        "generateaccruals": "T", "id": "5611", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-zPoyXqzhVV", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "3/10/2025", "location": "4127", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "averagecost": "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-mwOQQEhqd", "fullname": "-Fallback-scrubbed-mwOQQEhqd",
+        "generateaccruals": "F", "id": "5511", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-mwOQQEhqd", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates":
+        "F"}, {"links": [], "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "class": "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Sandra Reyes", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "externalid": "-Fallback-scrubbed-TejaAUnX",
+        "fullname": "-Fallback-scrubbed-TejaAUnX", "generateaccruals": "T", "id":
+        "5211", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-TejaAUnX",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "3/10/2025",
+        "location": "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/10/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "enforceminqtyinternally": "T", "externalid": "-Fallback-scrubbed-ApXhOvsDq",
+        "fullname": "-Fallback-scrubbed-ApXhOvsDq", "generateaccruals": "F", "id":
+        "5415", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-ApXhOvsDq",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-zvucrhKH", "fullname": "-Fallback-scrubbed-zvucrhKH",
+        "generateaccruals": "F", "id": "5414", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-zvucrhKH",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "class": "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "enforceminqtyinternally": "T", "expenseaccount":
+        "2829", "externalid": "-Fallback-scrubbed-aWToaAVv", "fullname": "-Fallback-scrubbed-aWToaAVv",
+        "generateaccruals": "T", "id": "5412", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-aWToaAVv", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "3/10/2025", "location": "4127", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "averagecost": "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Teresa Diaz", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-AogHUrWc",
+        "fullname": "-Fallback-scrubbed-AogHUrWc", "generateaccruals": "F", "id":
+        "5411", "includechildren": "F", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-AogHUrWc", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "6654", "createddate":
+        "3/10/2025", "custitem_ste_item_taxitem_type": "8020", "department": "6740",
+        "displayname": "Fake-Brenda Maxwell", "enforceminqtyinternally": "T", "externalid":
+        "-Fallback-scrubbed-byfhsBFh", "fullname": "-Fallback-scrubbed-byfhsBFh",
+        "generateaccruals": "F", "id": "5311", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-byfhsBFh", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "6654", "createddate":
+        "3/7/2025", "custitem_ste_item_taxitem_type": "6654", "department": "6740",
+        "displayname": "Fake-Amy Olson", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-iukIGVl", "fullname": "-Fallback-scrubbed-iukIGVl",
+        "generateaccruals": "F", "id": "4713", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-iukIGVl",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Hunter Walker", "enforceminqtyinternally":
+        "T", "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-QmQOcJH",
+        "fullname": "-Fallback-scrubbed-QmQOcJH", "generateaccruals": "F", "id": "5112",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-QmQOcJH", "itemtype":
+        "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "3/10/2025", "lastpurchaseprice":
+        "4325", "location": "4127", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/10/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "displayname": "Fake-Teresa Diaz", "enforceminqtyinternally": "F",
+        "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-ogCBpZO", "fullname":
+        "-Fallback-scrubbed-ogCBpZO", "generateaccruals": "F", "id": "5111", "includechildren":
+        "F", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-ogCBpZO",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "3/10/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/10/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Brenda Maxwell", "enforceminqtyinternally":
+        "T", "externalid": "-Fallback-scrubbed-luRmhmi", "fullname": "-Fallback-scrubbed-luRmhmi",
+        "generateaccruals": "F", "id": "5011", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-luRmhmi", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "3/10/2025", "lastpurchaseprice": "4325", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "6654", "createddate":
+        "3/7/2025", "custitem_ste_item_taxitem_type": "6654", "department": "6740",
+        "displayname": "Fake-Jodi Wright", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-xZsAknX", "fullname": "-Fallback-scrubbed-xZsAknX",
+        "generateaccruals": "F", "id": "4911", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-xZsAknX",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "3/7/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "6654", "department": "6740", "displayname": "Fake-Michael Wright", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-oJLCVmS",
+        "fullname": "-Fallback-scrubbed-oJLCVmS", "generateaccruals": "F", "id": "4712",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-oJLCVmS", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "3/7/2025", "lastpurchaseprice": "4325", "location": "4127",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "class": "6654", "createddate": "3/7/2025",
+        "custitem_ste_item_taxitem_type": "8020", "department": "6740", "displayname":
+        "Fake-Caleb Casey", "enforceminqtyinternally": "T", "expenseaccount": "9044",
+        "externalid": "-Fallback-scrubbed-lTiuRXm", "fullname": "-Fallback-scrubbed-lTiuRXm",
+        "generateaccruals": "F", "id": "4614", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-lTiuRXm", "itemtype": "-Fallback-scrubbed-xFXIeyihi",
+        "lastmodifieddate": "3/7/2025", "lastpurchaseprice": "4325", "location": "4127",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "class": "6654", "createddate": "3/7/2025",
+        "custitem_ste_item_taxitem_type": "8020", "department": "6740", "displayname":
+        "Fake-Jonathan Cortez Jr.", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-PKkrrOP", "fullname": "-Fallback-scrubbed-PKkrrOP",
+        "generateaccruals": "F", "id": "4811", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-PKkrrOP",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "3/7/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Mr. Russell Bailey MD",
+        "enforceminqtyinternally": "T", "externalid": "-Fallback-scrubbed-AYkHOVf",
+        "fullname": "-Fallback-scrubbed-AYkHOVf", "generateaccruals": "F", "id": "4711",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-AYkHOVf", "itemtype":
+        "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "3/7/2025", "lastpurchaseprice":
+        "4325", "location": "4127", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/7/2025", "custitem_ste_item_taxitem_type": "6654", "department":
+        "6740", "displayname": "Fake-Steven Butler", "enforceminqtyinternally": "T",
+        "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-iNbOHDl", "fullname":
+        "-Fallback-scrubbed-iNbOHDl", "generateaccruals": "F", "id": "4613", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-iNbOHDl", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "3/7/2025", "lastpurchaseprice": "4325", "location": "4127",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "class": "6654", "createddate": "3/7/2025",
+        "custitem_ste_item_taxitem_type": "6654", "department": "6740", "displayname":
+        "Fake-Daniel Stevens", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "externalid": "-Fallback-scrubbed-rGzzpIN", "fullname": "-Fallback-scrubbed-rGzzpIN",
+        "generateaccruals": "F", "id": "4612", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-rGzzpIN",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "3/7/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "6654", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "6654", "department": "6740", "displayname": "Fake-Heather Graham DDS", "enforceminqtyinternally":
+        "T", "externalid": "-Fallback-scrubbed-glMhgXm", "fullname": "-Fallback-scrubbed-glMhgXm",
+        "generateaccruals": "F", "id": "4611", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-glMhgXm", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "3/7/2025", "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "class": "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Christine Ross", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "fullname": "Fake-Samuel Cowan", "generateaccruals":
+        "T", "id": "4511", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Samuel Cowan", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "3/7/2025", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/7/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "displayname": "Fake-Charles Brewer", "enforceminqtyinternally": "T",
+        "expenseaccount": "9044", "fullname": "Fake-Jacob Miller", "generateaccruals":
+        "F", "id": "4311", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Jacob Miller", "itemtype":
+        "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "3/7/2025", "lastpurchaseprice":
+        "4325", "location": "4127", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "class": "6654",
+        "createddate": "3/7/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "displayname": "Fake-Maria Miller", "enforceminqtyinternally": "T",
+        "expenseaccount": "9044", "externalid": "-Fallback-scrubbed-KJokkVrDhGdnIwy",
+        "fullname": "Fake-Daniel Ward", "generateaccruals": "F", "id": "4114", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Daniel Ward", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "3/7/2025", "lastpurchaseprice": "4325", "location": "4127",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"},
+        {"links": [], "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "class": "6654", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "3/7/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Eric Jones", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "fullname": "Fake-Jacob Miller", "generateaccruals":
+        "T", "id": "4211", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Jacob Miller", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "3/7/2025", "location":
+        "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "class": "6654", "costingmethod":
+        "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2/27/2025", "custitem_ste_item_taxitem_type": "8020", "department":
+        "6740", "displayname": "Fake-Terrance Garcia", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "fullname": "Fake-Meghan Espinoza", "generateaccruals":
+        "T", "id": "3312", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Meghan Espinoza",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2/27/2025",
+        "location": "4127", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "billexchratevarianceacct":
+        "6035", "billpricevarianceacct": "7053", "billqtyvarianceacct": "7444", "class":
+        "6654", "cost": "5901", "countryofmanufacture": "-Fallback-scrubbed-ws", "createddate":
+        "2/21/2025", "custitem_ste_item_taxitem_type": "8020", "department": "6740",
+        "description": "-Fallback-scrubbed-ZvTITBIaLaanIjRsDOuPxTnZq", "displayname":
+        "Fake-Ms. Victoria Davis", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "fullname": "Fake-Susan Carr", "fxcost": "5901", "generateaccruals":
+        "F", "id": "1010", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-NzRvHwabejErwJTK",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2/27/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "manufacturer": "-Fallback-scrubbed-vzwVtFX",
+        "matchbilltoreceipt": "F", "maximumquantity": "1002", "minimumquantity": "8020",
+        "mpn": "4621", "overallquantitypricingtype": "-Fallback-scrubbed-nkYz", "parent":
+        "3950", "printitems": "F", "purchasedescription": "-Fallback-scrubbed-ajntBURKCljcVVpmgPhOTwZfhoXv",
+        "purchaseorderamount": "6881", "purchaseorderquantity": "6881", "purchaseorderquantitydiff":
+        "2141", "receiptamount": "6881", "receiptquantity": "2141", "receiptquantitydiff":
+        "6881", "shipindividually": "F", "stockdescription": "-Fallback-scrubbed-CJHThkgPSUTXkbznVpvNG",
+        "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx", "upccode": "4589",
+        "usemarginalrates": "F", "vendorname": "-Fallback-scrubbed-ifJlCAH", "weight":
+        "6654", "weightunit": "8020"}, {"links": [], "averagecost": "4325", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "displayname": "Fake-Jason
+        Williams", "enforceminqtyinternally": "T", "externalid": "-Fallback-scrubbed-VEwmWCmld",
+        "fullname": "Fake-Ronald Morales", "generateaccruals": "F", "id": "2912",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Ronald Morales", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "8020", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Eric Johnson", "enforceminqtyinternally":
+        "T", "externalid": "-Fallback-scrubbed-FFvJMTAdlEfKz", "fullname": "Fake-Caroline
+        Johnson", "generateaccruals": "F", "id": "2814", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Caroline Johnson",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2/24/2025",
+        "lastpurchaseprice": "4325", "location": "4127", "matchbilltoreceipt": "F",
+        "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "upccode": "-Fallback-scrubbed-pAeg", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "class": "8020", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "department": "6740",
+        "displayname": "Fake-Crystal Ferguson", "enforceminqtyinternally": "T", "externalid":
+        "-Fallback-scrubbed-JhlhgGGBQW", "fullname": "Fake-David Austin", "generateaccruals":
+        "F", "id": "2811", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-David Austin", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "location":
+        "6654", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "upccode":
+        "-Fallback-scrubbed-pAeg", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "class": "8020", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type":
+        "8020", "department": "6740", "displayname": "Fake-Crystal Ferguson", "enforceminqtyinternally":
+        "F", "externalid": "-Fallback-scrubbed-tLtXHDavgT", "fullname": "Fake-Joseph
+        Ashley", "generateaccruals": "F", "id": "2518", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Joseph Ashley", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2/24/2025", "lastpurchaseprice":
+        "4325", "location": "6654", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "upccode": "-Fallback-scrubbed-pAeg", "usemarginalrates": "F"}, {"links":
+        [], "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "displayname":
+        "Fake-Anna Berg", "enforceminqtyinternally": "T", "expenseaccount": "2829",
+        "externalid": "-Fallback-scrubbed-ekiqFcRpU", "fullname": "Fake-Mark Bartlett",
+        "generateaccruals": "T", "id": "2516", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Mark Bartlett", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2/24/2025", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "averagecost": "5442",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "displayname":
+        "Fake-Anna Berg", "enforceminqtyinternally": "T", "expenseaccount": "2829",
+        "externalid": "-Fallback-scrubbed-CxtQXvAMwTa", "fullname": "Fake-Margaret
+        Obrien", "generateaccruals": "T", "id": "2417", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Margaret Obrien", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2/24/2025", "lastpurchaseprice": "5442", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "8020", "totalvalue":
+        "5442", "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "6654", "displayname": "Fake-Andrew
+        Clark", "enforceminqtyinternally": "T", "expenseaccount": "9044", "externalid":
+        "-Fallback-scrubbed-ZrnTukNw", "fullname": "Fake-Jacqueline Rios", "generateaccruals":
+        "F", "id": "1916", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Jacqueline Rios",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2/24/2025",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "6654", "displayname": "Fake-Kelly
+        Rodriguez", "enforceminqtyinternally": "F", "expenseaccount": "9044", "externalid":
+        "-Fallback-scrubbed-XNfErxaTT", "fullname": "Fake-Carolyn Lawson", "generateaccruals":
+        "F", "id": "1817", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Carolyn Lawson", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type": "8020",
+        "displayname": "Fake-Ashley Liu", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "externalid": "-Fallback-scrubbed-VDvJAvJ", "fullname": "Fake-Mario
+        Peters", "generateaccruals": "F", "id": "1816", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Mario Peters", "itemtype":
+        "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2/24/2025", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type":
+        "8020", "displayname": "Fake-Jason Williams", "enforceminqtyinternally": "T",
+        "externalid": "-Fallback-scrubbed-zFdAofcPpi", "fullname": "Fake-Samantha
+        Robertson", "generateaccruals": "F", "id": "1913", "includechildren": "F",
+        "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Samantha Robertson", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "averagecost": "9418", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type":
+        "8020", "displayname": "Fake-Anna Berg", "enforceminqtyinternally": "T", "expenseaccount":
+        "2829", "externalid": "-Fallback-scrubbed-vRXeQxh", "fullname": "Fake-Susan
+        Lyons", "generateaccruals": "T", "id": "1815", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Susan Lyons", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2/24/2025", "lastpurchaseprice": "9418", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "5442", "totalvalue":
+        "2366", "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "displayname": "Fake-Christopher
+        Anderson", "enforceminqtyinternally": "F", "expenseaccount": "9044", "externalid":
+        "-Fallback-scrubbed-GLRPYFagHpx", "fullname": "Fake-Rebecca Watson", "generateaccruals":
+        "F", "id": "1912", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Rebecca Watson", "itemtype": "-Fallback-scrubbed-xFXIeyihi",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2/24/2025", "custitem_ste_item_taxitem_type": "6654",
+        "displayname": "Fake-Kyle Schaefer", "enforceminqtyinternally": "T", "externalid":
+        "-Fallback-scrubbed-syrHdOO", "fullname": "Fake-Rebecca Mcbride", "generateaccruals":
+        "F", "id": "1412", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Rebecca Mcbride",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2/24/2025",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2/24/2025", "custitem_ste_item_taxitem_type": "8020", "displayname": "Fake-Ashley
+        Liu", "enforceminqtyinternally": "F", "expenseaccount": "9044", "externalid":
+        "-Fallback-scrubbed-IoYHaOS", "fullname": "Fake-Michael Hutchinson", "generateaccruals":
+        "F", "id": "1311", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Michael Hutchinson", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2/24/2025", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-WagFesnWPGWGoeasW",
+        "displayname": "-Fallback-scrubbed-WagFesnWPGWGoeasW", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-WagFesnWPGWGoeasW", "generateaccruals":
+        "F", "id": "105", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-WagFesnWPGWGoeasW",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "1/16/2025",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "12/19/2024", "displayname": "Fake-Ryan Mitchell", "enforceminqtyinternally":
+        "T", "fullname": "Fake-Ryan Mitchell", "generateaccruals": "F", "id": "909",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Ryan Mitchell", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/19/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "upccode": "5540", "usemarginalrates": "F"}, {"links":
+        [], "averagecost": "4325", "createddate": "12/13/2024", "displayname": "Fake-Beverly
+        Velazquez", "enforceminqtyinternally": "T", "fullname": "Fake-Robert Harris",
+        "generateaccruals": "F", "id": "812", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Robert Harris", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "12/13/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "12/13/2024", "displayname": "Fake-Beverly Velazquez", "enforceminqtyinternally":
+        "T", "fullname": "Fake-Billy Ryan", "generateaccruals": "F", "id": "810",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Billy Ryan", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/13/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "12/13/2024", "displayname": "Fake-Christopher Bass",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Christopher Bass", "generateaccruals":
+        "F", "id": "711", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Christopher Bass",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "12/13/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "upccode": "5540", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "12/13/2024", "displayname": "Fake-Beverly Velazquez",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Beverly Velazquez", "generateaccruals":
+        "F", "id": "710", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Beverly Velazquez",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "12/13/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "12/13/2024", "displayname": "Fake-Jessica Hughes", "enforceminqtyinternally":
+        "T", "fullname": "Fake-Jessica Hughes", "generateaccruals": "F", "id": "809",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Jessica Hughes", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/13/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "12/13/2024", "displayname": "Fake-Chad Dunn", "enforceminqtyinternally":
+        "T", "fullname": "Fake-Chad Dunn", "generateaccruals": "F", "id": "709", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Chad Dunn", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/13/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "12/13/2024", "displayname": "Fake-Robert Davidson",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Robert Davidson", "generateaccruals":
+        "F", "id": "708", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Robert Davidson",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "12/13/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "12/12/2024", "displayname": "Fake-Thomas Rogers", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Thomas Rogers", "generateaccruals":
+        "F", "id": "610", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Thomas Rogers", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/12/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "12/12/2024", "displayname": "Fake-Caitlin Lawson", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Caitlin Lawson", "generateaccruals":
+        "T", "id": "608", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Caitlin Lawson",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "12/12/2024",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "12/12/2024", "displayname":
+        "Fake-Stephen Mcclain", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "fullname": "Fake-Stephen Mcclain", "generateaccruals": "F", "id":
+        "508", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Stephen Mcclain", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/12/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "12/12/2024", "displayname": "Fake-Stephen Mcclain", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Stephen Mcclain", "generateaccruals":
+        "T", "id": "311", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Stephen Mcclain",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "12/12/2024",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "12/12/2024", "displayname": "Fake-William Solomon", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-William Solomon", "generateaccruals":
+        "T", "id": "310", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-William Solomon",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "12/12/2024",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "12/12/2024", "displayname":
+        "Fake-Brenda Moore", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "fullname": "Fake-Sandra Reeves MD", "generateaccruals": "F", "id": "507",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Sandra Reeves MD", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "12/12/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "12/12/2024", "displayname": "Fake-Kelly Long", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Kelly Long", "generateaccruals":
+        "T", "id": "309", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Kelly Long", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "12/12/2024", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "12/12/2024", "displayname": "Fake-Nichole Solis", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Nichole Solis", "generateaccruals":
+        "T", "id": "407", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Nichole Solis", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "12/12/2024", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "averagecost": "90645240713.8212", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "12/12/2024",
+        "displayname": "Fake-Daniel Price", "enforceminqtyinternally": "T", "expenseaccount":
+        "65", "fullname": "Fake-Daniel Price", "generateaccruals": "T", "id": "307",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Daniel Price", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "12/12/2024", "lastpurchaseprice": "1002", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "4429", "totalvalue":
+        "1002", "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "12/11/2024",
+        "displayname": "Fake-John Wilkinson", "enforceminqtyinternally": "T", "expenseaccount":
+        "65", "fullname": "Fake-John Wilkinson", "generateaccruals": "T", "id": "306",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-John Wilkinson", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "12/11/2024", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "averagecost": "4325", "createddate": "12/10/2024", "displayname": "Fake-Tara
+        Cole", "enforceminqtyinternally": "F", "expenseaccount": "9044", "fullname":
+        "Fake-John Mcgee", "generateaccruals": "F", "id": "305", "includechildren":
+        "F", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-John
+        Mcgee", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate":
+        "12/10/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "upccode": "5304", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-WJWDQdGALL",
+        "displayname": "-Fallback-scrubbed-WJWDQdGALL", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-WJWDQdGALL", "generateaccruals": "F",
+        "id": "217", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-WJWDQdGALL",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-jQKwHbjiIZ", "displayname":
+        "-Fallback-scrubbed-jQKwHbjiIZ", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-jQKwHbjiIZ", "generateaccruals": "F", "id": "218", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-jQKwHbjiIZ", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-ZAHCOvmBcS",
+        "displayname": "-Fallback-scrubbed-ZAHCOvmBcS", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-ZAHCOvmBcS", "generateaccruals": "F",
+        "id": "219", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-ZAHCOvmBcS",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-nVfNaBvBM", "displayname":
+        "-Fallback-scrubbed-nVfNaBvBM", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-nVfNaBvBM", "generateaccruals": "F", "id": "209", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-nVfNaBvBM", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-JZEhIUuAXq",
+        "displayname": "-Fallback-scrubbed-JZEhIUuAXq", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-JZEhIUuAXq", "generateaccruals": "F",
+        "id": "216", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-JZEhIUuAXq",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-VWPowQukVG", "displayname":
+        "-Fallback-scrubbed-VWPowQukVG", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-VWPowQukVG", "generateaccruals": "F", "id": "214", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-VWPowQukVG", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-HuTlvZKdS",
+        "displayname": "-Fallback-scrubbed-HuTlvZKdS", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-HuTlvZKdS", "generateaccruals": "F",
+        "id": "212", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-HuTlvZKdS",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-mkTFtfgkv", "displayname":
+        "-Fallback-scrubbed-mkTFtfgkv", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-mkTFtfgkv", "generateaccruals": "F", "id": "210", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-mkTFtfgkv", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-LIKfMmAoR",
+        "displayname": "-Fallback-scrubbed-LIKfMmAoR", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-LIKfMmAoR", "generateaccruals": "F",
+        "id": "208", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-LIKfMmAoR",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-zSgvbGxtIk", "displayname":
+        "-Fallback-scrubbed-zSgvbGxtIk", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-zSgvbGxtIk", "generateaccruals": "F", "id": "215", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-zSgvbGxtIk", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-UmVUDCnMI",
+        "displayname": "-Fallback-scrubbed-UmVUDCnMI", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-UmVUDCnMI", "generateaccruals": "F",
+        "id": "213", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-UmVUDCnMI",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-xCgCURGwD", "displayname":
+        "-Fallback-scrubbed-xCgCURGwD", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-xCgCURGwD", "generateaccruals": "F", "id": "211", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-xCgCURGwD", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-NThaXESZT",
+        "displayname": "-Fallback-scrubbed-NThaXESZT", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-NThaXESZT", "generateaccruals": "F",
+        "id": "205", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-NThaXESZT",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-XupIgmauk", "displayname":
+        "-Fallback-scrubbed-XupIgmauk", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-XupIgmauk", "generateaccruals": "F", "id": "206", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-XupIgmauk", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-LnJxDiSNF",
+        "displayname": "-Fallback-scrubbed-LnJxDiSNF", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-LnJxDiSNF", "generateaccruals": "F",
+        "id": "207", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-LnJxDiSNF",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG",
+        "displayname": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG",
+        "generateaccruals": "F", "id": "109", "includechildren": "F", "incomeaccount":
+        "3157", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD",
+        "displayname": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD", "generateaccruals":
+        "F", "id": "116", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI", "displayname":
+        "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI", "enforceminqtyinternally": "T",
+        "fullname": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI", "generateaccruals":
+        "F", "id": "114", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-kOzTmCrWnPTpgx", "displayname":
+        "-Fallback-scrubbed-kOzTmCrWnPTpgx", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-kOzTmCrWnPTpgx", "generateaccruals": "F", "id": "112",
+        "includechildren": "F", "incomeaccount": "3157", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-kOzTmCrWnPTpgx", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "description":
+        "-Fallback-scrubbed-QkVNEqaVWXZqLs", "displayname": "-Fallback-scrubbed-QkVNEqaVWXZqLs",
+        "enforceminqtyinternally": "T", "fullname": "-Fallback-scrubbed-QkVNEqaVWXZqLs",
+        "generateaccruals": "F", "id": "110", "includechildren": "F", "incomeaccount":
+        "3157", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-QkVNEqaVWXZqLs", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "description": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp",
+        "displayname": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp", "generateaccruals":
+        "F", "id": "108", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed",
+        "displayname": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed", "generateaccruals":
+        "F", "id": "115", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "10/21/2024", "description": "-Fallback-scrubbed-MpIoijnZITVfcH", "displayname":
+        "-Fallback-scrubbed-MpIoijnZITVfcH", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-MpIoijnZITVfcH", "generateaccruals": "F", "id": "113",
+        "includechildren": "F", "incomeaccount": "3157", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-MpIoijnZITVfcH", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "description":
+        "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD", "displayname":
+        "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD",
+        "generateaccruals": "F", "id": "107", "includechildren": "F", "incomeaccount":
+        "3157", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "10/21/2024", "displayname": "Fake-Katherine Morgan",
+        "enforceminqtyinternally": "F", "expenseaccount": "2091", "fullname": "Fake-Katherine
+        Morgan", "generateaccruals": "F", "id": "21", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Katherine Morgan",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Katherine Morgan", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Kimberly Larson", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Kimberly Larson", "generateaccruals": "F", "id":
+        "11", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Kimberly Larson", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "10/21/2024", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Kimberly Larson", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Juan Warren", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Juan Warren", "generateaccruals": "F", "id": "20", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Juan
+        Warren", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Juan Warren", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Ann Powell", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Ann Powell", "generateaccruals": "F", "id": "18", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Ann
+        Powell", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Ann Powell", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-James Wise", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-James Wise", "generateaccruals": "F", "id": "16", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-James
+        Wise", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-James Wise", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Cynthia Hayes", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Cynthia Hayes", "generateaccruals": "F", "id": "14", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Cynthia
+        Hayes", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Cynthia Hayes", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Evelyn Taylor", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Evelyn Taylor", "generateaccruals": "F", "id": "12", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Evelyn
+        Taylor", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Evelyn Taylor", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Ariel Burton", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Ariel Burton", "generateaccruals": "F", "id": "19", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Ariel
+        Burton", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Ariel Burton", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Mark Elliott", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Mark Elliott", "generateaccruals": "F", "id": "17", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Mark
+        Elliott", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Mark Elliott", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Zachary Jones", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Zachary Jones", "generateaccruals": "F", "id": "15", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Zachary
+        Jones", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Zachary Jones", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Daniel Edwards", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Daniel Edwards", "generateaccruals": "F", "id": "13", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Daniel
+        Edwards", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Daniel Edwards", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Roy Greene", "enforceminqtyinternally": "F", "expenseaccount": "6955",
+        "fullname": "Fake-Roy Greene", "generateaccruals": "F", "id": "7", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Roy
+        Greene", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Roy Greene", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Erin Hanson", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Erin Hanson", "generateaccruals": "F", "id": "10", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Erin
+        Hanson", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Erin Hanson", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Deborah Jones", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "fullname": "Fake-Deborah Jones", "generateaccruals": "F", "id": "8", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Deborah
+        Jones", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Deborah Jones", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Wesley Davis", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "fullname": "Fake-Wesley Davis", "generateaccruals": "F", "id": "6", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Wesley
+        Davis", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Wesley Davis", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Valerie Moreno", "enforceminqtyinternally": "F", "expenseaccount": "9854",
+        "fullname": "Fake-Valerie Moreno", "generateaccruals": "F", "id": "9", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Valerie
+        Moreno", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Valerie Moreno", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"},
+        {"links": [], "averagecost": "4325", "createddate": "10/21/2024", "displayname":
+        "Fake-Timothy Berger", "enforceminqtyinternally": "F", "expenseaccount": "7053",
+        "fullname": "Fake-Timothy Berger", "generateaccruals": "F", "id": "5", "includechildren":
+        "F", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Timothy
+        Berger", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "10/21/2024",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "purchasedescription": "Fake-Timothy Berger", "shipindividually": "F", "subsidiary":
+        "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}],
+        "offset": 0, "totalResults": 108}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT item.id AS id, TO_CHAR (item.lastmodifieddate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS lastmodifieddate, item.isfulfillable AS isfulfillable, item.fullname
+      AS fullname, item.isinactive AS isinactive, item.atpmethod AS atpmethod, item.costingmethoddisplay
+      AS costingmethoddisplay, item.totalquantityonhand AS totalquantityonhand, item.averagecost
+      AS averagecost, item.displayname AS displayname, item.costingmethod AS costingmethod,
+      item.assetaccount AS assetaccount, item.subtype AS subtype, item.isonline AS
+      isonline, item.shipindividually AS shipindividually, item.enforceminqtyinternally
+      AS enforceminqtyinternally, item.generateaccruals AS generateaccruals, item.matchbilltoreceipt
+      AS matchbilltoreceipt, item.printitems AS printitems, item.usemarginalrates
+      AS usemarginalrates, item.purchasedescription AS purchasedescription, item.supplyreplenishmentmethod
+      AS supplyreplenishmentmethod, item.expenseaccount AS expenseaccount, item.incomeaccount
+      AS incomeaccount, item.lastpurchaseprice AS lastpurchaseprice, item.subsidiary
+      AS subsidiary, item.totalvalue AS totalvalue, item.includechildren AS includechildren,
+      item.upccode AS upccode, TO_CHAR (item.createddate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS createddate, item.itemid AS itemid, item.itemtype AS itemtype, item.description
+      AS description FROM item  WHERE item.lastmodifieddate>TO_TIMESTAMP(''2024-01-01
+      00:00:00'', ''YYYY-MM-DD HH24:MI:SS'') ORDER BY item.lastmodifieddate"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-dpsV", "href": "-Fallback-scrubbed-OTnQrIRnWIPBXFcAPrtVnAkFWQKHwTwRHyUuymWMLGwkdQKMttaeuqFoqBdEwjSlwkAusZXcjHmZWmqwpBVuXeGzyOQXGpYPm"}],
+        "count": 108, "hasMore": false, "items": [{"links": [], "averagecost": "4325",
+        "createddate": "2024-10-21 14:10:44", "displayname": "Fake-Timothy Berger",
+        "enforceminqtyinternally": "F", "expenseaccount": "7053", "fullname": "Fake-Timothy
+        Berger", "generateaccruals": "F", "id": "5", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Timothy Berger",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:10:44", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "purchasedescription": "Fake-Timothy Berger", "shipindividually": "F",
+        "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:48",
+        "displayname": "Fake-Roy Greene", "enforceminqtyinternally": "F", "expenseaccount":
+        "6955", "fullname": "Fake-Roy Greene", "generateaccruals": "F", "id": "7",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Roy Greene", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Roy Greene", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:48",
+        "displayname": "Fake-Erin Hanson", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Erin Hanson", "generateaccruals": "F", "id": "10",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Erin Hanson", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Erin Hanson", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:48",
+        "displayname": "Fake-Deborah Jones", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "fullname": "Fake-Deborah Jones", "generateaccruals": "F", "id": "8",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Deborah Jones", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Deborah Jones", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:48",
+        "displayname": "Fake-Wesley Davis", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "fullname": "Fake-Wesley Davis", "generateaccruals": "F", "id": "6",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Wesley Davis", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Wesley Davis", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:48",
+        "displayname": "Fake-Valerie Moreno", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Valerie Moreno", "generateaccruals": "F", "id":
+        "9", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Valerie Moreno", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Valerie Moreno", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Kimberly Larson", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Kimberly Larson", "generateaccruals": "F", "id":
+        "11", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Kimberly Larson", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Kimberly Larson", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Juan Warren", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Juan Warren", "generateaccruals": "F", "id": "20",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Juan Warren", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Juan Warren", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Ann Powell", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Ann Powell", "generateaccruals": "F", "id": "18",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Ann Powell", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Ann Powell", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-James Wise", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-James Wise", "generateaccruals": "F", "id": "16",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-James Wise", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-James Wise", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Cynthia Hayes", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Cynthia Hayes", "generateaccruals": "F", "id": "14",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Cynthia Hayes", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Cynthia Hayes", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Evelyn Taylor", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Evelyn Taylor", "generateaccruals": "F", "id": "12",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Evelyn Taylor", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Evelyn Taylor", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Ariel Burton", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Ariel Burton", "generateaccruals": "F", "id": "19",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Ariel Burton", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Ariel Burton", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Mark Elliott", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Mark Elliott", "generateaccruals": "F", "id": "17",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Mark Elliott", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Mark Elliott", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Zachary Jones", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Zachary Jones", "generateaccruals": "F", "id": "15",
+        "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Zachary Jones", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Zachary Jones", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:49",
+        "displayname": "Fake-Daniel Edwards", "enforceminqtyinternally": "F", "expenseaccount":
+        "9854", "fullname": "Fake-Daniel Edwards", "generateaccruals": "F", "id":
+        "13", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Daniel Edwards", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Daniel Edwards", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:10:50",
+        "displayname": "Fake-Katherine Morgan", "enforceminqtyinternally": "F", "expenseaccount":
+        "2091", "fullname": "Fake-Katherine Morgan", "generateaccruals": "F", "id":
+        "21", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Katherine Morgan", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:10:50", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "purchasedescription": "Fake-Katherine Morgan", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-10-21 14:14:06",
+        "description": "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD",
+        "displayname": "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD",
+        "enforceminqtyinternally": "T", "fullname": "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD",
+        "generateaccruals": "F", "id": "107", "includechildren": "F", "incomeaccount":
+        "3157", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-cJTKLGzVthGlbFGpDNAZwJNzwiHjIrvxsredD", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:14:06", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG",
+        "displayname": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG",
+        "generateaccruals": "F", "id": "109", "includechildren": "F", "incomeaccount":
+        "3157", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-QjCwkBALGCXRQBkKTSfDPlzWaFagMWPoFWG", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-10-21 14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD",
+        "displayname": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD", "generateaccruals":
+        "F", "id": "116", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-pcEhoqctlqfivabFmKkQQVD",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI",
+        "displayname": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI", "generateaccruals":
+        "F", "id": "114", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-RpbciPakXPbfVyzOqwJI",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-kOzTmCrWnPTpgx",
+        "displayname": "-Fallback-scrubbed-kOzTmCrWnPTpgx", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-kOzTmCrWnPTpgx", "generateaccruals":
+        "F", "id": "112", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-kOzTmCrWnPTpgx",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-QkVNEqaVWXZqLs",
+        "displayname": "-Fallback-scrubbed-QkVNEqaVWXZqLs", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-QkVNEqaVWXZqLs", "generateaccruals":
+        "F", "id": "110", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-QkVNEqaVWXZqLs",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp",
+        "displayname": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp", "generateaccruals":
+        "F", "id": "108", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-QctdzZaZaFffKoYdIuQyoTtJZp",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed",
+        "displayname": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed", "generateaccruals":
+        "F", "id": "115", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-OpFHVdGQTefDDDmQzHgLed",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:07", "description": "-Fallback-scrubbed-MpIoijnZITVfcH",
+        "displayname": "-Fallback-scrubbed-MpIoijnZITVfcH", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-MpIoijnZITVfcH", "generateaccruals":
+        "F", "id": "113", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-MpIoijnZITVfcH",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-10-21
+        14:14:07", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:17", "description": "-Fallback-scrubbed-NThaXESZT", "displayname":
+        "-Fallback-scrubbed-NThaXESZT", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-NThaXESZT", "generateaccruals": "F", "id": "205", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-NThaXESZT", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:17", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:17", "description": "-Fallback-scrubbed-XupIgmauk",
+        "displayname": "-Fallback-scrubbed-XupIgmauk", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-XupIgmauk", "generateaccruals": "F",
+        "id": "206", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-XupIgmauk",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:17", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:17", "description": "-Fallback-scrubbed-LnJxDiSNF", "displayname":
+        "-Fallback-scrubbed-LnJxDiSNF", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-LnJxDiSNF", "generateaccruals": "F", "id": "207", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-LnJxDiSNF", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:17", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-nVfNaBvBM",
+        "displayname": "-Fallback-scrubbed-nVfNaBvBM", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-nVfNaBvBM", "generateaccruals": "F",
+        "id": "209", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-nVfNaBvBM",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-JZEhIUuAXq", "displayname":
+        "-Fallback-scrubbed-JZEhIUuAXq", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-JZEhIUuAXq", "generateaccruals": "F", "id": "216", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-JZEhIUuAXq", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-VWPowQukVG",
+        "displayname": "-Fallback-scrubbed-VWPowQukVG", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-VWPowQukVG", "generateaccruals": "F",
+        "id": "214", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-VWPowQukVG",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-HuTlvZKdS", "displayname":
+        "-Fallback-scrubbed-HuTlvZKdS", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-HuTlvZKdS", "generateaccruals": "F", "id": "212", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-HuTlvZKdS", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-mkTFtfgkv",
+        "displayname": "-Fallback-scrubbed-mkTFtfgkv", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-mkTFtfgkv", "generateaccruals": "F",
+        "id": "210", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-mkTFtfgkv",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-LIKfMmAoR", "displayname":
+        "-Fallback-scrubbed-LIKfMmAoR", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-LIKfMmAoR", "generateaccruals": "F", "id": "208", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-LIKfMmAoR", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-zSgvbGxtIk",
+        "displayname": "-Fallback-scrubbed-zSgvbGxtIk", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-zSgvbGxtIk", "generateaccruals": "F",
+        "id": "215", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-zSgvbGxtIk",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-UmVUDCnMI", "displayname":
+        "-Fallback-scrubbed-UmVUDCnMI", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-UmVUDCnMI", "generateaccruals": "F", "id": "213", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-UmVUDCnMI", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:18", "description": "-Fallback-scrubbed-xCgCURGwD",
+        "displayname": "-Fallback-scrubbed-xCgCURGwD", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-xCgCURGwD", "generateaccruals": "F",
+        "id": "211", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-xCgCURGwD",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:18", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:19", "description": "-Fallback-scrubbed-WJWDQdGALL", "displayname":
+        "-Fallback-scrubbed-WJWDQdGALL", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-WJWDQdGALL", "generateaccruals": "F", "id": "217", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-WJWDQdGALL", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:19", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-10-21 14:15:19", "description": "-Fallback-scrubbed-jQKwHbjiIZ",
+        "displayname": "-Fallback-scrubbed-jQKwHbjiIZ", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-jQKwHbjiIZ", "generateaccruals": "F",
+        "id": "218", "includechildren": "F", "incomeaccount": "928", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-jQKwHbjiIZ",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-10-21
+        14:15:19", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:15:19", "description": "-Fallback-scrubbed-ZAHCOvmBcS", "displayname":
+        "-Fallback-scrubbed-ZAHCOvmBcS", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-ZAHCOvmBcS", "generateaccruals": "F", "id": "219", "includechildren":
+        "F", "incomeaccount": "928", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-ZAHCOvmBcS", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2024-10-21 14:15:19", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-10 12:37:10", "displayname": "Fake-Tara Cole",
+        "enforceminqtyinternally": "F", "expenseaccount": "9044", "fullname": "Fake-John
+        Mcgee", "generateaccruals": "F", "id": "305", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-John Mcgee", "itemtype":
+        "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2024-12-10 12:37:10",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "upccode": "5304", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2024-12-11 13:25:05", "displayname": "Fake-John Wilkinson",
+        "enforceminqtyinternally": "T", "expenseaccount": "65", "fullname": "Fake-John
+        Wilkinson", "generateaccruals": "T", "id": "306", "includechildren": "F",
+        "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-John Wilkinson", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "2024-12-11 13:25:06", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "averagecost": "90645240713.8212", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "2024-12-12
+        08:56:45", "displayname": "Fake-Daniel Price", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Daniel Price", "generateaccruals":
+        "T", "id": "307", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Daniel Price", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2024-12-12 08:56:46",
+        "lastpurchaseprice": "1002", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "4429", "totalvalue":
+        "1002", "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "2024-12-12
+        08:58:13", "displayname": "Fake-Nichole Solis", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Nichole Solis", "generateaccruals":
+        "T", "id": "407", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Nichole Solis", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2024-12-12 08:58:13",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2024-12-12 08:58:52", "displayname": "Fake-Kelly Long", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Kelly Long", "generateaccruals":
+        "T", "id": "309", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Kelly Long", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2024-12-12 08:58:52",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-12-12 09:03:59",
+        "displayname": "Fake-Brenda Moore", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "fullname": "Fake-Sandra Reeves MD", "generateaccruals": "F", "id":
+        "507", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Sandra Reeves MD", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-12-12 09:03:59", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2024-12-12 09:05:17", "displayname": "Fake-William Solomon",
+        "enforceminqtyinternally": "T", "expenseaccount": "65", "fullname": "Fake-William
+        Solomon", "generateaccruals": "T", "id": "310", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-William Solomon", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2024-12-12 09:05:17", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "2024-12-12
+        09:05:44", "displayname": "Fake-Stephen Mcclain", "enforceminqtyinternally":
+        "T", "expenseaccount": "65", "fullname": "Fake-Stephen Mcclain", "generateaccruals":
+        "T", "id": "311", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Stephen Mcclain",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2024-12-12
+        09:05:44", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-12-12 12:03:20", "displayname": "Fake-Stephen Mcclain", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Stephen Mcclain", "generateaccruals":
+        "F", "id": "508", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Stephen Mcclain", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-12-12 12:03:20", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2024-12-12 12:48:07", "displayname": "Fake-Caitlin Lawson",
+        "enforceminqtyinternally": "T", "expenseaccount": "65", "fullname": "Fake-Caitlin
+        Lawson", "generateaccruals": "T", "id": "608", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Caitlin Lawson", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2024-12-12 12:48:07", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-12-12 12:48:42", "displayname": "Fake-Thomas Rogers", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Thomas Rogers", "generateaccruals":
+        "F", "id": "610", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Thomas Rogers", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-12-12 12:48:42", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-13 08:24:49", "displayname": "Fake-Robert
+        Davidson", "enforceminqtyinternally": "T", "fullname": "Fake-Robert Davidson",
+        "generateaccruals": "F", "id": "708", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Robert Davidson", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "2024-12-13 08:24:50", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-13 08:42:33", "displayname": "Fake-Chad Dunn",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Chad Dunn", "generateaccruals":
+        "F", "id": "709", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Chad Dunn", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-12-13 08:42:33", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2024-12-13 08:56:08",
+        "displayname": "Fake-Jessica Hughes", "enforceminqtyinternally": "T", "fullname":
+        "Fake-Jessica Hughes", "generateaccruals": "F", "id": "809", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Jessica Hughes", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2024-12-13 08:56:08", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-13 09:25:49", "displayname": "Fake-Beverly
+        Velazquez", "enforceminqtyinternally": "T", "fullname": "Fake-Beverly Velazquez",
+        "generateaccruals": "F", "id": "710", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Beverly Velazquez", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "2024-12-13 09:25:49", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-13 09:38:06", "displayname": "Fake-Christopher
+        Bass", "enforceminqtyinternally": "T", "fullname": "Fake-Christopher Bass",
+        "generateaccruals": "F", "id": "711", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Christopher Bass", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "2024-12-13 09:38:06", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "upccode": "5540", "usemarginalrates": "F"}, {"links":
+        [], "averagecost": "4325", "createddate": "2024-12-13 09:39:57", "displayname":
+        "Fake-Beverly Velazquez", "enforceminqtyinternally": "T", "fullname": "Fake-Billy
+        Ryan", "generateaccruals": "F", "id": "810", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Billy Ryan", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "2024-12-13 09:39:57", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-13 09:40:18", "displayname": "Fake-Beverly
+        Velazquez", "enforceminqtyinternally": "T", "fullname": "Fake-Robert Harris",
+        "generateaccruals": "F", "id": "812", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Robert Harris", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate":
+        "2024-12-13 09:40:18", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2024-12-19 07:43:21", "displayname": "Fake-Ryan Mitchell",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Ryan Mitchell", "generateaccruals":
+        "F", "id": "909", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Ryan Mitchell", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2024-12-19 07:43:21", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu", "upccode":
+        "5540", "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2024-10-21 14:14:06", "description": "-Fallback-scrubbed-WagFesnWPGWGoeasW",
+        "displayname": "-Fallback-scrubbed-WagFesnWPGWGoeasW", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-WagFesnWPGWGoeasW", "generateaccruals":
+        "F", "id": "105", "includechildren": "F", "incomeaccount": "3157", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-WagFesnWPGWGoeasW",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-01-16
+        20:50:30", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-02-24 08:14:12", "displayname": "Fake-Ashley Liu", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Michael Hutchinson", "generateaccruals":
+        "F", "id": "1311", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Michael Hutchinson", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-02-24 08:14:12", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-02-24 08:36:51", "displayname": "Fake-Kyle Schaefer",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Rebecca Mcbride", "generateaccruals":
+        "F", "id": "1412", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Rebecca Mcbride",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-02-24
+        08:36:51", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-02-24 11:33:51", "displayname": "Fake-Christopher Anderson", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Rebecca Watson", "generateaccruals":
+        "F", "id": "1912", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Rebecca Watson", "itemtype": "-Fallback-scrubbed-xFXIeyihi",
+        "lastmodifieddate": "2025-02-24 11:33:51", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "averagecost": "9418", "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay":
+        "-Fallback-scrubbed-YtRVihS", "createddate": "2025-02-24 11:34:03", "displayname":
+        "Fake-Anna Berg", "enforceminqtyinternally": "T", "expenseaccount": "2829",
+        "fullname": "Fake-Susan Lyons", "generateaccruals": "T", "id": "1815", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Susan Lyons", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "2025-02-24 11:34:03", "lastpurchaseprice": "9418", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "5442", "totalvalue":
+        "2366", "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-02-24 11:34:24", "displayname": "Fake-Jason Williams", "enforceminqtyinternally":
+        "T", "fullname": "Fake-Samantha Robertson", "generateaccruals": "F", "id":
+        "1913", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Samantha Robertson",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-02-24
+        11:34:24", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-02-24 11:35:06", "displayname": "Fake-Ashley Liu", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "Fake-Mario Peters", "generateaccruals":
+        "F", "id": "1816", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Mario Peters", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-02-24 11:35:06", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-02-24 11:35:23", "displayname": "Fake-Kelly Rodriguez",
+        "enforceminqtyinternally": "F", "expenseaccount": "9044", "fullname": "Fake-Carolyn
+        Lawson", "generateaccruals": "F", "id": "1817", "includechildren": "F", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Carolyn Lawson",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-02-24
+        11:35:23", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-02-24 11:35:32", "displayname": "Fake-Andrew Clark", "enforceminqtyinternally":
+        "T", "expenseaccount": "9044", "fullname": "Fake-Jacqueline Rios", "generateaccruals":
+        "F", "id": "1916", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "Fake-Jacqueline Rios",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-02-24
+        11:35:32", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "averagecost": "5442",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-02-24 12:38:31", "displayname": "Fake-Anna Berg", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "fullname": "Fake-Margaret Obrien", "generateaccruals":
+        "T", "id": "2417", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Margaret Obrien",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2025-02-24
+        12:38:31", "lastpurchaseprice": "5442", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "totalquantityonhand": "8020", "totalvalue":
+        "5442", "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "2025-02-24
+        12:39:58", "displayname": "Fake-Anna Berg", "enforceminqtyinternally": "T",
+        "expenseaccount": "2829", "fullname": "Fake-Mark Bartlett", "generateaccruals":
+        "T", "id": "2516", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Mark Bartlett", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2025-02-24 12:39:58",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-02-24 13:04:45",
+        "displayname": "Fake-Crystal Ferguson", "enforceminqtyinternally": "F", "fullname":
+        "Fake-Joseph Ashley", "generateaccruals": "F", "id": "2518", "includechildren":
+        "F", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Joseph
+        Ashley", "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-02-24
+        13:05:52", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "upccode": "-Fallback-scrubbed-pAeg", "usemarginalrates": "F"}, {"links":
+        [], "averagecost": "4325", "createddate": "2025-02-24 13:30:31", "displayname":
+        "Fake-Crystal Ferguson", "enforceminqtyinternally": "T", "fullname": "Fake-David
+        Austin", "generateaccruals": "F", "id": "2811", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-David Austin", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-02-24 13:30:31", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "upccode":
+        "-Fallback-scrubbed-pAeg", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-02-24 14:10:45", "displayname": "Fake-Eric Johnson",
+        "enforceminqtyinternally": "T", "fullname": "Fake-Caroline Johnson", "generateaccruals":
+        "F", "id": "2814", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Caroline Johnson", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2025-02-24 14:10:45", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "upccode": "-Fallback-scrubbed-pAeg", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-02-24 14:27:32",
+        "displayname": "Fake-Jason Williams", "enforceminqtyinternally": "T", "fullname":
+        "Fake-Ronald Morales", "generateaccruals": "F", "id": "2912", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Ronald Morales", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-02-24 14:27:33", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-02-21 14:21:26", "description": "-Fallback-scrubbed-ZvTITBIaLaanIjRsDOuPxTnZq",
+        "displayname": "Fake-Ms. Victoria Davis", "enforceminqtyinternally": "T",
+        "expenseaccount": "9044", "fullname": "Fake-Susan Carr", "generateaccruals":
+        "F", "id": "1010", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-NzRvHwabejErwJTK",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-02-27
+        13:04:16", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "purchasedescription": "-Fallback-scrubbed-ajntBURKCljcVVpmgPhOTwZfhoXv",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "upccode": "4589", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-02-27 13:12:47", "displayname": "Fake-Terrance Garcia",
+        "enforceminqtyinternally": "T", "expenseaccount": "2829", "fullname": "Fake-Meghan
+        Espinoza", "generateaccruals": "T", "id": "3312", "includechildren": "F",
+        "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Meghan Espinoza", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "2025-02-27 13:12:47", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "assetaccount": "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-03-07 06:42:06", "displayname": "Fake-Eric Jones", "enforceminqtyinternally":
+        "T", "expenseaccount": "2829", "fullname": "Fake-Jacob Miller", "generateaccruals":
+        "T", "id": "4211", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "Fake-Jacob Miller", "itemtype":
+        "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2025-03-07 06:42:07",
+        "matchbilltoreceipt": "F", "printitems": "F", "shipindividually": "F", "subsidiary":
+        "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-03-07 07:12:19",
+        "displayname": "Fake-Maria Miller", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "fullname": "Fake-Daniel Ward", "generateaccruals": "F", "id": "4114",
+        "includechildren": "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "Fake-Daniel Ward", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-07 07:12:45", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-03-07 10:52:21", "displayname": "Fake-Charles
+        Brewer", "enforceminqtyinternally": "T", "expenseaccount": "9044", "fullname":
+        "Fake-Jacob Miller", "generateaccruals": "F", "id": "4311", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "Fake-Jacob Miller", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-07 10:52:22", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-03-07 11:02:17", "displayname": "Fake-Christine Ross",
+        "enforceminqtyinternally": "T", "expenseaccount": "2829", "fullname": "Fake-Samuel
+        Cowan", "generateaccruals": "T", "id": "4511", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "Fake-Samuel Cowan", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2025-03-07 11:02:17", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 11:57:40", "displayname": "Fake-Heather Graham DDS", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-glMhgXm", "generateaccruals": "F", "id":
+        "4611", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-glMhgXm",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-07
+        11:57:41", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 12:04:08", "displayname": "Fake-Daniel Stevens", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-rGzzpIN", "generateaccruals":
+        "F", "id": "4612", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-rGzzpIN", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-07 12:04:08", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-03-07 12:09:29",
+        "displayname": "Fake-Steven Butler", "enforceminqtyinternally": "T", "expenseaccount":
+        "9044", "fullname": "-Fallback-scrubbed-iNbOHDl", "generateaccruals": "F",
+        "id": "4613", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-iNbOHDl",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-07
+        12:09:29", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 12:14:30", "displayname": "Fake-Mr. Russell Bailey MD", "enforceminqtyinternally":
+        "T", "fullname": "-Fallback-scrubbed-AYkHOVf", "generateaccruals": "F", "id":
+        "4711", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-AYkHOVf",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "2025-03-07
+        12:14:30", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 12:16:48", "displayname": "Fake-Jonathan Cortez Jr.", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-PKkrrOP", "generateaccruals":
+        "F", "id": "4811", "includechildren": "F", "isfulfillable": "T", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-PKkrrOP", "itemtype":
+        "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "2025-03-07 12:16:48",
+        "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems": "F",
+        "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 12:24:35", "displayname": "Fake-Caleb Casey", "enforceminqtyinternally":
+        "T", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-lTiuRXm", "generateaccruals":
+        "F", "id": "4614", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-lTiuRXm",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "2025-03-07
+        12:24:35", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 12:40:40", "displayname": "Fake-Michael Wright", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-oJLCVmS", "generateaccruals":
+        "F", "id": "4712", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-oJLCVmS", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-07 12:40:40", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-03-07 13:20:45",
+        "displayname": "Fake-Jodi Wright", "enforceminqtyinternally": "F", "expenseaccount":
+        "9044", "fullname": "-Fallback-scrubbed-xZsAknX", "generateaccruals": "F",
+        "id": "4911", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-xZsAknX", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-07 13:20:45", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-03-10 05:28:31",
+        "displayname": "Fake-Brenda Maxwell", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-luRmhmi", "generateaccruals": "F", "id": "5011", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-luRmhmi", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-10 05:28:31", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-03-10 05:48:22", "displayname": "Fake-Teresa
+        Diaz", "enforceminqtyinternally": "F", "expenseaccount": "9044", "fullname":
+        "-Fallback-scrubbed-ogCBpZO", "generateaccruals": "F", "id": "5111", "includechildren":
+        "F", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-ogCBpZO",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-03-10
+        05:48:22", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 05:55:20", "displayname": "Fake-Hunter Walker", "enforceminqtyinternally":
+        "T", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-QmQOcJH", "generateaccruals":
+        "F", "id": "5112", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-QmQOcJH",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-03-10
+        05:55:20", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-07 13:08:10", "displayname": "Fake-Amy Olson", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-iukIGVl", "generateaccruals":
+        "F", "id": "4713", "includechildren": "F", "isfulfillable": "F", "isinactive":
+        "F", "isonline": "F", "itemid": "-Fallback-scrubbed-iukIGVl", "itemtype":
+        "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-10 07:08:13", "lastpurchaseprice":
+        "4325", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates":
+        "F"}, {"links": [], "averagecost": "4325", "createddate": "2025-03-10 09:47:48",
+        "displayname": "Fake-Brenda Maxwell", "enforceminqtyinternally": "T", "fullname":
+        "-Fallback-scrubbed-byfhsBFh", "generateaccruals": "F", "id": "5311", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-byfhsBFh", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-10 09:47:48", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-03-10 09:55:35", "displayname": "Fake-Teresa
+        Diaz", "enforceminqtyinternally": "F", "expenseaccount": "9044", "fullname":
+        "-Fallback-scrubbed-AogHUrWc", "generateaccruals": "F", "id": "5411", "includechildren":
+        "F", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-AogHUrWc",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-03-10
+        10:23:20", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "usemarginalrates": "F"}, {"links": [], "assetaccount": "6719", "atpmethod":
+        "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck", "costingmethod": "-Fallback-scrubbed-yQD",
+        "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS", "createddate": "2025-03-10
+        10:32:22", "enforceminqtyinternally": "T", "expenseaccount": "2829", "fullname":
+        "-Fallback-scrubbed-aWToaAVv", "generateaccruals": "T", "id": "5412", "includechildren":
+        "F", "incomeaccount": "7295", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-aWToaAVv", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "2025-03-10 10:32:22", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "averagecost": "4325", "createddate": "2025-03-10 10:44:43", "enforceminqtyinternally":
+        "F", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-zvucrhKH",
+        "generateaccruals": "F", "id": "5414", "includechildren": "F", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-zvucrhKH",
+        "itemtype": "-Fallback-scrubbed-OEuqYkGenpS", "lastmodifieddate": "2025-03-10
+        10:44:43", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-WFIlUkzw",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 10:51:24", "enforceminqtyinternally": "T", "fullname": "-Fallback-scrubbed-ApXhOvsDq",
+        "generateaccruals": "F", "id": "5415", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-ApXhOvsDq", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-10 10:51:24", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-03-10 09:41:22", "displayname": "Fake-Sandra Reyes",
+        "enforceminqtyinternally": "T", "expenseaccount": "2829", "fullname": "-Fallback-scrubbed-TejaAUnX",
+        "generateaccruals": "T", "id": "5211", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-TejaAUnX", "itemtype": "-Fallback-scrubbed-ULKHRAky",
+        "lastmodifieddate": "2025-03-10 10:54:01", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "supplyreplenishmentmethod":
+        "-Fallback-scrubbed-tgJtYSJcMOGIX", "usemarginalrates": "F"}, {"links": [],
+        "averagecost": "4325", "createddate": "2025-03-10 10:58:14", "enforceminqtyinternally":
+        "T", "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-mwOQQEhqd",
+        "generateaccruals": "F", "id": "5511", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-mwOQQEhqd", "itemtype": "-Fallback-scrubbed-OEuqYkGenpS",
+        "lastmodifieddate": "2025-03-10 10:58:14", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-AaqOnx", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-03-10 11:01:58", "enforceminqtyinternally": "T", "expenseaccount":
+        "2829", "fullname": "-Fallback-scrubbed-zPoyXqzhVV", "generateaccruals": "T",
+        "id": "5611", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-zPoyXqzhVV",
+        "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate": "2025-03-10
+        11:01:58", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 11:06:51", "enforceminqtyinternally": "T", "fullname": "-Fallback-scrubbed-aqVUXFoySt",
+        "generateaccruals": "F", "id": "5612", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "F", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-aqVUXFoySt", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2025-03-10 11:06:51", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-DFKu", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-03-10 11:13:16", "enforceminqtyinternally": "T",
+        "expenseaccount": "9044", "fullname": "-Fallback-scrubbed-NfkuyUewrS", "generateaccruals":
+        "F", "id": "5512", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "F", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-NfkuyUewrS",
+        "itemtype": "-Fallback-scrubbed-kkiDxJf", "lastmodifieddate": "2025-03-10
+        11:13:16", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 11:19:53", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "fullname": "-Fallback-scrubbed-aNtJNNuHFZ", "generateaccruals": "F", "id":
+        "5613", "includechildren": "F", "isfulfillable": "F", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-aNtJNNuHFZ", "itemtype": "-Fallback-scrubbed-kkiDxJf",
+        "lastmodifieddate": "2025-03-10 11:19:53", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "averagecost":
+        "4325", "createddate": "2025-03-10 12:07:10", "enforceminqtyinternally": "T",
+        "fullname": "-Fallback-scrubbed-qOHKELFIZc", "generateaccruals": "F", "id":
+        "5711", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-qOHKELFIZc",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "2025-03-10
+        12:07:10", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-DFKu",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 12:12:00", "enforceminqtyinternally": "T", "expenseaccount": "9044",
+        "fullname": "-Fallback-scrubbed-UUUqWeqWXg", "generateaccruals": "F", "id":
+        "5811", "includechildren": "F", "incomeaccount": "7295", "isfulfillable":
+        "T", "isinactive": "F", "isonline": "F", "itemid": "-Fallback-scrubbed-UUUqWeqWXg",
+        "itemtype": "-Fallback-scrubbed-xFXIeyihi", "lastmodifieddate": "2025-03-10
+        12:12:00", "lastpurchaseprice": "4325", "matchbilltoreceipt": "F", "printitems":
+        "F", "shipindividually": "F", "subsidiary": "8020", "subtype": "-Fallback-scrubbed-AaqOnx",
+        "usemarginalrates": "F"}, {"links": [], "averagecost": "4325", "createddate":
+        "2025-03-10 12:16:02", "enforceminqtyinternally": "F", "expenseaccount": "9044",
+        "fullname": "-Fallback-scrubbed-mXJwYzhbHy", "generateaccruals": "F", "id":
+        "5712", "includechildren": "F", "isfulfillable": "T", "isinactive": "F", "isonline":
+        "F", "itemid": "-Fallback-scrubbed-mXJwYzhbHy", "itemtype": "-Fallback-scrubbed-xFXIeyihi",
+        "lastmodifieddate": "2025-03-10 12:16:02", "lastpurchaseprice": "4325", "matchbilltoreceipt":
+        "F", "printitems": "F", "shipindividually": "F", "subsidiary": "8020", "subtype":
+        "-Fallback-scrubbed-WFIlUkzw", "usemarginalrates": "F"}, {"links": [], "assetaccount":
+        "6719", "atpmethod": "-Fallback-scrubbed-TWGeNSkkbgPRuRLjNBsiKGcNVtPqck",
+        "costingmethod": "-Fallback-scrubbed-yQD", "costingmethoddisplay": "-Fallback-scrubbed-YtRVihS",
+        "createddate": "2025-03-07 11:13:43", "displayname": "Fake-Sandra Reyes",
+        "enforceminqtyinternally": "T", "expenseaccount": "2829", "fullname": "-Fallback-scrubbed-quwJuXc",
+        "generateaccruals": "T", "id": "4312", "includechildren": "F", "incomeaccount":
+        "7295", "isfulfillable": "T", "isinactive": "F", "isonline": "F", "itemid":
+        "-Fallback-scrubbed-quwJuXc", "itemtype": "-Fallback-scrubbed-ULKHRAky", "lastmodifieddate":
+        "2025-03-10 14:21:22", "matchbilltoreceipt": "F", "printitems": "F", "shipindividually":
+        "F", "subsidiary": "8020", "supplyreplenishmentmethod": "-Fallback-scrubbed-tgJtYSJcMOGIX",
+        "usemarginalrates": "F"}], "offset": 0, "totalResults": 108}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1
