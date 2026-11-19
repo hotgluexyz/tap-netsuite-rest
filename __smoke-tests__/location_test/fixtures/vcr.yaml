@@ -1,0 +1,108 @@
+interactions:
+- request:
+    body: '{"q": "SELECT \n        *\n         FROM location \n        INNER JOIN
+      locationMainAddress ma ON(location.mainaddress = ma.nkey)\n         WHERE location.lastmodifieddate>TO_TIMESTAMP(''2000-01-01
+      00:00:00'', ''YYYY-MM-DD HH24:MI:SS'') \n    ORDER BY location.lastmodifieddate
+      ASC\n    "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-kGPt", "href": "-Fallback-scrubbed-TDRKSUeAsxsHrDVOjwoyFmpSgUbDlPRAqhCahLTdwiTDKnCpbGWiCIJwCfcGoOAoxQDoLPLVdgicZhRdFuIghTeqoZhsTzJCK"}],
+        "count": 15, "hasMore": false, "items": [{"links": [], "addressee": "Fake-Alexis
+        Martinez", "addrtext": "-Fallback-scrubbed-gObHxiPHcOpVctiZvuoog", "country":
+        "-Fallback-scrubbed-ZM", "fullname": "Fake-Erika Kline", "id": "2", "isinactive":
+        "F", "lastmodifieddate": "10/21/2024", "mainaddress": "3", "makeinventoryavailable":
+        "T", "name": "Fake-Alexis Martinez", "nkey": "3", "override": "F", "parent":
+        "9120", "recordowner": "8528", "subsidiary": "9120"}, {"links": [], "addressee":
+        "Fake-Brandi Mitchell", "addrtext": "-Fallback-scrubbed-TLvPYAeXndNMMvZGRLSM",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Brandi Mitchell", "id":
+        "4", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "5",
+        "makeinventoryavailable": "T", "name": "Fake-Brandi Mitchell", "nkey": "5",
+        "override": "F", "recordowner": "8975", "subsidiary": "9120"}, {"links": [],
+        "addressee": "Fake-Jonathan Perez", "addrtext": "-Fallback-scrubbed-hVYficfrpKTjZdoAxCbmw",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Cindy Miller", "id":
+        "5", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "6",
+        "makeinventoryavailable": "T", "name": "Fake-Jonathan Perez", "nkey": "6",
+        "override": "F", "parent": "5028", "recordowner": "9791", "subsidiary": "9120"},
+        {"links": [], "addressee": "Fake-Anthony Patel", "addrtext": "-Fallback-scrubbed-BfCoXHgSZeGvViyaAYHrNfd",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Judy Mcmahon", "id":
+        "6", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "7",
+        "makeinventoryavailable": "T", "name": "Fake-Anthony Patel", "nkey": "7",
+        "override": "F", "parent": "5028", "recordowner": "5581", "subsidiary": "9120"},
+        {"links": [], "addressee": "Fake-Sherry Cunningham", "addrtext": "-Fallback-scrubbed-lWAGXpbperbxVkDfwwSNZ",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Shawn Kim", "id": "7",
+        "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "8", "makeinventoryavailable":
+        "T", "name": "Fake-Sherry Cunningham", "nkey": "8", "override": "F", "parent":
+        "5028", "recordowner": "8462", "subsidiary": "9120"}, {"links": [], "addressee":
+        "Fake-David Boone", "addrtext": "-Fallback-scrubbed-dOJQbxZnTwWjuZskdFefnYfs",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Danielle Hanna", "id":
+        "8", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "9",
+        "makeinventoryavailable": "T", "name": "Fake-David Boone", "nkey": "9", "override":
+        "F", "parent": "5028", "recordowner": "7792", "subsidiary": "9120"}, {"links":
+        [], "addressee": "Fake-Lori Reynolds", "addrtext": "-Fallback-scrubbed-AjzZuphaBTIIVPzTXnH",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Lori Reynolds", "id":
+        "9", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "10",
+        "makeinventoryavailable": "T", "name": "Fake-Lori Reynolds", "nkey": "10",
+        "override": "F", "recordowner": "5157", "subsidiary": "9120"}, {"links": [],
+        "addressee": "Fake-Kara Ramirez", "addrtext": "-Fallback-scrubbed-JJQIjHNToINYdZufigLhr",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Denise Hoover", "id":
+        "10", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "11", "makeinventoryavailable": "T", "name": "Fake-Kara Ramirez", "nkey":
+        "11", "override": "F", "parent": "7792", "recordowner": "9473", "subsidiary":
+        "9120"}, {"links": [], "addressee": "Fake-Todd Payne", "addrtext": "-Fallback-scrubbed-atnpjiFgcJhRupyPNZzGQHfhpHLkz",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Tony Price", "id": "11",
+        "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "12",
+        "makeinventoryavailable": "T", "name": "Fake-Todd Payne", "nkey": "12", "override":
+        "F", "parent": "5157", "recordowner": "2458", "subsidiary": "9120"}, {"links":
+        [], "addressee": "Fake-Margaret Freeman", "addrtext": "-Fallback-scrubbed-CfHpXWIUyTswNayhDkdlqGhZsp",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Amy Sanchez", "id":
+        "12", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "13", "makeinventoryavailable": "T", "name": "Fake-Margaret Freeman", "nkey":
+        "13", "override": "F", "parent": "5157", "recordowner": "1455", "subsidiary":
+        "9120"}, {"links": [], "addressee": "Fake-Paul Martinez", "addrtext": "-Fallback-scrubbed-lWowoMZZukQzFYuTQvQG",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Jennifer Padilla", "id":
+        "13", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "14", "makeinventoryavailable": "T", "name": "Fake-Paul Martinez", "nkey":
+        "14", "override": "F", "parent": "5157", "recordowner": "2302", "subsidiary":
+        "9120"}, {"links": [], "addressee": "Fake-Alex Payne", "addrtext": "-Fallback-scrubbed-chUDoPTnGOxsWtNVTQZPvdAJqd",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Jeffrey Simon", "id":
+        "14", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "15", "makeinventoryavailable": "T", "name": "Fake-Alex Payne", "nkey": "15",
+        "override": "F", "parent": "7792", "recordowner": "8167", "subsidiary": "9120"},
+        {"links": [], "addressee": "Fake-Mark Duran", "addrtext": "-Fallback-scrubbed-zFhwxUWFBRjalPNaFfauX",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Tricia Ortiz", "id":
+        "15", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "16", "makeinventoryavailable": "T", "name": "Fake-Mark Duran", "nkey": "16",
+        "override": "F", "parent": "7792", "recordowner": "9549", "subsidiary": "9120"},
+        {"links": [], "addr1": "-Fallback-scrubbed-LrdzeGLUEnuu", "addrtext": "-Fallback-scrubbed-rmHQifvOyBencInfhHxXMSruhNvrcAtzaiuCcIzfBYifVBOvKPXU",
+        "city": "Fake-South Stephaniemouth", "country": "-Fallback-scrubbed-ZM", "dropdownstate":
+        "-Fallback-scrubbed-CN", "externalid": "-Fallback-scrubbed-SCoknJlArxWa",
+        "fullname": "Fake-Emily Hines", "id": "3", "isinactive": "F", "lastmodifieddate":
+        "2/25/2025", "locationtype": "9120", "mainaddress": "4", "makeinventoryavailable":
+        "T", "name": "Fake-Kelly Davis", "nkey": "4", "override": "F", "parent": "9120",
+        "recordowner": "5028", "returnaddress": "3832", "state": "-Fallback-scrubbed-CN",
+        "subsidiary": "9120", "tranprefix": "9266", "zip": "84440"}, {"links": [],
+        "addressee": "Fake-Zachary Buchanan", "addrtext": "-Fallback-scrubbed-lIvtQMzXcomJSAHHczv",
+        "country": "-Fallback-scrubbed-ZM", "fullname": "Fake-Zachary Buchanan", "id":
+        "1", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress": "2",
+        "makeinventoryavailable": "T", "name": "Fake-Zachary Buchanan", "nkey": "2",
+        "override": "F", "recordowner": "9668", "subsidiary": "9120"}], "offset":
+        0, "totalResults": 15}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

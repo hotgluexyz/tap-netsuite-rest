@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: '{"q": "SELECT customsegment.internalid AS internalid, customsegment.balancing
+      AS balancing, customsegment.displayorder AS displayorder, customsegment.glimpact
+      AS glimpact, customsegment.internal AS internal, customsegment.isinactive AS
+      isinactive, customsegment.name AS name, customsegment.recordtype AS recordtype,
+      customsegment.scriptid AS scriptid FROM customsegment   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-XTMb", "href": "-Fallback-scrubbed-pXwyPuxbwrJsBJfrNvzVsNgFaBeYfIwDfbmjFplCiBREXeyuoNhCmKexeHHkULoqhuOZYwOLmIaHyOidrgJWrchAXmNMSaLQM"}],
+        "count": 2, "hasMore": false, "items": [{"links": [], "balancing": "F", "displayorder":
+        "3509", "glimpact": "T", "internal": "F", "internalid": "1", "isinactive":
+        "F", "name": "Fake-Darren Marshall", "recordtype": "6738", "scriptid": "CSEGDIST_CHANNEL"},
+        {"links": [], "balancing": "F", "displayorder": "9852", "glimpact": "F", "internal":
+        "F", "internalid": "2", "isinactive": "F", "name": "Fake-Natalie Woodward",
+        "recordtype": "3064", "scriptid": "CSEGTEST_VINI"}], "offset": 0, "totalResults":
+        2}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

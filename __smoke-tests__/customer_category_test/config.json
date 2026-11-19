@@ -1,0 +1,11 @@
+{
+  "start_date": "2000-01-01T00:00:00Z",
+  "remove_unauthorized_streams": false,
+  "ns_account": "1234567_SB1",
+  "ns_consumer_key": "fake-credential",
+  "ns_consumer_secret": "fake-credential",
+  "ns_token_key": "fake-credential",
+  "ns_token_secret": "fake-credential",
+  "end_date": null,
+  "use_input_catalog": false
+}

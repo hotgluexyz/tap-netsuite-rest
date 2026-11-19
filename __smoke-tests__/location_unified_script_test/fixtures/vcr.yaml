@@ -1,0 +1,108 @@
+interactions:
+- request:
+    body: '{"q": "SELECT \n        *\n         FROM location \n        INNER JOIN
+      locationMainAddress ma ON(location.mainaddress = ma.nkey)\n          \n    ORDER
+      BY location.lastmodifieddate ASC\n    "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-zSNn", "href": "-Fallback-scrubbed-slOVnLsoUShrkptfmtwelodFOtZwnyUvRAPnrFLhhaYSDFKkrATaTxqYssoeLqfrPFRbfecwyYVSqRggJsXMUrzyBIrpnMBHh"}],
+        "count": 15, "hasMore": false, "items": [{"links": [], "addressee": "Fake-Drew
+        Becker", "addrtext": "-Fallback-scrubbed-RARjlBoLQzAuwCbhsmKuh", "country":
+        "-Fallback-scrubbed-VC", "fullname": "Fake-Michael Kaiser", "id": "2", "isinactive":
+        "F", "lastmodifieddate": "10/21/2024", "mainaddress": "3", "makeinventoryavailable":
+        "T", "name": "Fake-Drew Becker", "nkey": "3", "override": "F", "parent": "1783",
+        "recordowner": "6931", "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Thomas
+        Jimenez", "addrtext": "-Fallback-scrubbed-KwjoytWxVKXFaLXSmMGn", "country":
+        "-Fallback-scrubbed-VC", "fullname": "Fake-Thomas Jimenez", "id": "4", "isinactive":
+        "F", "lastmodifieddate": "10/21/2024", "mainaddress": "5", "makeinventoryavailable":
+        "T", "name": "Fake-Thomas Jimenez", "nkey": "5", "override": "F", "recordowner":
+        "2751", "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Travis Quinn",
+        "addrtext": "-Fallback-scrubbed-oNZdJzKhqBcdTwWmriQWe", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Lisa Barton", "id": "5", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "6", "makeinventoryavailable": "T", "name": "Fake-Travis
+        Quinn", "nkey": "6", "override": "F", "parent": "4341", "recordowner": "4926",
+        "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Veronica Perez", "addrtext":
+        "-Fallback-scrubbed-IUZtGcBXIPODVQhoSEgOVTp", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Scott Chapman", "id": "6", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "7", "makeinventoryavailable": "T", "name": "Fake-Veronica
+        Perez", "nkey": "7", "override": "F", "parent": "4341", "recordowner": "1343",
+        "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Wesley Blake", "addrtext":
+        "-Fallback-scrubbed-YqjiqzkmnPQpJzKPKXPjm", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Mark Clark", "id": "7", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "8", "makeinventoryavailable": "T", "name": "Fake-Wesley
+        Blake", "nkey": "8", "override": "F", "parent": "4341", "recordowner": "9449",
+        "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Melissa Bailey", "addrtext":
+        "-Fallback-scrubbed-fxWssWrFRDzzXIWGGQsbmdfx", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Melanie Fisher", "id": "8", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "9", "makeinventoryavailable": "T", "name": "Fake-Melissa
+        Bailey", "nkey": "9", "override": "F", "parent": "4341", "recordowner": "5587",
+        "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Natasha Williams",
+        "addrtext": "-Fallback-scrubbed-GcJJjysbYwaXbsQIKvg", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Natasha Williams", "id": "9", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "10", "makeinventoryavailable": "T", "name":
+        "Fake-Natasha Williams", "nkey": "10", "override": "F", "recordowner": "1205",
+        "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Kyle Campbell", "addrtext":
+        "-Fallback-scrubbed-DTLRxjWQyiqUxUerztIyr", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Amanda Johnson", "id": "10", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "11", "makeinventoryavailable": "T", "name":
+        "Fake-Kyle Campbell", "nkey": "11", "override": "F", "parent": "5587", "recordowner":
+        "7604", "subsidiary": "1783"}, {"links": [], "addressee": "Fake-Marc Jacobs",
+        "addrtext": "-Fallback-scrubbed-mXJMWVKUggoOZHZHyKgoAlzUfgUQj", "country":
+        "-Fallback-scrubbed-VC", "fullname": "Fake-Anna Moreno", "id": "11", "isinactive":
+        "F", "lastmodifieddate": "10/21/2024", "mainaddress": "12", "makeinventoryavailable":
+        "T", "name": "Fake-Marc Jacobs", "nkey": "12", "override": "F", "parent":
+        "1205", "recordowner": "437", "subsidiary": "1783"}, {"links": [], "addressee":
+        "Fake-Alexander Butler", "addrtext": "-Fallback-scrubbed-PlOBAWPlxpZZtaolgrrgUxLOhO",
+        "country": "-Fallback-scrubbed-VC", "fullname": "Fake-Garrett Pittman", "id":
+        "12", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "13", "makeinventoryavailable": "T", "name": "Fake-Alexander Butler", "nkey":
+        "13", "override": "F", "parent": "1205", "recordowner": "6118", "subsidiary":
+        "1783"}, {"links": [], "addressee": "Fake-Keith Olsen", "addrtext": "-Fallback-scrubbed-RZGycdnUVQLtplWoPVyj",
+        "country": "-Fallback-scrubbed-VC", "fullname": "Fake-Lisa Taylor", "id":
+        "13", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "14", "makeinventoryavailable": "T", "name": "Fake-Keith Olsen", "nkey": "14",
+        "override": "F", "parent": "1205", "recordowner": "9984", "subsidiary": "1783"},
+        {"links": [], "addressee": "Fake-Anthony Miller", "addrtext": "-Fallback-scrubbed-vJBdfchYCIwaoVSlmLOratCkzC",
+        "country": "-Fallback-scrubbed-VC", "fullname": "Fake-Katie Mitchell", "id":
+        "14", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "15", "makeinventoryavailable": "T", "name": "Fake-Anthony Miller", "nkey":
+        "15", "override": "F", "parent": "5587", "recordowner": "1588", "subsidiary":
+        "1783"}, {"links": [], "addressee": "Fake-Brian Robinson DVM", "addrtext":
+        "-Fallback-scrubbed-CrPvZaIoobipStZmEvxcj", "country": "-Fallback-scrubbed-VC",
+        "fullname": "Fake-Christopher Banks", "id": "15", "isinactive": "F", "lastmodifieddate":
+        "10/21/2024", "mainaddress": "16", "makeinventoryavailable": "T", "name":
+        "Fake-Brian Robinson DVM", "nkey": "16", "override": "F", "parent": "5587",
+        "recordowner": "3824", "subsidiary": "1783"}, {"links": [], "addr1": "-Fallback-scrubbed-xDYhduZUkIfX",
+        "addrtext": "-Fallback-scrubbed-ZTnSujugBzhJIrKeCGNvoHAiwaXbIFfEltTdQUDaabRXdnzZPbRX",
+        "city": "Fake-Biancastad", "country": "-Fallback-scrubbed-VC", "dropdownstate":
+        "-Fallback-scrubbed-Ar", "externalid": "-Fallback-scrubbed-bVTuEBalcRXb",
+        "fullname": "Fake-Timothy Hawkins", "id": "3", "isinactive": "F", "lastmodifieddate":
+        "2/25/2025", "locationtype": "1783", "mainaddress": "4", "makeinventoryavailable":
+        "T", "name": "Fake-Taylor Williams", "nkey": "4", "override": "F", "parent":
+        "1783", "recordowner": "4341", "returnaddress": "3832", "state": "-Fallback-scrubbed-Ar",
+        "subsidiary": "1783", "tranprefix": "8106", "zip": "91161"}, {"links": [],
+        "addressee": "Fake-Dr. Crystal Davies", "addrtext": "-Fallback-scrubbed-rnYzUWupxbtwPvKUhpJ",
+        "country": "-Fallback-scrubbed-VC", "fullname": "Fake-Dr. Crystal Davies",
+        "id": "1", "isinactive": "F", "lastmodifieddate": "10/21/2024", "mainaddress":
+        "2", "makeinventoryavailable": "T", "name": "Fake-Dr. Crystal Davies", "nkey":
+        "2", "override": "F", "recordowner": "4221", "subsidiary": "1783"}], "offset":
+        0, "totalResults": 15}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,0 +1,14 @@
+{
+  "include_streams": [
+    "LocationsStream"
+  ],
+  "ignore_columns": {
+    "locations": [
+      "lastmodifieddate",
+      "parent",
+      "returnaddress",
+      "locationtype",
+      "externalid"
+    ]
+  }
+}

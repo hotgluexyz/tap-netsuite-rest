@@ -1,0 +1,311 @@
+interactions:
+- request:
+    body: '{"q": "SELECT employee.fulluserqtymax AS fulluserqtymax, employee.aliennumber
+      AS aliennumber, employee.birthdate AS birthdate, employee.wasfulluserhasaccess
+      AS wasfulluserhasaccess, employee.retailuserqty AS retailuserqty, employee.externalid
+      AS externalid, employee.entityid AS entityid, employee.releasedate AS releasedate,
+      employee.wasinactive AS wasinactive, employee.hiredate AS hiredate, employee.password
+      AS password, employee.mobilephone AS mobilephone, employee.approvallimit AS
+      approvallimit, employee.issupportrep AS issupportrep, employee.id AS id, employee.custentity3
+      AS custentity3, employee.fax AS fax, employee.custentity1 AS custentity1, employee.retailuserqtymax
+      AS retailuserqtymax, employee.initials AS initials, TO_CHAR (employee.datecreated,
+      ''YYYY-MM-DD HH24:MI:SS'') AS datecreated, employee.lastname AS lastname, employee.effectivedatemode
+      AS effectivedatemode, employee.btemplate AS btemplate, employee.socialsecuritynumber
+      AS socialsecuritynumber, employee.isempcenterqtyenforced AS isempcenterqtyenforced,
+      employee.phone AS phone, employee.requirepwdchange AS requirepwdchange, employee.purchaseorderapprovallimit
+      AS purchaseorderapprovallimit, employee.wasretailuserhasaccess AS wasretailuserhasaccess,
+      employee.salutation AS salutation, employee.lastreviewdate AS lastreviewdate,
+      employee.purchaseorderlimit AS purchaseorderlimit, employee.defaultbillingaddress
+      AS defaultbillingaddress, employee.defaultaddress AS defaultaddress, employee.isinactive
+      AS isinactive, employee.firstname AS firstname, employee.jobdescription AS jobdescription,
+      employee.homephone AS homephone, employee.gender AS gender, employee.i9verified
+      AS i9verified, employee.title AS title, employee.defaultshippingaddress AS defaultshippingaddress,
+      employee.giveaccess AS giveaccess, employee.fulluserqty AS fulluserqty, employee.empcenterqtymax
+      AS empcenterqtymax, employee.password2 AS password2, employee.wasempcenterhasaccess
+      AS wasempcenterhasaccess, employee.email AS email, employee.nextreviewdate AS
+      nextreviewdate, employee.comments AS comments, employee.accountnumber AS accountnumber,
+      employee.authworkdate AS authworkdate, TO_CHAR (employee.lastmodifieddate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS lastmodifieddate, employee.visaexpdate AS visaexpdate, employee.middlename
+      AS middlename, employee.issalesrep AS issalesrep, employee.isfulluserqtyenforced
+      AS isfulluserqtyenforced, employee.empcenterqty AS empcenterqty, employee.concurrentwebservicesuser
+      AS concurrentwebservicesuser, employee.customform AS customform, employee.expenselimit
+      AS expenselimit, employee.terminationbydeath AS terminationbydeath, employee.autoname
+      AS autoname, employee.officephone AS officephone, employee.sendemail AS sendemail,
+      employee.isretailuserqtyenforced AS isretailuserqtyenforced, employee.refname
+      AS refname, employee.links AS links, employee.location AS location, employee.defaultacctcorpcardexp
+      AS defaultacctcorpcardexp, employee.workcalendar AS workcalendar, employee.approver
+      AS approver, employee.residentstatus AS residentstatus, employee.employeestatus
+      AS employeestatus, employee.class AS class, employee.timeapprover AS timeapprover,
+      employee.corporatecards AS corporatecards, employee.addressbook AS addressbook,
+      employee.image AS image, employee.directdepositlist AS directdepositlist, employee.purchaseorderapprover
+      AS purchaseorderapprover, employee.currency AS currency, employee.billingclass
+      AS billingclass, employee.roles AS roles, employee.ethnicity AS ethnicity, employee.supervisor
+      AS supervisor, employee.department AS department, employee.currencylist AS currencylist,
+      employee.visatype AS visatype, employee.maritalstatus AS maritalstatus, employee.defaultexpensereportcurrency
+      AS defaultexpensereportcurrency, employee.template AS template, employee.subsidiary
+      AS subsidiary, employee.employeetype AS employeetype FROM employee   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"type": "-Fallback-scrubbed-weqkMquJHFZcrnruBvraXCuzlfNezTVTaoCcuxnbmrwiCsAwAcpzYnSNIl",
+        "title": "-Fallback-scrubbed-xyFhYzYvWtk", "status": 3945, "o:errorDetails":
+        [{"detail": "Invalid search query. Field ''sendemail'' for record ''employee''
+        was not found. Field ''effectivedatemode'' for record ''employee'' was not
+        found. Field ''empcenterqtymax'' for record ''employee'' was not found. Field
+        ''links'' for record ''employee'' was not found. Field ''wasempcenterhasaccess''
+        for record ''employee'' was not found. Field ''retailuserqtymax'' for record
+        ''employee'' was not found. Field ''directdepositlist'' for record ''employee''
+        was not found. Field ''defaultaddress'' for record ''employee'' was not found.
+        Field ''isretailuserqtyenforced'' for record ''employee'' was not found. Field
+        ''fulluserqty'' for record ''employee'' was not found. Field ''customform''
+        for record ''employee'' was not found. Field ''terminationbydeath'' for record
+        ''employee'' was not found. Field ''addressbook'' for record ''employee''
+        was not found. Field ''empcenterqty'' for record ''employee'' was not found.
+        Field ''autoname'' for record ''employee'' was not found. Field ''retailuserqty''
+        for record ''employee'' was not found. Field ''corporatecards'' for record
+        ''employee'' was not found. Field ''image'' for record ''employee'' was not
+        found. Field ''refname'' for record ''employee'' was not found. Field ''fulluserqtymax''
+        for record ''employee'' was not found. Field ''isfulluserqtyenforced'' for
+        record ''employee'' was not found. Field ''wasretailuserhasaccess'' for record
+        ''employee'' was not found. Field ''requirepwdchange'' for record ''employee''
+        was not found. Field ''password'' for record ''employee'' was not found. Field
+        ''password2'' for record ''employee'' was not found. Field ''currencylist''
+        for record ''employee'' was not found. Field ''wasfulluserhasaccess'' for
+        record ''employee'' was not found. Field ''wasinactive'' for record ''employee''
+        was not found. Field ''socialsecuritynumber'' for record ''employee'' was
+        not found. Field ''roles'' for record ''employee'' was not found. Field ''isempcenterqtyenforced''
+        for record ''employee'' was not found.", "o:errorQueryParam": "-Fallback-scrubbed-Q",
+        "o:errorCode": "-Fallback-scrubbed-hTYQoYaBKazbYqNTf"}]}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=error; charset=UTF-8
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"q": "SELECT employee.aliennumber AS aliennumber, employee.birthdate AS
+      birthdate, employee.externalid AS externalid, employee.entityid AS entityid,
+      employee.releasedate AS releasedate, employee.hiredate AS hiredate, employee.mobilephone
+      AS mobilephone, employee.approvallimit AS approvallimit, employee.issupportrep
+      AS issupportrep, employee.id AS id, employee.custentity3 AS custentity3, employee.fax
+      AS fax, employee.custentity1 AS custentity1, employee.initials AS initials,
+      TO_CHAR (employee.datecreated, ''YYYY-MM-DD HH24:MI:SS'') AS datecreated, employee.lastname
+      AS lastname, employee.btemplate AS btemplate, employee.phone AS phone, employee.purchaseorderapprovallimit
+      AS purchaseorderapprovallimit, employee.salutation AS salutation, employee.lastreviewdate
+      AS lastreviewdate, employee.purchaseorderlimit AS purchaseorderlimit, employee.defaultbillingaddress
+      AS defaultbillingaddress, employee.isinactive AS isinactive, employee.firstname
+      AS firstname, employee.jobdescription AS jobdescription, employee.homephone
+      AS homephone, employee.gender AS gender, employee.i9verified AS i9verified,
+      employee.title AS title, employee.defaultshippingaddress AS defaultshippingaddress,
+      employee.giveaccess AS giveaccess, employee.email AS email, employee.nextreviewdate
+      AS nextreviewdate, employee.comments AS comments, employee.accountnumber AS
+      accountnumber, employee.authworkdate AS authworkdate, TO_CHAR (employee.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, employee.visaexpdate AS visaexpdate,
+      employee.middlename AS middlename, employee.issalesrep AS issalesrep, employee.concurrentwebservicesuser
+      AS concurrentwebservicesuser, employee.expenselimit AS expenselimit, employee.officephone
+      AS officephone, employee.location AS location, employee.defaultacctcorpcardexp
+      AS defaultacctcorpcardexp, employee.workcalendar AS workcalendar, employee.approver
+      AS approver, employee.residentstatus AS residentstatus, employee.employeestatus
+      AS employeestatus, employee.class AS class, employee.timeapprover AS timeapprover,
+      employee.purchaseorderapprover AS purchaseorderapprover, employee.currency AS
+      currency, employee.billingclass AS billingclass, employee.ethnicity AS ethnicity,
+      employee.supervisor AS supervisor, employee.department AS department, employee.visatype
+      AS visatype, employee.maritalstatus AS maritalstatus, employee.defaultexpensereportcurrency
+      AS defaultexpensereportcurrency, employee.template AS template, employee.subsidiary
+      AS subsidiary, employee.employeetype AS employeetype FROM employee   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"type": "-Fallback-scrubbed-weqkMquJHFZcrnruBvraXCuzlfNezTVTaoCcuxnbmrwiCsAwAcpzYnSNIl",
+        "title": "-Fallback-scrubbed-xyFhYzYvWtk", "status": 3945, "o:errorDetails":
+        [{"detail": "Invalid search query. field ''template''", "o:errorQueryParam":
+        "-Fallback-scrubbed-Q", "o:errorCode": "-Fallback-scrubbed-hTYQoYaBKazbYqNTf"}]}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=error; charset=UTF-8
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"q": "SELECT employee.aliennumber AS aliennumber, employee.birthdate AS
+      birthdate, employee.externalid AS externalid, employee.entityid AS entityid,
+      employee.releasedate AS releasedate, employee.hiredate AS hiredate, employee.mobilephone
+      AS mobilephone, employee.approvallimit AS approvallimit, employee.issupportrep
+      AS issupportrep, employee.id AS id, employee.custentity3 AS custentity3, employee.fax
+      AS fax, employee.custentity1 AS custentity1, employee.initials AS initials,
+      TO_CHAR (employee.datecreated, ''YYYY-MM-DD HH24:MI:SS'') AS datecreated, employee.lastname
+      AS lastname, employee.btemplate AS btemplate, employee.phone AS phone, employee.purchaseorderapprovallimit
+      AS purchaseorderapprovallimit, employee.salutation AS salutation, employee.lastreviewdate
+      AS lastreviewdate, employee.purchaseorderlimit AS purchaseorderlimit, employee.defaultbillingaddress
+      AS defaultbillingaddress, employee.isinactive AS isinactive, employee.firstname
+      AS firstname, employee.jobdescription AS jobdescription, employee.homephone
+      AS homephone, employee.gender AS gender, employee.i9verified AS i9verified,
+      employee.title AS title, employee.defaultshippingaddress AS defaultshippingaddress,
+      employee.giveaccess AS giveaccess, employee.email AS email, employee.nextreviewdate
+      AS nextreviewdate, employee.comments AS comments, employee.accountnumber AS
+      accountnumber, employee.authworkdate AS authworkdate, TO_CHAR (employee.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, employee.visaexpdate AS visaexpdate,
+      employee.middlename AS middlename, employee.issalesrep AS issalesrep, employee.concurrentwebservicesuser
+      AS concurrentwebservicesuser, employee.expenselimit AS expenselimit, employee.officephone
+      AS officephone, employee.location AS location, employee.defaultacctcorpcardexp
+      AS defaultacctcorpcardexp, employee.workcalendar AS workcalendar, employee.approver
+      AS approver, employee.residentstatus AS residentstatus, employee.employeestatus
+      AS employeestatus, employee.class AS class, employee.timeapprover AS timeapprover,
+      employee.purchaseorderapprover AS purchaseorderapprover, employee.currency AS
+      currency, employee.billingclass AS billingclass, employee.ethnicity AS ethnicity,
+      employee.supervisor AS supervisor, employee.department AS department, employee.visatype
+      AS visatype, employee.maritalstatus AS maritalstatus, employee.defaultexpensereportcurrency
+      AS defaultexpensereportcurrency, employee.subsidiary AS subsidiary, employee.employeetype
+      AS employeetype FROM employee   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-zmaH", "href": "-Fallback-scrubbed-PMykLfFyFqjmJzRmlcqpvNknOASDXxxvcrGuyAMUdVIIqOfLCIsQwqJNcnLbhaHGjmIFQUHUywALrFLElJfElhKlKcdZtUMgV"}],
+        "count": 14, "hasMore": false, "items": [{"links": [], "btemplate": "F", "concurrentwebservicesuser":
+        "F", "currency": "8448", "datecreated": "2025-04-16 14:17:44", "defaultexpensereportcurrency":
+        "8448", "email": "fake.rcarrillo@example.com", "entityid": "-Fallback-scrubbed-rbRLEQXNDbl",
+        "firstname": "Fake-Joel", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "12237", "initials":
+        "-Fallback-scrubbed-vD", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-04-16 14:17:44", "lastname": "Fake-Webb", "subsidiary":
+        "8448", "title": "-Fallback-scrubbed-ofYv", "workcalendar": "8448"}, {"links":
+        [], "btemplate": "F", "concurrentwebservicesuser": "F", "currency": "8448",
+        "datecreated": "2024-10-25 13:15:28", "defaultexpensereportcurrency": "8448",
+        "email": "fake.jamesanderson@example.com", "entityid": "-Fallback-scrubbed-JktaWxwnPLksp",
+        "firstname": "Fake-Jordan", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "F", "hiredate": "2000-01-01", "i9verified": "F", "id": "310", "initials":
+        "-Fallback-scrubbed-Zn", "isinactive": "T", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-03-12 11:24:55", "lastname": "Fake-Herrera",
+        "subsidiary": "8448", "workcalendar": "8448"}, {"links": [], "btemplate":
+        "F", "concurrentwebservicesuser": "F", "currency": "8448", "datecreated":
+        "2025-03-19 10:28:56", "defaultexpensereportcurrency": "8448", "email": "fake.william88@example.com",
+        "entityid": "-Fallback-scrubbed-wmXuGqRksPLr", "firstname": "Fake-David",
+        "gender": "-Fallback-scrubbed-A", "giveaccess": "T", "hiredate": "2000-01-01",
+        "i9verified": "F", "id": "9936", "initials": "-Fallback-scrubbed-Gr", "isinactive":
+        "T", "issalesrep": "F", "issupportrep": "F", "lastmodifieddate": "2025-04-16
+        14:15:16", "lastname": "Fake-Dyer", "salutation": "-Fallback-scrubbed-Ofi",
+        "subsidiary": "8448", "workcalendar": "8448"}, {"links": [], "btemplate":
+        "F", "concurrentwebservicesuser": "F", "currency": "8448", "datecreated":
+        "2025-02-20 08:57:04", "defaultexpensereportcurrency": "8448", "email": "fake.melissaalvarez@example.com",
+        "entityid": "-Fallback-scrubbed-RXQDRdTMu", "firstname": "Fake-John", "gender":
+        "-Fallback-scrubbed-A", "giveaccess": "T", "hiredate": "2000-01-01", "i9verified":
+        "F", "id": "4532", "initials": "-Fallback-scrubbed-CS", "isinactive": "F",
+        "issalesrep": "F", "issupportrep": "F", "lastmodifieddate": "2025-02-20 08:57:04",
+        "lastname": "Fake-Butler", "subsidiary": "8448", "workcalendar": "8448"},
+        {"links": [], "btemplate": "F", "concurrentwebservicesuser": "F", "currency":
+        "8448", "datecreated": "2025-02-10 14:48:31", "defaultexpensereportcurrency":
+        "8448", "email": "fake.neil52@example.com", "entityid": "-Fallback-scrubbed-wKswPBYEbkqnB",
+        "firstname": "Fake-Johnny", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "2525", "initials":
+        "-Fallback-scrubbed-nV", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-03-12 16:08:27", "lastname": "Fake-Massey",
+        "subsidiary": "8448", "workcalendar": "8448"}, {"links": [], "btemplate":
+        "F", "concurrentwebservicesuser": "F", "currency": "8448", "datecreated":
+        "2025-02-11 12:39:10", "defaultexpensereportcurrency": "8448", "email": "fake.williamharris@example.com",
+        "entityid": "-Fallback-scrubbed-qgUSxuGvZjFO", "firstname": "Fake-Brent",
+        "gender": "-Fallback-scrubbed-A", "giveaccess": "T", "hiredate": "2000-01-01",
+        "i9verified": "F", "id": "2526", "initials": "-Fallback-scrubbed-GS", "isinactive":
+        "F", "issalesrep": "T", "issupportrep": "F", "lastmodifieddate": "2025-02-20
+        12:27:33", "lastname": "Fake-Johnson", "subsidiary": "8448", "title": "-Fallback-scrubbed-ZzBfaUJy",
+        "workcalendar": "8448"}, {"links": [], "btemplate": "F", "concurrentwebservicesuser":
+        "F", "currency": "8448", "datecreated": "2024-10-21 13:11:17", "defaultexpensereportcurrency":
+        "8448", "email": "fake.nelsonamy@example.com", "entityid": "-Fallback-scrubbed-HuhxcHTaHTIESX",
+        "firstname": "Fake-Michael", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "F", "hiredate": "2000-01-01", "i9verified": "F", "id": "6", "initials": "-Fallback-scrubbed-IW",
+        "isinactive": "T", "issalesrep": "F", "issupportrep": "F", "lastmodifieddate":
+        "2025-04-16 14:15:23", "lastname": "Fake-Jenkins", "subsidiary": "8448", "workcalendar":
+        "8448"}, {"links": [], "btemplate": "F", "concurrentwebservicesuser": "F",
+        "currency": "8448", "datecreated": "2024-08-21 20:06:28", "defaultexpensereportcurrency":
+        "8448", "email": "fake.whitney08@example.com", "entityid": "-Fallback-scrubbed-VXiGjQTLrjnJ",
+        "firstname": "Fake-Melissa", "giveaccess": "T", "i9verified": "F", "id": "-5",
+        "initials": "-Fallback-scrubbed-nc", "isinactive": "F", "issalesrep": "F",
+        "issupportrep": "F", "lastmodifieddate": "2024-08-21 20:06:28", "lastname":
+        "Fake-Stephens", "purchaseorderlimit": "8319", "subsidiary": "8448"}, {"links":
+        [], "btemplate": "F", "concurrentwebservicesuser": "F", "currency": "8448",
+        "datecreated": "2025-05-23 12:31:02", "defaultexpensereportcurrency": "8448",
+        "email": "fake.paigejackson@example.com", "entityid": "-Fallback-scrubbed-SNAGbqpzNuUTsoB",
+        "firstname": "Fake-Bryan", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "12239", "initials":
+        "-Fallback-scrubbed-NPe", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-05-23 12:31:04", "lastname": "Fake-Osborne",
+        "middlename": "-Fallback-scrubbed-b", "subsidiary": "8448", "workcalendar":
+        "8448"}, {"links": [], "btemplate": "F", "concurrentwebservicesuser": "F",
+        "currency": "8448", "datecreated": "2024-11-11 09:05:54", "defaultexpensereportcurrency":
+        "8448", "email": "fake.kayladaniels@example.com", "employeestatus": "4292",
+        "employeetype": "5143", "entityid": "-Fallback-scrubbed-SjgHhvWHswvu", "firstname":
+        "Fake-Rebecca", "gender": "-Fallback-scrubbed-A", "giveaccess": "T", "hiredate":
+        "2000-01-01", "i9verified": "F", "id": "315", "initials": "-Fallback-scrubbed-Sf",
+        "isinactive": "F", "issalesrep": "T", "issupportrep": "F", "lastmodifieddate":
+        "2025-02-10 13:56:36", "lastname": "Fake-Torres", "subsidiary": "8448", "workcalendar":
+        "8448"}, {"links": [], "btemplate": "F", "concurrentwebservicesuser": "F",
+        "currency": "8448", "datecreated": "2025-05-23 12:32:29", "defaultexpensereportcurrency":
+        "8448", "email": "fake.jensenkatelyn@example.com", "entityid": "-Fallback-scrubbed-UkKAlWUvXvXsX",
+        "firstname": "Fake-Robin", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "12240", "initials":
+        "-Fallback-scrubbed-Ip", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-05-23 12:32:29", "lastname": "Fake-Rivera",
+        "subsidiary": "8448", "workcalendar": "8448"}, {"links": [], "btemplate":
+        "F", "concurrentwebservicesuser": "F", "currency": "8448", "datecreated":
+        "2024-10-18 07:29:36", "defaultexpensereportcurrency": "8448", "email": "fake.heatherhoffman@example.com",
+        "entityid": "-Fallback-scrubbed-IhARUpcmG", "firstname": "Fake-Brittany",
+        "gender": "-Fallback-scrubbed-A", "giveaccess": "F", "hiredate": "2000-01-01",
+        "i9verified": "F", "id": "3", "initials": "-Fallback-scrubbed-EK", "isinactive":
+        "T", "issalesrep": "F", "issupportrep": "F", "lastmodifieddate": "2025-04-16
+        14:15:25", "lastname": "Fake-Davis", "subsidiary": "8448", "workcalendar":
+        "8448"}, {"links": [], "btemplate": "F", "concurrentwebservicesuser": "F",
+        "currency": "8448", "datecreated": "2025-03-12 11:32:13", "defaultexpensereportcurrency":
+        "8448", "email": "fake.jsloan@example.com", "entityid": "-Fallback-scrubbed-HWpcUrJxdwQJaW",
+        "firstname": "Fake-Harry", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "8934", "initials":
+        "-Fallback-scrubbed-uN", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-03-12 11:32:13", "lastname": "Fake-Hill", "subsidiary":
+        "8448", "title": "-Fallback-scrubbed-HRiu", "workcalendar": "8448"}, {"links":
+        [], "btemplate": "F", "concurrentwebservicesuser": "F", "currency": "8448",
+        "datecreated": "2025-03-14 06:32:11", "defaultexpensereportcurrency": "8448",
+        "email": "fake.joshua59@example.com", "entityid": "-Fallback-scrubbed-BqvcsdejhrRqAsxUz",
+        "firstname": "Fake-Sandra", "gender": "-Fallback-scrubbed-A", "giveaccess":
+        "T", "hiredate": "2000-01-01", "i9verified": "F", "id": "8935", "initials":
+        "-Fallback-scrubbed-Kj", "isinactive": "F", "issalesrep": "F", "issupportrep":
+        "F", "lastmodifieddate": "2025-03-14 06:32:11", "lastname": "Fake-Holmes",
+        "subsidiary": "8448", "workcalendar": "8448"}], "offset": 0, "totalResults":
+        14}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

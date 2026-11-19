@@ -1,0 +1,283 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/schema+json
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: GET
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/record/v1/metadata-catalog/job
+  response:
+    body:
+      string: '{"type": "object", "properties": {"defaultAddress": {"title": "Default
+        Address", "type": "string", "description": "Enter a default address.", "nullable":
+        true}, "isInactive": {"title": "Inactive", "type": "boolean", "description":
+        "If you check this box, then the project no longer appears on the list of
+        projects. You cannot edit or make any changes to a project marked inactive.
+        Check the Show Inactives box at the bottom of the List page to view inactive
+        projects."}, "openingBalance": {"title": "Opening Balance", "type": "number",
+        "format": "double", "nullable": true}, "externalId": {"title": "External ID",
+        "type": "string", "description": "Returns the job&apos;s external ID, if one
+        is assigned.", "nullable": true}, "entityId": {"title": "Project", "type":
+        "string", "description": "NetSuite copies the Project Name as the Project
+        ID. If you want to manually enter a Project ID, clear the Auto check box next
+        to the field and enter the ID. If you use Auto-Generated Numbering, then NetSuite
+        creates this ID automatically based on your settings at Setup &gt; Company
+        Set Up Auto-Generated Numbers.", "nullable": true}, "startdate": {"title":
+        "Start Date", "type": "string", "description": "Enter the estimated date work
+        will start on the project. You can change this date at any time during the
+        life of the project. NetSuite schedules all project tasks without predecessors
+        to start on this date.", "format": "date", "nullable": true}, "entityStatus":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string", "enum": ["1", "2", "3", "4", "5"]}, "refName": {"title": "Reference
+        Name", "type": "string"}}}, "defaultShippingAddress": {"title": "Default Shipping
+        Address", "type": "string", "description": "Returns the default shipping address
+        for the job, if one is entered on the customer record.", "nullable": true},
+        "estimatedrevenue": {"title": "Estimated Revenue", "type": "number", "description":
+        "Enter the projected revenue to be billed for work performed on this project.",
+        "format": "double", "nullable": true}, "estimatedcost": {"title": "Estimated
+        Cost", "type": "number", "description": "Enter the projected cost to complete
+        this project.", "format": "double", "nullable": true}, "id": {"title": "Internal
+        ID", "type": "string", "description": "Returns the job&apos;s internal ID.",
+        "nullable": true}, "custentity3": {"title": "Custom-Test-Field2", "type":
+        "integer", "format": "int64", "nullable": true, "x-ns-custom-field": true},
+        "custentity1": {"title": "additional_notes", "type": "string", "nullable":
+        true, "x-ns-custom-field": true}, "projectedEndDate": {"title": "Estimated
+        End Date", "type": "string", "description": "Enter the date you plan to complete
+        all project tasks by. You can update this date at any time. If you use Advanced
+        Projects, NetSuite calculates an end date based on the project schedule and
+        displays it in Calculated End Date.", "format": "date", "nullable": true},
+        "openingBalanceDate": {"title": "Opening Balance Date", "type": "string",
+        "format": "date", "nullable": true}, "comments": {"title": "Comments", "type":
+        "string", "description": "Enter other information about this project.", "nullable":
+        true}, "accountNumber": {"title": "Account", "type": "string", "description":
+        "If you assign account numbers for projects, enter the account number here.",
+        "nullable": true}, "percentComplete": {"title": "Rev Rec Override Percent
+        Complete", "type": "number", "description": "Enter an estimate of how much
+        of the total project work is complete. This percentage is not calculated or
+        updated by NetSuite.", "format": "double", "nullable": true}, "lastModifiedDate":
+        {"title": "Last Modified Date", "type": "string", "description": "Returns
+        the date on which the job record was last modified.", "format": "date-time",
+        "nullable": true}, "dateCreated": {"title": "Date Created", "type": "string",
+        "description": "Indicates the date the project was created.", "format": "date-time",
+        "nullable": true}, "endDate": {"title": "Actual End Date", "type": "string",
+        "description": "Enter the date the project is finished.", "format": "date",
+        "nullable": true}, "customForm": {"type": "object", "properties": {"id": {"title":
+        "Internal identifier", "type": "string", "enum": ["4", "5", "-3"]}, "refName":
+        {"title": "Reference Name", "type": "string"}}}, "companyName": {"title":
+        "Project Name", "type": "string", "description": "Enter a unique project name.
+        If you use Auto-Generated Numbering, it is important to enter the project
+        name here because the Project ID does not include the project name.", "nullable":
+        true}, "autoName": {"title": "Auto", "type": "boolean", "description": "Clear
+        the box to manually enter an ID for this project. If you leave the box checked,
+        then NetSuite copies the project name to create the ID."}, "refName": {"title":
+        "Reference Name", "type": "string"}, "links": {"title": "Links", "type": "array",
+        "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "addressBook": {"type": "object", "properties": {"links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"type": "object", "properties": {"links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "internalId": {"title": "Internal ID", "type": "integer", "format": "int64",
+        "nullable": true}, "defaultBilling": {"title": "Default Billing", "type":
+        "boolean"}, "lastModifiedDate": {"title": "Last Modified Date", "type": "string",
+        "format": "date-time", "nullable": true}, "addressBookAddress_text": {"title":
+        "Address", "type": "string", "nullable": true}, "defaultShipping": {"title":
+        "Default Shipping", "type": "boolean"}, "isResidential": {"title": "Residential
+        Address", "type": "boolean"}, "label": {"title": "Label", "type": "string",
+        "nullable": true}, "id": {"type": "integer", "format": "int64", "nullable":
+        true}, "addressId": {"title": "Internal ID", "type": "string", "nullable":
+        true}, "refName": {"title": "Reference Name", "type": "string"}, "addressBookAddress":
+        {"type": "object", "properties": {"zip": {"title": "Zip", "type": "string",
+        "nullable": true}, "country": {"type": "object", "properties": {"id": {"title":
+        "Internal identifier", "type": "string", "enum": ["PR", "PS", "PT", "PW",
+        "PY", "QA", "AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR",
+        "AS", "AT", "RE", "AU", "AW", "AX", "AZ", "RO", "BA", "BB", "RS", "BD", "BE",
+        "RU", "BF", "BG", "RW", "BH", "BI", "BJ", "BL", "BM", "BN", "BO", "SA", "BQ",
+        "SB", "BR", "SC", "BS", "SD", "BT", "SE", "BV", "SG", "BW", "SH", "SI", "BY",
+        "SJ", "BZ", "SK", "SL", "SM", "SN", "SO", "CA", "SR", "CC", "SS", "CD", "ST",
+        "CF", "SV", "CG", "CH", "SX", "CI", "SY", "SZ", "CK", "CL", "CM", "CN", "CO",
+        "CR", "TC", "CS", "TD", "CU", "TF", "CV", "TG", "CW", "TH", "CX", "CY", "TJ",
+        "CZ", "TK", "TL", "TM", "TN", "TO", "TR", "TT", "DE", "TV", "TW", "DJ", "TZ",
+        "DK", "DM", "DO", "UA", "UG", "DZ", "UM", "EA", "EC", "US", "EE", "EG", "EH",
+        "UY", "UZ", "VA", "ER", "VC", "ES", "ET", "VE", "VG", "VI", "VN", "VU", "FI",
+        "FJ", "FK", "FM", "FO", "FR", "WF", "GA", "GB", "WS", "GD", "GE", "GF", "GG",
+        "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY",
+        "XK", "HK", "HM", "HN", "HR", "HT", "YE", "HU", "IC", "ID", "YT", "IE", "IL",
+        "IM", "IN", "IO", "ZA", "IQ", "IR", "IS", "IT", "ZM", "JE", "ZW", "JM", "JO",
+        "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA",
+        "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD",
+        "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS",
+        "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI",
+        "NL", "NO", "NP", "NR", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK",
+        "PL", "PM", "PN"]}, "refName": {"title": "Reference Name", "type": "string"}}},
+        "addr2": {"title": "Address 2", "type": "string", "nullable": true}, "city":
+        {"title": "City", "type": "string", "nullable": true}, "addr1": {"title":
+        "Address 1", "type": "string", "nullable": true}, "lastModifiedDate": {"title":
+        "Last Modified Date", "type": "string", "format": "date-time", "nullable":
+        true}, "addr3": {"title": "Address 3", "type": "string", "nullable": true},
+        "externalId": {"title": "External ID", "type": "string", "nullable": true},
+        "addrPhone": {"title": "Phone", "type": "string", "nullable": true}, "addressee":
+        {"title": "Addressee", "type": "string", "nullable": true}, "attention": {"title":
+        "Attention", "type": "string", "nullable": true}, "override": {"title": "Override",
+        "type": "boolean"}, "state": {"title": "State/Province", "type": "string",
+        "nullable": true}, "addrText": {"title": "Address", "type": "string", "nullable":
+        true}, "refName": {"title": "Reference Name", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}},
+        "x-ns-filterable": []}}, "x-ns-sublistkey": {"present": true, "value": {"new":
+        ["internalId"], "existing": ["internalId"]}}, "x-ns-filterable": []}}}}, "subsidiary":
+        {"type": "object", "properties": {"id": {"title": "Internal identifier", "type":
+        "string"}, "refName": {"title": "Reference Name", "type": "string"}, "externalId":
+        {"title": "External identifier", "type": "string"}, "links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "currency": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "contact": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "contactList": {"type": "object", "properties": {"links": {"title": "Links",
+        "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}},
+        "totalResults": {"title": "Total Results", "type": "integer", "format": "int64",
+        "readOnly": true}, "count": {"title": "Count", "type": "integer", "format":
+        "int64", "readOnly": true}, "hasMore": {"title": "Has More Results", "type":
+        "boolean", "readOnly": true}, "offset": {"title": "Query Offset", "type":
+        "integer", "format": "int64", "readOnly": true}, "items": {"type": "array",
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/contact"}}}},
+        "jobType": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "parent": {"type": "object", "properties": {"id": {"title": "Internal identifier",
+        "type": "string"}, "refName": {"title": "Reference Name", "type": "string"},
+        "externalId": {"title": "External identifier", "type": "string"}, "links":
+        {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "custentitylocation": {"type": "object", "properties": {"id": {"title": "Internal
+        identifier", "type": "string"}, "refName": {"title": "Reference Name", "type":
+        "string"}, "externalId": {"title": "External identifier", "type": "string"},
+        "links": {"title": "Links", "type": "array", "readOnly": true, "items": {"$ref":
+        "/services/rest/record/v1/metadata-catalog/nsLink"}}}}, "category": {"type":
+        "object", "properties": {"id": {"title": "Internal identifier", "type": "string"},
+        "refName": {"title": "Reference Name", "type": "string"}, "externalId": {"title":
+        "External identifier", "type": "string"}, "links": {"title": "Links", "type":
+        "array", "readOnly": true, "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}},
+        "openingBalanceAccount": {"type": "object", "properties": {"id": {"title":
+        "Internal identifier", "type": "string"}, "refName": {"title": "Reference
+        Name", "type": "string"}, "externalId": {"title": "External identifier", "type":
+        "string"}, "links": {"title": "Links", "type": "array", "readOnly": true,
+        "items": {"$ref": "/services/rest/record/v1/metadata-catalog/nsLink"}}}}},
+        "$schema": "http://json-schema.org/draft-06/hyper-schema#", "x-ns-filterable":
+        ["isInactive", "parent", "contactList", "externalId", "entityId", "startdate",
+        "entityStatus", "defaultShippingAddress", "estimatedrevenue", "contact", "estimatedcost",
+        "currency", "id", "custentity3", "custentity1", "projectedEndDate", "custentitylocation",
+        "comments", "accountNumber", "percentComplete", "lastModifiedDate", "dateCreated",
+        "jobType", "endDate", "companyName", "category"]}'
+    headers:
+      Content-Type:
+      - application/schema+json; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT job.defaultaddress AS defaultaddress, job.isinactive AS isinactive,
+      job.openingbalance AS openingbalance, job.externalid AS externalid, job.entityid
+      AS entityid, job.startdate AS startdate, job.entitystatus AS entitystatus, job.defaultshippingaddress
+      AS defaultshippingaddress, job.estimatedrevenue AS estimatedrevenue, job.estimatedcost
+      AS estimatedcost, job.id AS id, job.custentity3 AS custentity3, job.custentity1
+      AS custentity1, job.projectedenddate AS projectedenddate, job.openingbalancedate
+      AS openingbalancedate, job.custentitylocation AS custentitylocation, job.comments
+      AS comments, job.accountnumber AS accountnumber, job.percentcomplete AS percentcomplete,
+      TO_CHAR (job.lastmodifieddate, ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate,
+      TO_CHAR (job.datecreated, ''YYYY-MM-DD HH24:MI:SS'') AS datecreated, job.enddate
+      AS enddate, job.customform AS customform, job.companyname AS companyname, job.autoname
+      AS autoname, job.addressbook AS
+      addressbook, job.subsidiary AS subsidiary, job.currency AS currency, job.contact
+      AS contact, job.contactlist AS contactlist, job.jobtype AS jobtype, job.parent
+      AS parent, job.category AS category, job.openingbalanceaccount AS openingbalanceaccount
+      FROM job   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"type": "-Fallback-scrubbed-KclvnAqtxMMmQDBizwgujVSpwDNtFvacmekwgrVkqezwonObmQHHRqdvre",
+        "title": "-Fallback-scrubbed-GHlolnQDGVz", "status": 3453, "o:errorDetails":
+        [{"detail": "Invalid search query. Field ''openingbalance'' for record ''job'' was not found. Field
+        ''openingbalancedate'' for record ''job'' was not found. Field ''addressbook''
+        for record ''job'' was not found. Field ''autoname'' for record ''job'' was
+        not found. Field ''customform''
+        for record ''job'' was not found. Field ''defaultaddress'' for record ''job''
+        was not found. Field ''openingbalanceaccount'' for record ''job'' was not
+        found.", "o:errorQueryParam": "-Fallback-scrubbed-C", "o:errorCode": "-Fallback-scrubbed-oJYFgZShhMTAWetsw"}]}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=error; charset=UTF-8
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"q": "SELECT job.isinactive AS isinactive, job.externalid AS externalid,
+      job.entityid AS entityid, job.startdate AS startdate, job.entitystatus AS entitystatus,
+      job.defaultshippingaddress AS defaultshippingaddress, job.estimatedrevenue AS
+      estimatedrevenue, job.estimatedcost AS estimatedcost, job.id AS id, job.custentity3
+      AS custentity3, job.custentity1 AS custentity1, job.projectedenddate AS projectedenddate,
+      job.custentitylocation AS custentitylocation, job.comments AS comments, job.accountnumber
+      AS accountnumber, job.percentcomplete AS percentcomplete, TO_CHAR (job.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, TO_CHAR (job.datecreated, ''YYYY-MM-DD
+      HH24:MI:SS'') AS datecreated, job.enddate AS enddate, job.companyname AS companyname,
+      job.subsidiary AS subsidiary, job.currency AS currency, job.contact AS contact,
+      job.contactlist AS contactlist, job.jobtype AS jobtype, job.parent AS parent,
+      job.category AS category FROM job   "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-nlZA", "href": "-Fallback-scrubbed-KyzdErJjODjXGNfBLjGcqXWRRJzIWWnsciUaDwjGsvnwLJTHfQjxYmAgMCcKtFUMgIVzRyoQzcctYzUqjjwuNehakMqAoxqav"}],
+        "count": 3, "hasMore": false, "items": [{"links": [], "currency": "6267",
+        "datecreated": "2025-04-24 12:54:14", "defaultshippingaddress": "13041", "enddate":
+        "4/24/2025", "entityid": "8585", "id": "12238", "isinactive": "F", "lastmodifieddate":
+        "2025-07-16 16:39:12", "parent": "2784", "startdate": "4/24/2025", "subsidiary":
+        "6267"}, {"links": [], "companyname": "Fake-Porter-Clark", "currency": "6267",
+        "datecreated": "2024-10-25 06:54:23", "defaultshippingaddress": "317", "enddate":
+        "10/25/2024", "entityid": "5054", "entitystatus": "5653", "id": "308", "isinactive":
+        "F", "lastmodifieddate": "2024-10-25 06:54:24", "parent": "1310", "startdate":
+        "10/25/2024", "subsidiary": "6267"}, {"links": [], "companyname": "Fake-Curry-Mitchell",
+        "currency": "6267", "custentitylocation": "6267", "datecreated": "2025-07-16
+        16:43:56", "defaultshippingaddress": "17642", "entityid": "Fake-Curry-Mitchell",
+        "entitystatus": "6267", "id": "15141", "isinactive": "F", "lastmodifieddate":
+        "2025-07-17 16:54:50", "parent": "7227", "startdate": "7/16/2025", "subsidiary":
+        "6267"}], "offset": 0, "totalResults": 3}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

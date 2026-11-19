@@ -1,0 +1,12 @@
+{
+  "include_streams": [
+    "CustomersStream"
+  ],
+  "ignore_columns": {
+    "customers": [
+      "defaultbillingaddress",
+      "parent",
+      "subsidiary"
+    ]
+  }
+}

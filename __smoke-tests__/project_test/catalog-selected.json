@@ -1,0 +1,623 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "projects",
+      "replication_method": "FULL_TABLE",
+      "key_properties": [
+        "id"
+      ],
+      "schema": {
+        "properties": {
+          "defaultaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isinactive": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "openingbalance": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "externalid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entityid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "startdate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entitystatus": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "defaultshippingaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "estimatedrevenue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "estimatedcost": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custentity3": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "custentity1": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "projectedenddate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "openingbalancedate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custentitylocation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "comments": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accountnumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "percentcomplete": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "lastmodifieddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "datecreated": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "enddate": {
+            "format": "date",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "customform": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "companyname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "autoname": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "refname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "links": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ]
+          },
+          "addressbook": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "subsidiary": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "contact": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "contactlist": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "jobtype": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "parent": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "category": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "openingbalanceaccount": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "projects",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isinactive"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "openingbalance"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "externalid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "entityid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "startdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "entitystatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "defaultshippingaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estimatedrevenue"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "estimatedcost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "inclusion": "automatic",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custentity3"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custentity1"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "projectedenddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "openingbalancedate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custentitylocation"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "comments"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "accountnumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "percentcomplete"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastmodifieddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "datecreated"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "enddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "customform"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "companyname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "autoname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "refname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "links"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "addressbook"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "subsidiary"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "currency"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "contact"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "contactlist"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "jobtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "parent"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "category"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "openingbalanceaccount"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "table-key-properties": [
+              "id"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

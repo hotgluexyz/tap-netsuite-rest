@@ -1,0 +1,11 @@
+{
+  "include_streams": [
+    "ClassificationStream"
+  ],
+  "ignore_columns": {
+    "classification": [
+      "parent",
+      "externalid"
+    ]
+  }
+}

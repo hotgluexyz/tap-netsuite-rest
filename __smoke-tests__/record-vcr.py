@@ -1,0 +1,135 @@
+"""Offline-replayable NetSuite smoke cases and narrowly scoped scrub rules."""
+
+import base64
+import json
+import re
+from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
+
+import xmltodict
+from hotglue_smoke_test.vcr.tap import VCRTapTestRunner
+
+
+class NetsuiteTestRunner(VCRTapTestRunner):
+    """Replay NetSuite fixtures offline and scrub newly recorded customer data."""
+
+    FAKE_ATTACHMENT = "%PDF-1.4\n% Fake smoke-test attachment\n%%EOF\n"
+
+    # Pagination controls, relational IDs used in child queries, and dynamic field types.
+    PRESERVE_KEYS = {
+        "count", "hasMore", "offset", "totalResults", "id", "internalid", "transaction",
+        "mainaddress", "returnaddress",
+        "defaultshippingaddress", "defaultbillingaddress", "scriptid", "fieldvaluetype",
+        "fieldtype", "file_id", "recordid", "nkey", "accountingbook",
+        "subscriptionchangeorder", "subscriptionline", "detail",
+    }
+    PRESERVE_VALUES = {"T", "F", True, False}
+    TOKEN_KEYS = [
+        *VCRTapTestRunner.TOKEN_KEYS, "consumerKey", "signature", "nonce",
+        "download_token", "redirect_uri",
+    ]
+    FILTER_HEADERS = [
+        *VCRTapTestRunner.FILTER_HEADERS, "cookie", "x-n-operationid", "x-n-identifier",
+        "report-to", "nel", "content-disposition",
+    ]
+
+    def module(self):
+        """Return the tap's importable module name."""
+        return "tap_netsuite_rest"
+
+    def launch(self):
+        """Import and run the tap after the harness configures its environment."""
+        from tap_netsuite_rest.tap import TapNetSuite
+
+        TapNetSuite.cli()
+
+    def sanitize_cassette(self):
+        """Normalize the replay config alongside the captured cassette."""
+        super().sanitize_cassette()
+        config_path = Path(self.test_case_path) / "config.json"
+        config = json.loads(config_path.read_text())
+        for key in ("bill_attachments_restlet_url", "bill_attachments_suitelet_url"):
+            if key in config:
+                config[key] = self.scrub_uri(config[key])
+        config_path.write_text(json.dumps(config, indent=4) + "\n")
+
+    def before_record_response(self, response):
+        """Replace opaque attachment bytes before the sanitizer's UTF-8 decode."""
+        response = super().before_record_response(response)
+        body = response["body"]["string"]
+        if isinstance(body, bytes):
+            try:
+                text = body.decode("utf-8")
+            except UnicodeDecodeError:
+                text = ""
+            if not text.lstrip().startswith(("{", "[", "<")):
+                response["body"]["string"] = self.FAKE_ATTACHMENT.encode("utf-8")
+        return response
+
+    def scrub_uri(self, uri):
+        """Replace attachment download tokens."""
+        parts = urlsplit(uri)
+        query = re.sub(r"(?i)(download_token|ns-at|h)=([^&]*)", r"\1=fake-token", parts.query)
+        return urlunsplit(parts._replace(query=query))
+
+    def scrub_response_body(self, body, faker, cache):
+        """Fake response data while retaining protocol and incremental controls."""
+        # Attachment bytes are opaque to the tap: replace the document, not its filename/ID.
+        if not body.lstrip().startswith(("{", "[", "<")):
+            return self.FAKE_ATTACHMENT
+        scrubbed = super().scrub_response_body(body, faker, cache)
+        if body.lstrip().startswith(("{", "[")):
+            return json.dumps(self.restore_controls(json.loads(body), json.loads(scrubbed)))
+        scrubbed = xmltodict.unparse(self.restore_controls(
+            xmltodict.parse(body), xmltodict.parse(scrubbed)
+        ))
+        # SOAP content is base64 encoded; random strings are not a valid replacement file.
+        return re.sub(
+            r"(<docFileCab:content[^>]*>).*?(</docFileCab:content>)",
+            lambda m: m[1] + base64.b64encode(b"Fake smoke-test attachment\n").decode() + m[2],
+            scrubbed, flags=re.DOTALL,
+        )
+
+    def restore_controls(self, original, scrubbed, in_address=False):
+        """Restore structural values needed for pagination, schemas, and fallbacks."""
+        if isinstance(original, dict):
+            # Vendor metadata schemas drive types and field selection, not customer records.
+            if "properties" in original and original.get("type") == "object":
+                return original
+            restored = {
+                key: self.restore_controls(
+                    value, scrubbed[key],
+                    in_address or key.lower() in {
+                        "billingaddress", "shippingaddress", "addr1", "addr2", "addr3",
+                        "addrtext", "addressee",
+                    },
+                )
+                for key, value in original.items()
+            }
+            for key, value in original.items():
+                if key == "download_token":
+                    restored[key] = "fake-token"
+                # Personal dates are not transaction/replication boundaries.
+                if key.lower() in {"hiredate", "birthdate", "dateofbirth", "dob"} and value:
+                    restored[key] = "2000-01-01"
+                # Keep numeric address references, not formatted addresses.
+                if (
+                    key.lower() in {"billingaddress", "shippingaddress"}
+                    and isinstance(value, (str, int))
+                    and re.fullmatch(r"-?\d+", str(value))
+                ):
+                    restored[key] = value
+            return restored
+        if isinstance(original, list):
+            return [self.restore_controls(value, fake, in_address)
+                    for value, fake in zip(original, scrubbed)]
+        # NetSuite infers dates as incremental boundaries; address text is never one.
+        if not in_address and isinstance(original, str) and re.fullmatch(
+            r"(?:\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4})(?:[T ].*)?", original
+        ):
+            return original
+        return scrubbed
+
+
+if __name__ == "__main__":
+    NetsuiteTestRunner.main()
