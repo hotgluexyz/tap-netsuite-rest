@@ -48,21 +48,10 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         super().sanitize_cassette()
         config_path = Path(self.test_case_path) / "config.json"
         config = json.loads(config_path.read_text())
-        config["ns_account"] = "1234567_SB1"
         for key in ("bill_attachments_restlet_url", "bill_attachments_suitelet_url"):
             if key in config:
                 config[key] = self.scrub_uri(config[key])
         config_path.write_text(json.dumps(config, indent=4) + "\n")
-
-    def before_record_request(self, request):
-        """Remove SOAP credentials not covered by HTTP header filtering."""
-        # SOAP authentication lives in XML, rather than the filtered Authorization header.
-        if request.body and b"<tokenPassport>" in request.body:
-            request.body = re.sub(
-                rb"<tokenPassport>.*?</tokenPassport>",
-                b"<tokenPassport>REDACTED</tokenPassport>", request.body, flags=re.DOTALL,
-            )
-        return request
 
     def before_record_response(self, response):
         """Replace opaque attachment bytes before the sanitizer's UTF-8 decode."""
@@ -78,12 +67,10 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         return response
 
     def scrub_uri(self, uri):
-        """Replace account hostnames and attachment authentication tokens."""
+        """Replace attachment download tokens."""
         parts = urlsplit(uri)
-        host = re.sub(r"^[^.]+(?=\.(?:suitetalk\.api|restlets\.api|app|extforms)\.netsuite\.com$)",
-                      "1234567-sb1", parts.netloc)
         query = re.sub(r"(?i)(download_token|ns-at|h)=([^&]*)", r"\1=fake-token", parts.query)
-        return urlunsplit((parts.scheme, host, parts.path, query, parts.fragment))
+        return urlunsplit(parts._replace(query=query))
 
     def scrub_response_body(self, body, faker, cache):
         """Fake response data while retaining protocol and incremental controls."""
