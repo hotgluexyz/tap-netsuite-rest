@@ -23,6 +23,7 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         "fieldtype", "file_id", "recordid", "nkey", "accountingbook",
         "subscriptionchangeorder", "subscriptionline", "detail",
     }
+    PRESERVE_VALUES = {"T", "F", True, False}
     TOKEN_KEYS = [
         *VCRTapTestRunner.TOKEN_KEYS, "consumerKey", "signature", "nonce",
         "download_token", "redirect_uri",
@@ -135,8 +136,6 @@ class NetsuiteTestRunner(VCRTapTestRunner):
         if isinstance(original, list):
             return [self.restore_controls(value, fake, in_address)
                     for value, fake in zip(original, scrubbed)]
-        if isinstance(original, bool) or original in ("T", "F"):
-            return original
         # NetSuite infers dates as incremental boundaries; address text is never one.
         if not in_address and isinstance(original, str) and re.fullmatch(
             r"(?:\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4})(?:[T ].*)?", original

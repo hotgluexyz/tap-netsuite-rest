@@ -22,6 +22,6 @@ jobs:
       - name: Install tap and smoke harness
         run: |
           python -m venv .venv
-          .venv/bin/pip install . "hotglue-smoke-test==1.1.9"
+          .venv/bin/pip install . "hotglue-smoke-test==1.1.10"
       - name: Replay colocated scrubbed fixtures
         run: .venv/bin/hotglue-smoke-test run
