@@ -1,0 +1,16 @@
+{
+  "include_streams": [
+    "BillsStream",
+    "BillExpensesStream"
+  ],
+  "ignore_columns": {
+    "bill_expenses": [
+      "linecreateddate"
+    ]
+  },
+  "sort_config": {
+    "bill_expenses": [
+      "uniquekey"
+    ]
+  }
+}

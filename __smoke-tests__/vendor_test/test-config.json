@@ -1,0 +1,10 @@
+{
+  "include_streams": [
+    "VendorStream"
+  ],
+  "ignore_columns": {
+    "vendor": [
+      "defaultbillingaddress"
+    ]
+  }
+}

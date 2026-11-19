@@ -1,0 +1,32 @@
+{
+  "filters_version": "1.0.0",
+  "streams": {
+    "bills": {
+      "group_1": {
+        "clause_1_1": {
+          "field": "transaction.entity",
+          "operator": "IN",
+          "value": [
+            "27",
+            "62"
+          ]
+        },
+        "operator_1_1": "OR",
+        "clause_1_2": {
+          "field": "Entity.altname",
+          "operator": "IN",
+          "value": [
+            "Fake-Entity-0",
+            "Fake-Entity-1"
+          ]
+        }
+      },
+      "operator_1": "AND",
+      "clause_2": {
+        "field": "BUILTIN.DF(transaction.status)",
+        "operator": "EQ",
+        "value": "Bill : Open"
+      }
+    }
+  }
+}

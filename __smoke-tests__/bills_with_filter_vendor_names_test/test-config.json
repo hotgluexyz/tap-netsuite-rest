@@ -1,0 +1,13 @@
+{
+  "include_streams": [
+    "BillsStream"
+  ],
+  "ignore_columns": {
+    "bills": [
+      "daysopen",
+      "daysoverduesearch",
+      "foreignamountpaidnopost",
+      "prevdate"
+    ]
+  }
+}

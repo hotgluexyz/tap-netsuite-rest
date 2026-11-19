@@ -1,0 +1,423 @@
+interactions:
+- request:
+    body: '{"q": "SELECT *,TO_CHAR (transaction.discountdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS discountdate,TO_CHAR (transaction.taxpointdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS taxpointdate,TO_CHAR (transaction.nextbilldate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS nextbilldate,TO_CHAR (transaction.duedate, ''YYYY-MM-DD HH24:MI:SS'') AS
+      duedate,TO_CHAR (transaction.enddate, ''YYYY-MM-DD HH24:MI:SS'') AS enddate,TO_CHAR
+      (transaction.actualshipdate, ''YYYY-MM-DD HH24:MI:SS'') AS actualshipdate,TO_CHAR
+      (transaction.closedate, ''YYYY-MM-DD HH24:MI:SS'') AS closedate,TO_CHAR (transaction.shipdate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS shipdate,TO_CHAR (transaction.prevdate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS prevdate,TO_CHAR (transaction.createddate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS createddate,TO_CHAR (transaction.startdate, ''YYYY-MM-DD HH24:MI:SS'') AS
+      startdate,TO_CHAR (transaction.trandate, ''YYYY-MM-DD HH24:MI:SS'') AS trandate,TO_CHAR
+      (transaction.lastmodifieddate, ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate,TO_CHAR
+      (transaction.discountdate, ''YYYY-MM-DD HH24:MI:SS'') AS discountdate,TO_CHAR
+      (transaction.taxpointdate, ''YYYY-MM-DD HH24:MI:SS'') AS taxpointdate,TO_CHAR
+      (transaction.nextbilldate, ''YYYY-MM-DD HH24:MI:SS'') AS nextbilldate,TO_CHAR
+      (transaction.duedate, ''YYYY-MM-DD HH24:MI:SS'') AS duedate,TO_CHAR (transaction.enddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS enddate,TO_CHAR (transaction.actualshipdate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS actualshipdate,TO_CHAR (transaction.closedate, ''YYYY-MM-DD
+      HH24:MI:SS'') AS closedate,TO_CHAR (transaction.shipdate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS shipdate,TO_CHAR (transaction.prevdate, ''YYYY-MM-DD HH24:MI:SS'') AS prevdate,TO_CHAR
+      (transaction.createddate, ''YYYY-MM-DD HH24:MI:SS'') AS createddate,TO_CHAR
+      (transaction.startdate, ''YYYY-MM-DD HH24:MI:SS'') AS startdate,TO_CHAR (transaction.trandate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS trandate,TO_CHAR (transaction.lastmodifieddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS lastmodifieddate, BUILTIN.DF(status) status FROM
+      transaction  WHERE transaction.lastmodifieddate>TO_TIMESTAMP(''2025-02-13 00:00:00'',
+      ''YYYY-MM-DD HH24:MI:SS'') AND type = ''VendCred'' ORDER BY transaction.lastmodifieddate"}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-dIQm", "href": "-Fallback-scrubbed-xpbqurohGCTkxeAYfGRLQGBiiscGnXxHADfmcShZIoLMxUlgliZbpeTiVBkhSuYlkHYvZwlOcSPfUYavxrLSrTgFYkBdVYrhi"}],
+        "count": 4, "hasMore": false, "items": [{"links": [], "abbrevtype": "-Fallback-scrubbed-kzQAQzXr",
+        "balsegstatus": "9490", "basetotalaftertaxes": "2119", "billingaddress": "12841",
+        "billingstatus": "T", "createdby": "6056", "createddate": "2025-06-02 06:45:13",
+        "currency": "1432", "custbody1": "-Fallback-scrubbed-sQyr", "custbody2": "3943",
+        "custbody3": "F", "custbody_ste_rcs_applicable": "F", "custbody_ste_use_tax":
+        "F", "customform": "8646", "customtype": "9998", "daysopen": "1432", "daysoverduesearch":
+        "3826", "duedate": "2025-06-10 00:00:00", "entity": "7839", "exchangerate":
+        "1432", "foreignpaymentamountunused": "2119", "foreignpaymentamountused":
+        "3826", "foreignpaymentamountusednopost": "3826", "foreigntotal": "2119",
+        "id": "21144", "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "1284",
+        "lastmodifieddate": "2025-06-02 08:53:32", "legacytax": "F", "memorized":
+        "F", "needsbill": "F", "nexus": "1432", "number": "3826", "ordpicked": "F",
+        "paymenthold": "F", "posting": "T", "postingperiod": "983", "prevdate": "2025-06-02
+        00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-gsmBHygtXxfL",
+        "status": "-Fallback-scrubbed-yZGBHqtXGfwsdKQtmBbwfZj", "subsidiarytaxregnum":
+        "5905", "taxdetailsoverride": "F", "taxpointdate": "2025-06-02 00:00:00",
+        "taxpointdateoverride": "F", "taxregoverride": "F", "tobeprinted": "F", "totalaftertaxes":
+        "2119", "trandate": "2025-06-02 00:00:00", "trandisplayname": "-Fallback-scrubbed-JnZFGTJBWnRvnjjxkMFIxsuXOvT",
+        "tranid": "-Fallback-scrubbed-UsCoVhWIHQzoFH", "transactionnumber": "-Fallback-scrubbed-XLnpVLtLB",
+        "type": "-Fallback-scrubbed-oikozaSp", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-kzQAQzXr",
+        "balsegstatus": "9490", "basetotalaftertaxes": "5745", "billingaddress": "12841",
+        "billingstatus": "T", "createdby": "6056", "createddate": "2025-06-02 09:00:11",
+        "currency": "1432", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "8646", "customtype": "9998", "daysopen":
+        "1432", "entity": "7839", "exchangerate": "1432", "foreignpaymentamountunused":
+        "5745", "foreignpaymentamountused": "3826", "foreignpaymentamountusednopost":
+        "3826", "foreigntotal": "5745", "id": "21347", "isfinchrg": "F", "isreversal":
+        "F", "lastmodifiedby": "2051", "lastmodifieddate": "2025-06-02 09:54:36",
+        "legacytax": "F", "memorized": "F", "needsbill": "F", "nexus": "1432", "number":
+        "3826", "ordpicked": "F", "paymenthold": "F", "posting": "T", "postingperiod":
+        "983", "prevdate": "2025-06-02 00:00:00", "printedpickingticket": "F", "recordtype":
+        "-Fallback-scrubbed-gsmBHygtXxfL", "status": "-Fallback-scrubbed-yZGBHqtXGfwsdKQtmBbwfZj",
+        "subsidiarytaxregnum": "5905", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-06-02 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "5745", "trandate": "2025-06-02 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-wRBbwzpXrnBCJgbKdOnBRdxacae", "tranid":
+        "-Fallback-scrubbed-xclPwbGgvGjabQ", "transactionnumber": "-Fallback-scrubbed-uRVSlNmnm",
+        "type": "-Fallback-scrubbed-oikozaSp", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-kzQAQzXr",
+        "balsegstatus": "9490", "basetotalaftertaxes": "3244", "billingstatus": "T",
+        "createdby": "5913", "createddate": "2025-06-02 11:49:46", "currency": "1432",
+        "custbody2": "1900", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "8646", "customtype": "9998", "daysopen":
+        "742", "daysoverduesearch": "3826", "duedate": "2025-06-05 00:00:00", "entity":
+        "8927", "exchangerate": "1432", "externalid": "-Fallback-scrubbed-UwWsBKjhPRDy",
+        "foreignpaymentamountunused": "3244", "foreignpaymentamountused": "3826",
+        "foreignpaymentamountusednopost": "3826", "foreigntotal": "3244", "id": "21448",
+        "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "5913", "lastmodifieddate":
+        "2025-06-02 12:38:41", "legacytax": "F", "memo": "-Fallback-scrubbed-UGdRGKkWlUuTbi",
+        "memorized": "F", "needsbill": "F", "nexus": "1432", "number": "3826", "ordpicked":
+        "F", "paymenthold": "F", "posting": "T", "postingperiod": "4278", "prevdate":
+        "2025-05-27 00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-gsmBHygtXxfL",
+        "source": "-Fallback-scrubbed-IHIuDknYMETEVVt", "status": "-Fallback-scrubbed-yZGBHqtXGfwsdKQtmBbwfZj",
+        "subsidiarytaxregnum": "5905", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-05-27 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "3244", "trandate": "2025-05-27 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-zuseBHWbENntASosahfIUyFTu", "tranid":
+        "-Fallback-scrubbed-UwWsBKjhPRDy", "transactionnumber": "-Fallback-scrubbed-kIhbSEBUO",
+        "type": "-Fallback-scrubbed-oikozaSp", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}, {"links": [], "abbrevtype": "-Fallback-scrubbed-kzQAQzXr",
+        "balsegstatus": "9490", "basetotalaftertaxes": "3244", "billingstatus": "T",
+        "createdby": "5913", "createddate": "2025-06-02 12:30:47", "currency": "1432",
+        "custbody2": "1900", "custbody3": "F", "custbody_ste_rcs_applicable": "F",
+        "custbody_ste_use_tax": "F", "customform": "8646", "customtype": "9998", "daysopen":
+        "2348", "daysoverduesearch": "3826", "duedate": "2025-06-06 00:00:00", "entity":
+        "8927", "exchangerate": "1432", "externalid": "-Fallback-scrubbed-NglGwnsyNoje",
+        "foreignpaymentamountunused": "3244", "foreignpaymentamountused": "3826",
+        "foreignpaymentamountusednopost": "3826", "foreigntotal": "3244", "id": "21548",
+        "isfinchrg": "F", "isreversal": "F", "lastmodifiedby": "5913", "lastmodifieddate":
+        "2025-06-02 12:52:27", "legacytax": "F", "memo": "-Fallback-scrubbed-QwKmMJkmwrXGxREo",
+        "memorized": "F", "needsbill": "F", "nexus": "1432", "number": "3826", "ordpicked":
+        "F", "paymenthold": "F", "posting": "T", "postingperiod": "4278", "prevdate":
+        "2025-05-27 00:00:00", "printedpickingticket": "F", "recordtype": "-Fallback-scrubbed-gsmBHygtXxfL",
+        "source": "-Fallback-scrubbed-IHIuDknYMETEVVt", "status": "-Fallback-scrubbed-yZGBHqtXGfwsdKQtmBbwfZj",
+        "subsidiarytaxregnum": "5905", "taxdetailsoverride": "F", "taxpointdate":
+        "2025-05-28 00:00:00", "taxpointdateoverride": "F", "taxregoverride": "F",
+        "tobeprinted": "F", "totalaftertaxes": "3244", "trandate": "2025-05-28 00:00:00",
+        "trandisplayname": "-Fallback-scrubbed-WDmKkXINiiXzESfBGyYJbPDry", "tranid":
+        "-Fallback-scrubbed-NglGwnsyNoje", "transactionnumber": "-Fallback-scrubbed-mNSaklGkl",
+        "type": "-Fallback-scrubbed-oikozaSp", "userevenuearrangement": "F", "visibletocustomer":
+        "T", "void": "F", "voided": "F"}], "offset": 0, "totalResults": 4}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"q": "SELECT transactionline.item AS item, transactionline.quantity AS
+      quantity, transactionline.rate AS rate, transactionline.linesequencenumber AS
+      linesequencenumber, transactionline.matchbilltoreceipt AS matchbilltoreceipt,
+      transactionline.isbillable AS isbillable, transactionline.processedbyrevcommit
+      AS processedbyrevcommit, transactionline.foreignamountunpaid AS foreignamountunpaid,
+      TO_CHAR (transactionline.closedate, ''YYYY-MM-DD HH24:MI:SS'') AS closedate,
+      transactionline.quantityrejected AS quantityrejected, transactionline.isfullyshipped
+      AS isfullyshipped, transactionline.periodclosed AS periodclosed, TO_CHAR (transactionline.linecreateddate,
+      ''YYYY-MM-DD HH24:MI:SS'') AS linecreateddate, transactionline.department AS
+      department, transactionline.hasfulfillableitems AS hasfulfillableitems, transactionline.mainline
+      AS mainline, transactionline.foreignamountpaidnopost AS foreignamountpaidnopost,
+      transactionline.documentnumber AS documentnumber, transactionline.class AS class,
+      transactionline.iscogs AS iscogs, transactionline.taxline AS taxline, transactionline.expenseaccount
+      AS expenseaccount, transactionline.netamount AS netamount, transactionline.fxamountlinked
+      AS fxamountlinked, transactionline.memo AS memo, transactionline.cleared AS
+      cleared, transactionline.isclosed AS isclosed, transactionline.hascostline AS
+      hascostline, transactionline.donotprintline AS donotprintline, transactionline.commitmentfirm
+      AS commitmentfirm, TO_CHAR (transactionline.duedate, ''YYYY-MM-DD HH24:MI:SS'')
+      AS duedate, transactionline.creditforeignamount AS creditforeignamount, transactionline.id
+      AS id, transactionline.quantityshiprecv AS quantityshiprecv, transactionline.location
+      AS location, transactionline.createdfrom AS createdfrom, transactionline.foreignamountpaid
+      AS foreignamountpaid, transactionline.kitcomponent AS kitcomponent, TO_CHAR
+      (transactionline.linelastmodifieddate, ''YYYY-MM-DD HH24:MI:SS'') AS linelastmodifieddate,
+      transactionline.accountinglinetype AS accountinglinetype, transactionline.subsidiary
+      AS subsidiary, transactionline.isfxvariance AS isfxvariance, transactionline.quantitybilled
+      AS quantitybilled, transactionline.debitforeignamount AS debitforeignamount,
+      transactionline.oldcommitmentfirm AS oldcommitmentfirm, transactionline.foreignamount
+      AS foreignamount, transactionline.isinventoryaffecting AS isinventoryaffecting,
+      transactionline.transactiondiscount AS transactiondiscount, transactionline.transaction
+      AS transaction, transactionline.donotdisplayline AS donotdisplayline, transactionline.uniquekey
+      AS uniquekey, transactionline.entity AS entity FROM transactionline  WHERE mainline
+      = ''F'' AND (hascostline = ''T'' OR accountinglinetype = ''EXPENSE'') and transaction
+      IN (''21144'', ''21347'', ''21448'', ''21548'') "}'
+    headers:
+      Accept:
+      - !!binary |
+        Ki8q
+      Content-Type:
+      - !!binary |
+        YXBwbGljYXRpb24vanNvbg==
+      Prefer:
+      - !!binary |
+        dHJhbnNpZW50
+    method: POST
+    uri: https://1234567-sb1.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?offset=0&limit=1000
+  response:
+    body:
+      string: '{"links": [{"rel": "-Fallback-scrubbed-dIQm", "href": "-Fallback-scrubbed-xpbqurohGCTkxeAYfGRLQGBiiscGnXxHADfmcShZIoLMxUlgliZbpeTiVBkhSuYlkHYvZwlOcSPfUYavxrLSrTgFYkBdVYrhi"}],
+        "count": 19, "hasMore": false, "items": [{"links": [], "accountinglinetype":
+        "-Fallback-scrubbed-WHEkp", "class": "8305", "cleared": "F", "commitmentfirm":
+        "F", "creditforeignamount": "3323", "department": "742", "donotdisplayline":
+        "F", "donotprintline": "F", "expenseaccount": "8337", "foreignamount": "7174",
+        "fxamountlinked": "3826", "hascostline": "T", "hasfulfillableitems": "F",
+        "id": "3", "isbillable": "F", "isclosed": "F", "iscogs": "F", "isfullyshipped":
+        "F", "isfxvariance": "F", "isinventoryaffecting": "T", "item": "7721", "kitcomponent":
+        "F", "linecreateddate": "2025-06-02 12:30:47", "linelastmodifieddate": "2025-06-02
+        13:00:02", "linesequencenumber": "1029", "location": "8305", "mainline": "F",
+        "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-IlvLNGFhFVoUVWeScq",
+        "netamount": "7174", "oldcommitmentfirm": "F", "quantity": "1284", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3826",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21548", "transactiondiscount":
+        "F", "uniquekey": "645"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "5905", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "3850", "department": "7876", "donotdisplayline": "F", "donotprintline": "F",
+        "entity": "3171", "expenseaccount": "8337", "foreignamount": "5104", "fxamountlinked":
+        "3826", "hascostline": "T", "hasfulfillableitems": "F", "id": "3", "isbillable":
+        "T", "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance":
+        "F", "isinventoryaffecting": "T", "item": "2143", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 08:40:06", "linelastmodifieddate": "2025-06-02 08:53:32", "linesequencenumber":
+        "8305", "location": "3323", "mainline": "F", "matchbilltoreceipt": "F", "netamount":
+        "5104", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled": "3826",
+        "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3850", "subsidiary":
+        "1432", "taxline": "F", "transaction": "21144", "transactiondiscount": "F",
+        "uniquekey": "9996"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "8305", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "3323", "department": "742", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "7174", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "3", "isbillable": "F",
+        "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F",
+        "isinventoryaffecting": "T", "item": "7721", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 11:49:47", "linelastmodifieddate": "2025-06-02 12:38:42", "linesequencenumber":
+        "1029", "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-IlvLNGFhFVoUVWeScq", "netamount": "7174", "oldcommitmentfirm":
+        "F", "quantity": "1284", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "3826", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21448", "transactiondiscount": "F", "uniquekey": "614"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp", "class": "1029",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "1537", "department":
+        "7876", "donotdisplayline": "F", "donotprintline": "F", "expenseaccount":
+        "8337", "foreignamount": "248", "fxamountlinked": "3826", "hascostline": "T",
+        "hasfulfillableitems": "F", "id": "4", "isbillable": "F", "isclosed": "F",
+        "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F", "isinventoryaffecting":
+        "T", "item": "693", "kitcomponent": "F", "linecreateddate": "2025-06-02 12:30:47",
+        "linelastmodifieddate": "2025-06-02 13:00:02", "linesequencenumber": "742",
+        "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-FFCLKjeHLBwgUxEHHf",
+        "netamount": "248", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3826",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21548", "transactiondiscount":
+        "F", "uniquekey": "4294"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "1029", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "1537", "department": "7876", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "248", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "4", "isbillable": "F",
+        "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F",
+        "isinventoryaffecting": "T", "item": "693", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 11:49:47", "linelastmodifieddate": "2025-06-02 12:38:42", "linesequencenumber":
+        "742", "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-FFCLKjeHLBwgUxEHHf", "netamount": "248", "oldcommitmentfirm":
+        "F", "quantity": "9998", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "3826", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21448", "transactiondiscount": "F", "uniquekey": "4599"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp", "class": "1432",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "2183", "department":
+        "9490", "donotdisplayline": "F", "donotprintline": "F", "expenseaccount":
+        "8337", "foreignamount": "6694", "fxamountlinked": "3826", "hascostline":
+        "T", "hasfulfillableitems": "F", "id": "5", "isbillable": "F", "isclosed":
+        "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F", "isinventoryaffecting":
+        "T", "item": "2916", "kitcomponent": "F", "linecreateddate": "2025-06-02 12:30:47",
+        "linelastmodifieddate": "2025-06-02 13:00:02", "linesequencenumber": "3323",
+        "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-BecWGWyQclyCwfqnUV",
+        "netamount": "6694", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3826",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21548", "transactiondiscount":
+        "F", "uniquekey": "2569"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "1432", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "2183", "department": "9490", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "6694", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "5", "isbillable": "F",
+        "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F",
+        "isinventoryaffecting": "T", "item": "2916", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 11:49:47", "linelastmodifieddate": "2025-06-02 12:38:42", "linesequencenumber":
+        "3323", "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-BecWGWyQclyCwfqnUV", "netamount": "6694", "oldcommitmentfirm":
+        "F", "quantity": "9998", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "3826", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21448", "transactiondiscount": "F", "uniquekey": "3364"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp", "class": "5905",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "7223", "department":
+        "2348", "donotdisplayline": "F", "donotprintline": "F", "entity": "7882",
+        "expenseaccount": "8337", "foreignamount": "540", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "6", "isbillable": "T",
+        "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F",
+        "isinventoryaffecting": "T", "item": "9567", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 08:43:19", "linelastmodifieddate": "2025-06-02 08:53:32", "linesequencenumber":
+        "2348", "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-vyKWYAmX", "netamount": "540", "oldcommitmentfirm": "F",
+        "quantity": "9998", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "7223", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21144", "transactiondiscount": "F", "uniquekey": "9808"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp", "class": "1432",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "9316", "department":
+        "9490", "donotdisplayline": "F", "donotprintline": "F", "expenseaccount":
+        "8337", "foreignamount": "4720", "fxamountlinked": "3826", "hascostline":
+        "T", "hasfulfillableitems": "F", "id": "7", "isbillable": "F", "isclosed":
+        "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F", "isinventoryaffecting":
+        "T", "item": "2916", "kitcomponent": "F", "linecreateddate": "2025-06-02 12:52:28",
+        "linelastmodifieddate": "2025-06-02 13:00:02", "linesequencenumber": "2245",
+        "location": "844", "mainline": "F", "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-XnDwfbLLtZtocrUTBR",
+        "netamount": "4720", "oldcommitmentfirm": "F", "quantity": "6105", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3826",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21548", "transactiondiscount":
+        "F", "uniquekey": "2061"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "8305", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "9940", "department": "844", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "6835", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "8", "isbillable": "F",
+        "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F",
+        "isinventoryaffecting": "T", "item": "7568", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 09:31:09", "linelastmodifieddate": "2025-06-02 11:00:03", "linesequencenumber":
+        "1029", "location": "2823", "mainline": "F", "matchbilltoreceipt": "F", "netamount":
+        "6835", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled": "3826",
+        "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "9940", "subsidiary":
+        "1432", "taxline": "F", "transaction": "21347", "transactiondiscount": "F",
+        "uniquekey": "5463"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-rdOhBCD",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "3416", "donotdisplayline":
+        "F", "donotprintline": "F", "entity": "7882", "expenseaccount": "7716", "foreignamount":
+        "9554", "fxamountlinked": "3826", "hascostline": "F", "hasfulfillableitems":
+        "F", "id": "9", "isbillable": "T", "isclosed": "F", "iscogs": "F", "isfullyshipped":
+        "F", "isfxvariance": "F", "isinventoryaffecting": "F", "item": "742", "kitcomponent":
+        "F", "linecreateddate": "2025-06-02 08:50:24", "linelastmodifieddate": "2025-06-02
+        08:53:32", "linesequencenumber": "844", "location": "8305", "mainline": "F",
+        "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-GGlKrXmmbyYzPZOOwCRz",
+        "netamount": "9554", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "3416",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21144", "transactiondiscount":
+        "F", "uniquekey": "8446"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-rdOhBCD",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "8401", "donotdisplayline":
+        "F", "donotprintline": "F", "expenseaccount": "4690", "foreignamount": "3753",
+        "fxamountlinked": "3826", "hascostline": "F", "hasfulfillableitems": "F",
+        "id": "10", "isbillable": "F", "isclosed": "F", "iscogs": "F", "isfullyshipped":
+        "F", "isfxvariance": "F", "isinventoryaffecting": "F", "item": "2348", "kitcomponent":
+        "F", "linecreateddate": "2025-06-02 08:53:32", "linelastmodifieddate": "2025-06-02
+        08:53:32", "linesequencenumber": "3323", "mainline": "F", "matchbilltoreceipt":
+        "F", "memo": "-Fallback-scrubbed-cVImtHtrcmkruyhmbfK", "netamount": "3753",
+        "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled": "3826", "quantityrejected":
+        "3826", "quantityshiprecv": "3826", "rate": "8401", "subsidiary": "1432",
+        "taxline": "F", "transaction": "21144", "transactiondiscount": "F", "uniquekey":
+        "2401"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-rdOhBCD",
+        "class": "8305", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "3416", "department": "844", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "7716", "foreignamount": "9554", "fxamountlinked": "3826",
+        "hascostline": "F", "hasfulfillableitems": "F", "id": "11", "isbillable":
+        "F", "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance":
+        "F", "isinventoryaffecting": "F", "item": "742", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 09:38:10", "linelastmodifieddate": "2025-06-02 11:00:03", "linesequencenumber":
+        "742", "location": "2823", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-GGlKrXmmbyYzPZOOwCRz", "netamount": "9554", "oldcommitmentfirm":
+        "F", "quantity": "9998", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "3416", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21347", "transactiondiscount": "F", "uniquekey": "8187"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-rdOhBCD", "cleared":
+        "F", "commitmentfirm": "F", "creditforeignamount": "4821", "donotdisplayline":
+        "F", "donotprintline": "F", "expenseaccount": "9702", "foreignamount": "3232",
+        "fxamountlinked": "3826", "hascostline": "F", "hasfulfillableitems": "F",
+        "id": "12", "isbillable": "F", "isclosed": "F", "iscogs": "F", "isfullyshipped":
+        "F", "isfxvariance": "F", "isinventoryaffecting": "F", "item": "1819", "kitcomponent":
+        "F", "linecreateddate": "2025-06-02 09:39:21", "linelastmodifieddate": "2025-06-02
+        11:00:03", "linesequencenumber": "7876", "mainline": "F", "matchbilltoreceipt":
+        "F", "memo": "-Fallback-scrubbed-qdyKiIAKcoYPaC", "netamount": "3232", "oldcommitmentfirm":
+        "F", "quantity": "9998", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "4821", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21347", "transactiondiscount": "F", "uniquekey": "1580"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp", "class": "1432",
+        "cleared": "F", "commitmentfirm": "F", "creditforeignamount": "2823", "department":
+        "7876", "donotdisplayline": "F", "donotprintline": "F", "expenseaccount":
+        "8337", "foreignamount": "1187", "fxamountlinked": "3826", "hascostline":
+        "T", "hasfulfillableitems": "F", "id": "13", "isbillable": "F", "isclosed":
+        "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F", "isinventoryaffecting":
+        "T", "item": "2152", "kitcomponent": "F", "linecreateddate": "2025-06-02 09:40:15",
+        "linelastmodifieddate": "2025-06-02 11:00:03", "linesequencenumber": "844",
+        "location": "3323", "mainline": "F", "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-jTbYNnWdHQCHwOYIFNT",
+        "netamount": "1187", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "2823",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21347", "transactiondiscount":
+        "F", "uniquekey": "999"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "1432", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "9316", "department": "9490", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "4720", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "13", "isbillable":
+        "F", "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance":
+        "F", "isinventoryaffecting": "T", "item": "2916", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 12:38:42", "linelastmodifieddate": "2025-06-02 13:00:02", "linesequencenumber":
+        "2245", "location": "844", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-XnDwfbLLtZtocrUTBR", "netamount": "4720", "oldcommitmentfirm":
+        "F", "quantity": "6105", "quantitybilled": "3826", "quantityrejected": "3826",
+        "quantityshiprecv": "3826", "rate": "3826", "subsidiary": "1432", "taxline":
+        "F", "transaction": "21448", "transactiondiscount": "F", "uniquekey": "1319"},
+        {"links": [], "accountinglinetype": "-Fallback-scrubbed-rdOhBCD", "cleared":
+        "F", "commitmentfirm": "F", "creditforeignamount": "8464", "donotdisplayline":
+        "F", "donotprintline": "F", "expenseaccount": "8367", "foreignamount": "6789",
+        "fxamountlinked": "3826", "hascostline": "F", "hasfulfillableitems": "F",
+        "id": "16", "isbillable": "F", "isclosed": "F", "iscogs": "F", "isfullyshipped":
+        "F", "isfxvariance": "F", "isinventoryaffecting": "F", "item": "6442", "kitcomponent":
+        "F", "linecreateddate": "2025-06-02 09:48:47", "linelastmodifieddate": "2025-06-02
+        11:00:03", "linesequencenumber": "2823", "location": "8305", "mainline": "F",
+        "matchbilltoreceipt": "F", "memo": "-Fallback-scrubbed-cWKFpdaXNDjhKVdqgwIR",
+        "netamount": "6789", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled":
+        "3826", "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "8464",
+        "subsidiary": "1432", "taxline": "F", "transaction": "21347", "transactiondiscount":
+        "F", "uniquekey": "6632"}, {"links": [], "accountinglinetype": "-Fallback-scrubbed-WHEkp",
+        "class": "5905", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "8486", "department": "2348", "donotdisplayline": "F", "donotprintline": "F",
+        "expenseaccount": "8337", "foreignamount": "2809", "fxamountlinked": "3826",
+        "hascostline": "T", "hasfulfillableitems": "F", "id": "17", "isbillable":
+        "F", "isclosed": "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance":
+        "F", "isinventoryaffecting": "T", "item": "3441", "kitcomponent": "F", "linecreateddate":
+        "2025-06-02 09:51:22", "linelastmodifieddate": "2025-06-02 11:00:03", "linesequencenumber":
+        "2245", "location": "8305", "mainline": "F", "matchbilltoreceipt": "F", "memo":
+        "-Fallback-scrubbed-WGt", "netamount": "2809", "oldcommitmentfirm": "F", "quantity":
+        "9998", "quantitybilled": "3826", "quantityrejected": "3826", "quantityshiprecv":
+        "3826", "rate": "8486", "subsidiary": "1432", "taxline": "F", "transaction":
+        "21347", "transactiondiscount": "F", "uniquekey": "4575"}, {"links": [], "accountinglinetype":
+        "-Fallback-scrubbed-rdOhBCD", "cleared": "F", "commitmentfirm": "F", "creditforeignamount":
+        "4657", "donotdisplayline": "F", "donotprintline": "F", "expenseaccount":
+        "4690", "foreignamount": "5055", "fxamountlinked": "3826", "hascostline":
+        "F", "hasfulfillableitems": "F", "id": "20", "isbillable": "F", "isclosed":
+        "F", "iscogs": "F", "isfullyshipped": "F", "isfxvariance": "F", "isinventoryaffecting":
+        "F", "item": "8420", "kitcomponent": "F", "linecreateddate": "2025-06-02 09:54:37",
+        "linelastmodifieddate": "2025-06-02 11:00:03", "linesequencenumber": "211",
+        "location": "844", "mainline": "F", "matchbilltoreceipt": "F", "netamount":
+        "5055", "oldcommitmentfirm": "F", "quantity": "9998", "quantitybilled": "3826",
+        "quantityrejected": "3826", "quantityshiprecv": "3826", "rate": "4657", "subsidiary":
+        "1432", "taxline": "F", "transaction": "21347", "transactiondiscount": "F",
+        "uniquekey": "64"}], "offset": 0, "totalResults": 19}'
+    headers:
+      Content-Type:
+      - application/vnd.oracle.resource+json; type=collection; charset=UTF-8
+    status:
+      code: 200
+      message: OK
+version: 1

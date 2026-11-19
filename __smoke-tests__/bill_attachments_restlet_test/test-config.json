@@ -1,0 +1,15 @@
+{
+  "filter_query_parameters": [
+    "requestId"
+  ],
+  "include_streams": [
+    "BillsStream",
+    "BillAttachmentsStream"
+  ],
+  "sort_config": {
+    "bill_attachments": [
+      "transaction",
+      "file_id"
+    ]
+  }
+}

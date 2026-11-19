@@ -1,0 +1,1530 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "vendor_credits",
+      "replication_key": "lastmodifieddate",
+      "replication_method": "INCREMENTAL",
+      "key_properties": [],
+      "schema": {
+        "properties": {
+          "discountdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "terms": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxpointdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxdetailsoverride": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "postingperiod": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lastmodifiedby": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nextbilldate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "duedate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "transactionnumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "foreignamountpaid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody3": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "enddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "actualshipdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxtotal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "amountunbilled": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxpointdateoverride": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "foreignpaymentamountunused": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "nexus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paymentoption": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "recordtype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "otherrefnum": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "closedate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "billingstatus": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "shipcomplete": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "number": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "daysoverduesearch": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "legacytax": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "memo": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "currency": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paymenthold": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "firmed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "abbrevtype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "balsegstatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "basetaxtotal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "userevenuearrangement": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "voided": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "customtype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ordpicked": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "trandisplayname": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "externalid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isfinchrg": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "accountbasednumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "employee": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "foreignpaymentamountusednopost": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "approvalstatus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "foreignamountunpaid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "memorized": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "foreignamountpaidnopost": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "printedpickingticket": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "foreigntotal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "void": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "journaltype": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "shipdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxregoverride": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "custbody_ste_discounted_price": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prevdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visibletocustomer": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "shippingaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "startdate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paymentlink": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody_ste_use_tax": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "subsidiarytaxregnum": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbodycust_je_cf_test": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "isreversal": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "createdby": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "totalaftertaxes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "paymentmethod": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exchangerate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody_ste_rcs_applicable": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "shipcarrier": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody_ste_discounted_vat": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "basetotalaftertaxes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "posting": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "foreignpaymentamountused": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tranid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody2": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody_ste_discounted_total": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "needsbill": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "billingaddress": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "typebaseddocumentnumber": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "custbody1": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "trandate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "daysopen": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tobeprinted": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "lastmodifieddate": {
+            "format": "date-time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "customform": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "entity": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "vendor_credits",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "discountdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "terms"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "taxpointdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "taxdetailsoverride"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "postingperiod"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastmodifiedby"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "nextbilldate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "duedate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "transactionnumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignamountpaid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "email"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody3"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "enddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "actualshipdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "taxtotal"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "type"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "amountunbilled"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "taxpointdateoverride"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignpaymentamountunused"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "nexus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paymentoption"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "recordtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "otherrefnum"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "closedate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "billingstatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "shipcomplete"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "number"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "daysoverduesearch"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "legacytax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "memo"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "currency"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paymenthold"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "firmed"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "abbrevtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "balsegstatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "basetaxtotal"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "userevenuearrangement"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "voided"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "customtype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "ordpicked"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "trandisplayname"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "externalid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isfinchrg"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "accountbasednumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "employee"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignpaymentamountusednopost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "approvalstatus"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignamountunpaid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "memorized"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignamountpaidnopost"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "status"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "printedpickingticket"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreigntotal"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "void"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "journaltype"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "shipdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "taxregoverride"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody_ste_discounted_price"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "prevdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "visibletocustomer"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "shippingaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "createddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "startdate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paymentlink"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "source"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody_ste_use_tax"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "subsidiarytaxregnum"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbodycust_je_cf_test"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "isreversal"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "createdby"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "totalaftertaxes"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "paymentmethod"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "exchangerate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody_ste_rcs_applicable"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "shipcarrier"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody_ste_discounted_vat"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "basetotalaftertaxes"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "posting"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "foreignpaymentamountused"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "tranid"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody2"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody_ste_discounted_total"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "needsbill"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "billingaddress"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "typebaseddocumentnumber"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "custbody1"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "trandate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "daysopen"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "tobeprinted"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "lastmodifieddate"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "customform"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "entity"
+          ],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "table-key-properties": [],
+            "valid-replication-keys": [
+              "lastmodifieddate"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
